@@ -265,7 +265,8 @@
       const id = document.getElementById('input-admin-id').value.trim();
       const pw = document.getElementById('input-admin-pw').value.trim();
 
-      if (id === 'admin' && pw === '1234') {
+      // 🌟 변경된 아이디(admina)와 비밀번호(12341) 검증 구문
+      if (id === 'admina' && pw === '12341') {
         document.getElementById('login-modal').classList.add('hidden');
         document.getElementById('admin-main-content').classList.remove('hidden');
         document.getElementById('admin-main-content').classList.add('flex');
