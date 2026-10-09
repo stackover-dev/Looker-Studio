@@ -23,9 +23,50 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- SheetJS CDN (Full XLSX Support) -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap');
     body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; }
+    
+    /* 🌟 빙그레체 폰트 적용 및 다크테마 시인성 극대화 패치 */
+    @font-face {
+        font-family: 'Binggrae';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Binggrae.woff') format('woff');
+        font-weight: 400;
+        font-style: normal;
+    }
+
+    /* 코멘트 영역 폰트, 크기, 줄간격 강제 확대 */
+    [id*="strategy-comment-box"], [id*="anomaly-comment-box"] {
+        font-family: 'Binggrae', sans-serif !important;
+        font-size: 16px !important;
+        line-height: 1.8 !important;
+        word-break: keep-all !important;
+    }
+
+    /* 어두운 글씨를 다크 테마에 맞춰 '밝은 화이트'로 강제 변경 */
+    [id*="strategy-comment-box"] p, [id*="strategy-comment-box"] h4, [id*="strategy-comment-box"] li,
+    [id*="anomaly-comment-box"] p, [id*="anomaly-comment-box"] li {
+        color: #F8FAFC !important;
+        font-family: 'Binggrae', sans-serif !important;
+        font-size: 16px !important;
+    }
+
+    /* 굵은 글씨(b, strong)는 '노란색'으로 강조하여 한눈에 띄게 수정 */
+    [id*="strategy-comment-box"] b, [id*="strategy-comment-box"] strong,
+    [id*="anomaly-comment-box"] b, [id*="anomaly-comment-box"] strong {
+        color: #FDE047 !important;
+        font-weight: bold !important;
+        font-size: 17px !important;
+    }
+
+    /* 형광펜(mark) 태그 다크테마 최적화 */
+    [id*="strategy-comment-box"] mark, [id*="anomaly-comment-box"] mark {
+        background-color: rgba(253, 224, 71, 0.2) !important;
+        color: #FDE047 !important;
+        padding: 2px 6px !important;
+        border-radius: 4px !important;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen">
