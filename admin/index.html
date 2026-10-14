@@ -54,12 +54,17 @@
           <h1 class="text-sm sm:text-base font-bold">통합 매체 관리자 시스템</h1>
         </div>
 
-        <!-- 🌟 새롭게 추가된 우측 상단 데이터 배포/미리보기 버튼 영역 -->
-        <div class="flex items-center space-x-3">
-          <button onclick="downloadDatabaseJson()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1.5 shadow-sm">
-            <span>💾 Github 영구 배포 (database.json 저장)</span>
+        <!-- 🌟 원클릭 GitHub REST API 자동 배포 버튼 그룹 -->
+        <div class="flex items-center space-x-2">
+          <button onclick="setGitHubTokenPrompt()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-lg text-xs font-bold transition flex items-center space-x-1" title="GitHub Personal Access Token 설정">
+            <span>🔑 토큰 설정</span>
           </button>
-          <a id="preview-client-link" href="../coway-perfectmall.html" target="_blank" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm">
+          
+          <button id="btn-gh-deploy" onclick="deployDirectlyToGitHub()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1.5 shadow-sm">
+            <span>🚀 GitHub 즉시 배포 (원클릭 자동 커밋)</span>
+          </button>
+          
+          <a id="preview-client-link" href="../coway-perfectmall.html" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm">
             <span>👁️ <span id="preview-filename-text">coway-perfectmall.html</span> 미리보기</span>
           </a>
         </div>
@@ -233,7 +238,13 @@
   </div>
 
   <script>
-    // 🌟 불필요한 기간 탭을 완전히 제거하고 오직 실제 기간만 남긴 초기화 세팅
+    const GITHUB_CONFIG = {
+      owner: "stackover-dev",
+      repo: "Looker-Studio",
+      path: "database.json",
+      branch: "main"
+    };
+
     const defaultDatabase = {
       "코웨이 퍼펙트몰": {
         htmlFilename: "coway-perfectmall.html",
@@ -249,7 +260,7 @@
 
     let db = {};
     let currentClient = "코웨이 퍼펙트몰";
-    let currentPeriod = "2026.09.22 ~ 2026.10.13"; // 단일 현재 기간
+    let currentPeriod = "2026.09.22 ~ 2026.10.13";
 
     function loadDatabase() {
       const saved = localStorage.getItem('MEDIA_REPORT_DB');
@@ -274,7 +285,6 @@
     }
 
     function saveDatabase() {
-      // 저장 시점에 데이터셋 내부의 날짜들을 기반으로 현재 기간의 탭 이름을 자동 업데이트!
       if (db[currentClient] && db[currentClient].months[currentPeriod]) {
         const dataset = db[currentClient].months[currentPeriod].rawDataset || [];
         if (dataset.length > 0) {
@@ -293,17 +303,95 @@
       localStorage.setItem('MEDIA_REPORT_DB', JSON.stringify(db));
     }
 
-    // 🌟 깃허브 영구 배포 파일 (database.json) 다운로드 함수
-    function downloadDatabaseJson() {
-      saveDatabase(); // 저장 전 자동 날짜 동기화 한번 실행
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
-      const dlAnchor = document.createElement('a');
-      dlAnchor.setAttribute("href", dataStr);
-      dlAnchor.setAttribute("download", "database.json");
-      document.body.appendChild(dlAnchor);
-      dlAnchor.click();
-      dlAnchor.remove();
-      alert('✅ database.json 파일이 성공적으로 추출되었습니다.\n\n이 파일을 [public/reports/] 폴더에 덮어씌운 뒤 깃허브에 푸시해주세요!');
+    // 🌟 GitHub 토큰 설정
+    function setGitHubTokenPrompt() {
+      const currentToken = localStorage.getItem('GH_PAT_TOKEN') || '';
+      const input = prompt('GitHub Personal Access Token (classic)을 입력하세요:\n(권한: repo 체크 필수)', currentToken);
+      if (input !== null) {
+        const trimmed = input.trim();
+        if (trimmed) {
+          localStorage.setItem('GH_PAT_TOKEN', trimmed);
+          alert('✅ GitHub 토큰이 브라우저에 안전하게 저장되었습니다!');
+        } else {
+          localStorage.removeItem('GH_PAT_TOKEN');
+          alert('토큰이 제거되었습니다.');
+        }
+      }
+    }
+
+    // 🌟 브라우저에서 다운로드 창 없이 GitHub API로 database.json 직접 자동 커밋/발행
+    async function deployDirectlyToGitHub() {
+      const token = localStorage.getItem('GH_PAT_TOKEN');
+      if (!token) {
+        alert('GitHub 토큰이 설정되지 않았습니다.\n먼저 상단의 [🔑 토큰 설정] 버튼을 눌러 발급받은 PAT 토큰을 입력해주세요.');
+        setGitHubTokenPrompt();
+        return;
+      }
+
+      saveDatabase(); // 저장 전 시작일~종료일 동기화
+
+      const btn = document.getElementById('btn-gh-deploy');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<span>⏳ 깃허브 배포 중...</span>`;
+
+      try {
+        const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
+
+        // 1. 기존 파일의 SHA 해시값 조회
+        let sha = null;
+        const getRes = await fetch(url, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Accept": "application/vnd.github.v3+json"
+          }
+        });
+
+        if (getRes.ok) {
+          const fileData = await getRes.json();
+          sha = fileData.sha;
+        }
+
+        // 2. 한글 깨짐 방지 UTF-8 -> Base64 인코딩
+        const jsonString = JSON.stringify(db, null, 2);
+        const utf8Bytes = new TextEncoder().encode(jsonString);
+        let binaryStr = "";
+        for (let i = 0; i < utf8Bytes.length; i++) {
+          binaryStr += String.fromCharCode(utf8Bytes[i]);
+        }
+        const base64Content = btoa(binaryStr);
+
+        // 3. GitHub API로 파일 직접 커밋/푸시 (PUT)
+        const putBody = {
+          message: `Auto-deploy report database: ${currentClient} (${currentPeriod})`,
+          content: base64Content,
+          branch: GITHUB_CONFIG.branch
+        };
+        if (sha) putBody.sha = sha;
+
+        const putRes = await fetch(url, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "Accept": "application/vnd.github.v3+json"
+          },
+          body: JSON.stringify(putBody)
+        });
+
+        if (putRes.ok) {
+          alert(`🎉 [${currentClient}] 보고서가 GitHub 저장소에 즉시 커밋되었습니다!\n\n다운로드나 터미널 푸시 없이 원클릭으로 반영이 완료되었습니다.\n약 1분 후 고객사 페이지를 새로고침하면 최신 데이터가 표시됩니다.`);
+        } else {
+          const errData = await putRes.json();
+          throw new Error(errData.message || 'GitHub API 전송 실패');
+        }
+      } catch (err) {
+        console.error(err);
+        alert(`❌ 배포 실패: ${err.message}\n토큰 권한(repo 체크 여부) 또는 레포지토리 이름을 확인해주세요.`);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
     }
 
     function handleLogin(e) {
@@ -557,13 +645,13 @@
         dataset[idx][field] = Number(val) || 0;
       }
       saveDatabase();
-      renderPeriodNav(); // 날짜가 바뀌었을 수 있으므로 탭 자동 동기화 렌더링
+      renderPeriodNav();
     }
 
     function deleteRowData(idx) {
       db[currentClient].months[currentPeriod].rawDataset.splice(idx, 1);
       saveDatabase();
-      renderPeriodNav(); // 날짜가 바뀌었을 수 있으므로 탭 자동 동기화 렌더링
+      renderPeriodNav();
       renderAdminPanel();
     }
 
@@ -702,7 +790,7 @@
               db[currentClient].months[currentPeriod].rawDataset = [];
             }
             db[currentClient].months[currentPeriod].rawDataset.push(...newRows);
-            saveDatabase(); // 🌟 데이터 저장 시 시작일~종료일 기반으로 탭 이름이 자동 연동 변경됨!
+            saveDatabase();
             renderPeriodNav();
             renderAdminPanel();
             alert(`🎉 데이터 ${newRows.length}건이 성공적으로 등록되었으며, 집행 기간이 표 내부 일자 기준으로 자동 동기화되었습니다!`);
