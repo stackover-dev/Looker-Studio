@@ -64,12 +64,12 @@
             <span>🚀 GitHub 즉시 배포 (원클릭 자동 커밋)</span>
           </button>
           
-          <!-- 🌟 404 해결: 링크가 JS 로직에 의해 깃허브 절대경로로 자동 세팅됩니다 -->
+          <!-- 🌟 [수정됨] 미리보기 링크 (지정해주신 stackover-dev.github.io 도메인 기반으로 직결) -->
           <a id="preview-client-link" href="#" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm">
-            <span>👁️ <span id="preview-filename-text">미리보기</span></span>
+            <span>👁️ <span id="preview-filename-text">coway-perfectmall.html</span> 미리보기</span>
           </a>
 
-          <!-- 🌟 [신규] 로그아웃 버튼 추가 -->
+          <!-- 🌟 [신규] 로그아웃 버튼 (지정해주신 도메인으로 리다이렉션) -->
           <button onclick="handleLogout()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-100 rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm ml-2">
             <span>🚪 로그아웃</span>
           </button>
@@ -109,7 +109,6 @@
           </div>
         </div>
 
-        <!-- 🌟 유연한 맞춤형 광고 집행 기간 탭 영역 -->
         <div>
           <div class="flex items-center justify-between mb-2">
             <label class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
@@ -145,7 +144,6 @@
             <p class="text-[11px] text-slate-500 mt-0.5">클라이언트 보고서 최상단에 노출되는 서식 태그(HTML) 적용 가능 총평 영역입니다.</p>
           </div>
 
-          <!-- HTML 태그 빠른 삽입 툴바 -->
           <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1.5 rounded-xl border border-slate-200">
             <span class="text-[10px] font-bold text-slate-400 px-1">빠른 서식:</span>
             <button type="button" onclick="insertHtmlTag('<b>', '</b>')" class="px-2 py-1 text-[11px] font-bold bg-white border border-slate-300 rounded hover:bg-slate-100" title="진하게"><b>B</b></button>
@@ -160,7 +158,6 @@
             <label class="block text-xs font-bold text-slate-700 mb-1">HTML 코드 편집기</label>
             <textarea id="edit-strategy-comment" rows="7" oninput="handleCommentInput()" class="w-full font-mono text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-slate-50 focus:bg-white"></textarea>
           </div>
-
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">클라이언트 실제 노출 프리뷰 (Live Preview)</label>
             <div id="comment-live-preview" class="w-full h-full min-h-[148px] text-xs p-4 border border-slate-200 rounded-xl bg-slate-50/50 leading-relaxed overflow-y-auto">
@@ -169,18 +166,18 @@
         </div>
       </div>
 
-      <!-- 🌟 [수정/추가됨] 3. 운영 특이사항 및 4. 광고 소재 피드백 관리 -->
+      <!-- 🌟 [신규/복구됨] 3. 운영 이슈 & 4. 광고 소재 피드백 관리 -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- 3. 운영 특이사항 및 조치 내역 -->
+        <!-- 좌측: 운영 이슈 -->
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
           <label class="block text-xs font-bold text-amber-800 mb-1.5">
-            ⚡ 운영 이슈 및 최적화 대응 내역 (Operational Actions - 줄바꿈으로 자동 리스트화)
+            ⚡ 운영 이슈 및 최적화 대응 내역 (줄바꿈으로 리스트화)
           </label>
           <textarea id="edit-anomaly-comment" rows="4" onchange="saveCommentsFromAdmin()" class="w-full flex-grow text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="CPC 급등 대응, 소재 교체 등 운영 이슈를 줄바꿈(Enter)으로 구분해 입력하세요."></textarea>
         </div>
 
-        <!-- 🌟 [핵심] 광고 소재 피드백 관리 (이미지 업로드) -->
+        <!-- 우측: 광고 소재 이미지 & 피드백 관리 -->
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
           <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
             <h2 class="text-sm font-bold text-indigo-700 flex items-center space-x-1.5">
@@ -216,9 +213,8 @@
         </div>
       </div>
 
-      <!-- 5. 데이터 업로드 (정밀 UTF-8 파서 탑재) -->
+      <!-- 5. 데이터 업로드 -->
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
           <div>
             <h3 class="text-sm font-bold text-blue-700 flex items-center gap-1.5">
@@ -251,7 +247,7 @@
         </div>
       </div>
 
-      <!-- 6. 등록된 일별 매체 데이터 (수정 & 삭제) -->
+      <!-- 6. 등록된 일별 매체 데이터 -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
           <h3 class="text-xs font-bold text-slate-900">등록된 일별 매체 데이터 (<span id="active-period-label" class="text-blue-600 font-bold"></span>)</h3>
@@ -298,7 +294,7 @@
             strategyComment: "<h4 class='text-sm font-bold text-slate-900 mb-1.5'>퍼포먼스 마케팅 종합 성과 평가</h4>\n<p>총 집행비용은 <b class='text-slate-900'>44.3만 원 (VAT포함)</b>으로 숏폼 동영상 크리에이티브 중심 집중 집행되었습니다.</p>\n<p class='mt-1'><mark class='bg-yellow-200 px-1 rounded font-semibold'>인스타그램 프로필 방문 및 링크 클릭률 3.79%</mark>의 높은 반응도를 유지했습니다.</p>",
             anomalyComment: "인스타그램 숏폼 비디오 소재 A/B 테스트 진행 (30초 vs 60초)\n30~59초 소재에서 전환율 76% 집중 발생 확인에 따라 예산 80% 집중 배정 완료",
             rawDataset: [],
-            creatives: [] // 소재 데이터 초기 배열
+            creatives: [] // 🌟 신규 소재 저장 배열 보장
           }
         }
       }
@@ -308,12 +304,43 @@
     let currentClient = "코웨이 퍼펙트몰";
     let currentPeriod = "2026.09.22 ~ 2026.10.13";
 
-    // 🌟 [추가/수정됨] 페이지 로드 시 로그인 상태 체크
+    // 🌟 [수정됨] 페이지 로드 시 새로고침 방어: 로그인 유지 체크
     document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.getItem('IS_ADMIN_LOGGED_IN') === 'true') {
         showAdminPanel();
       }
     });
+
+    function showAdminPanel() {
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('admin-main-content').classList.remove('hidden');
+      document.getElementById('admin-main-content').classList.add('flex');
+      
+      loadDatabase();
+      currentClient = Object.keys(db)[0]; 
+      renderClientSelect();
+      renderPeriodNav();
+      renderAdminPanel();
+    }
+
+    // 🌟 [추가됨] 로그아웃 버튼 동작 (지정된 경로로 리다이렉트)
+    function handleLogout() {
+      localStorage.removeItem('IS_ADMIN_LOGGED_IN');
+      window.location.href = 'https://admin.placepartner.cloud/reports';
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const id = document.getElementById('input-admin-id').value.trim();
+      const pw = document.getElementById('input-admin-pw').value.trim();
+
+      if (id === 'admina' && pw === '12341') {
+        localStorage.setItem('IS_ADMIN_LOGGED_IN', 'true'); // 로그인 성공 기록
+        showAdminPanel();
+      } else {
+        document.getElementById('login-error').classList.remove('hidden');
+      }
+    }
 
     function loadDatabase() {
       const saved = localStorage.getItem('MEDIA_REPORT_DB');
@@ -329,7 +356,6 @@
                 months: oldMonths
               };
             }
-            // 소재(creatives) 배열이 없을 경우를 대비한 자동 추가
             Object.keys(db[client].months).forEach(periodKey => {
               if (!db[client].months[periodKey].creatives) {
                 db[client].months[periodKey].creatives = [];
@@ -385,7 +411,7 @@
         return;
       }
 
-      saveDatabase(); // 저장 전 시작일~종료일 동기화
+      saveDatabase();
 
       const btn = document.getElementById('btn-gh-deploy');
       const originalText = btn.innerHTML;
@@ -397,12 +423,8 @@
 
         let sha = null;
         const getRes = await fetch(url, {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Accept": "application/vnd.github.v3+json"
-          }
+          headers: { "Authorization": `Bearer ${token}`, "Accept": "application/vnd.github.v3+json" }
         });
-
         if (getRes.ok) {
           const fileData = await getRes.json();
           sha = fileData.sha;
@@ -448,38 +470,6 @@
       }
     }
 
-    // 🌟 [추가/수정됨] 로그인 및 패널 렌더링 분리
-    function handleLogin(e) {
-      e.preventDefault();
-      const id = document.getElementById('input-admin-id').value.trim();
-      const pw = document.getElementById('input-admin-pw').value.trim();
-
-      if (id === 'admina' && pw === '12341') {
-        localStorage.setItem('IS_ADMIN_LOGGED_IN', 'true'); // 로그인 세션 유지
-        showAdminPanel();
-      } else {
-        document.getElementById('login-error').classList.remove('hidden');
-      }
-    }
-
-    // 🌟 [신규 추가] 로그아웃 기능
-    function handleLogout() {
-      localStorage.removeItem('IS_ADMIN_LOGGED_IN');
-      window.location.href = 'https://admin.placepartner.cloud/reports';
-    }
-
-    function showAdminPanel() {
-      document.getElementById('login-modal').classList.add('hidden');
-      document.getElementById('admin-main-content').classList.remove('hidden');
-      document.getElementById('admin-main-content').classList.add('flex');
-      
-      loadDatabase();
-      currentClient = Object.keys(db)[0]; 
-      renderClientSelect();
-      renderPeriodNav();
-      renderAdminPanel();
-    }
-
     function renderClientSelect() {
       const select = document.getElementById('admin-client-select');
       select.innerHTML = '';
@@ -493,15 +483,15 @@
       updateClientHtmlLinkDisplay();
     }
 
-    // 🌟 [수정됨] 404 문제 해결을 위한 미리보기 링크 절대경로 변경
+    // 🌟 [수정됨] 404 문제 해결을 위해 미리보기 링크를 GitHub Pages 루트 URL로 설정
     function updateClientHtmlLinkDisplay() {
       const clientData = db[currentClient] || {};
       const filename = clientData.htmlFilename || `${currentClient}.html`;
       document.getElementById('edit-client-html-file').value = filename;
       document.getElementById('preview-filename-text').innerText = filename;
       
-      // 404가 나던 상대경로를 지우고, 깃허브 배포 주소로 직접 꽂아줌
-      document.getElementById('preview-client-link').href = `https://stackover-dev.github.io/Looker-Studio/${filename}`;
+      // 고객이 지정하신 도메인으로 직행
+      document.getElementById('preview-client-link').href = `https://stackover-dev.github.io/${filename}`;
     }
 
     function updateClientHtmlFilename() {
@@ -633,7 +623,7 @@
 
       updateLiveCommentPreview();
       renderAdminDataTable(activeData.rawDataset || []);
-      renderCreativesList(); // 🌟 소재 리스트 렌더링 호출
+      renderCreativesList(); // 🌟 소재 리스트 렌더링
     }
 
     function handleCommentInput() {
@@ -672,7 +662,7 @@
       saveDatabase();
     }
 
-    // 🌟 광고 소재 이미지 자동 압축 로직
+    // 🌟 광고 소재 이미지 자동 압축 변환 엔진 (Base64)
     function processCreativeImage(event) {
       const file = event.target.files[0];
       if (!file) return;
