@@ -81,7 +81,6 @@
             </div>
           </div>
 
-          <!-- 🌟 12개월 모두 나오도록 래퍼 너비와 줄바꿈(flex-wrap) 적용 -->
           <div class="flex-1 min-w-[280px]">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">집행월 선택 (2026년)</label>
             <div id="admin-month-buttons" class="flex flex-wrap gap-1.5">
@@ -142,16 +141,16 @@
         <textarea id="edit-anomaly-comment" rows="3" onchange="saveCommentsFromAdmin()" class="w-full text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="CPC 급등 대응, 소재 교체 등 운영 이슈를 줄바꿈(Enter)으로 구분해 입력하세요."></textarea>
       </div>
 
-      <!-- 🌟 4. 데이터 업로드 (CSV/엑셀 파일 자동화 & 텍스트 복붙) -->
+      <!-- 4. 데이터 업로드 (CSV/엑셀 파일 자동화 & 텍스트 복붙) -->
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
         
         <!-- 파일 업로드 영역 -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
           <div>
             <h3 class="text-sm font-bold text-blue-700 flex items-center gap-1.5">
-              <span class="text-lg">📁</span> CSV / Excel 매체 보고서 자동 업로드 (추천)
+              <span class="text-lg">📁</span> CSV / Excel 매체 보고서 자동 업로드 (스마트 인식 기능 적용!)
             </h3>
-            <p class="text-[11px] text-slate-500 mt-0.5">페이스북, 구글, 네이버 관리자에서 다운로드한 파일을そのまま 올리면 시스템이 컬럼을 스마트하게 자동 분류합니다.</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">메타(페이스북), 구글, 네이버 관리자에서 다운로드한 파일을 그대로 올리면 시스템이 컬럼을 스마트하게 자동 분류합니다.</p>
           </div>
           
           <div class="relative w-full sm:w-auto flex-shrink-0">
@@ -344,19 +343,14 @@
       }
     }
 
-    // 🌟 1월부터 12월까지 모두 동적으로 생성되도록 수정한 부분
     function renderMonthNav() {
       const container = document.getElementById('admin-month-buttons');
       container.innerHTML = '';
-      
-      // 2026.01 ~ 2026.12 까지 자동 배열 생성
       const months = Array.from({ length: 12 }, (_, i) => `2026.${String(i + 1).padStart(2, '0')}`);
 
       months.forEach(m => {
         const btn = document.createElement('button');
         btn.onclick = () => { currentMonth = m; renderMonthNav(); renderAdminPanel(); };
-        
-        // 버튼 크기가 작아지지 않게 flex-shrink-0 추가
         if (m === currentMonth) {
           btn.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-900 text-white shadow-sm shrink-0 transition-colors";
         } else {
@@ -477,7 +471,7 @@
       renderAdminPanel();
     }
 
-    // 🌟 파일 업로드 및 스마트 파싱 기능
+    // 🌟 대대적으로 업그레이드된 스마트 파싱 기능
     function handleFileUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -506,23 +500,27 @@
           let imp = 0, reach = 0, clicks = 0, cost = 0, conv = 0;
 
           keys.forEach(key => {
-            const lowerK = key.toLowerCase();
+            const lowerK = key.toLowerCase().trim();
             const val = row[key];
 
-            if (lowerK.includes('캠페인') || lowerK.includes('매체') || lowerK.includes('platform') || lowerK.includes('media') || lowerK.includes('ad set') || lowerK.includes('광고 세트')) {
+            // 1. 매체 구분
+            if (lowerK.includes('캠페인') || lowerK.includes('매체') || lowerK.includes('platform') || lowerK.includes('광고 세트') || lowerK.includes('광고 이름')) {
               const strVal = String(val).toLowerCase();
               if (strVal.includes('naver') || strVal.includes('네이버')) mediaVal = 'Naver';
               else if (strVal.includes('google') || strVal.includes('구글') || lowerK.includes('ad group')) mediaVal = 'Google';
             }
 
-            if (lowerK.includes('date') || lowerK.includes('날짜') || lowerK.includes('일자') || lowerK.includes('reporting starts') || lowerK.includes('시작일')) {
+            // 2. 날짜 추출 (🌟 페이스북의 '보고 시작' 완벽 대응)
+            if (lowerK === 'date' || lowerK.includes('날짜') || lowerK.includes('일자') || lowerK.includes('시작일') || lowerK.includes('보고 시작') || lowerK.includes('reporting starts')) {
               if(!dateVal) dateVal = val; 
             }
-            else if (lowerK.includes('impressions') || lowerK.includes('노출')) imp = parseNum(val);
-            else if (lowerK.includes('reach') || lowerK.includes('도달')) reach = parseNum(val);
-            else if (lowerK.includes('clicks') || lowerK.includes('클릭')) clicks = parseNum(val);
-            else if (lowerK.includes('amount spent') || lowerK.includes('cost') || lowerK.includes('비용') || lowerK.includes('소진') || lowerK.includes('지출')) cost = parseNum(val);
-            else if (lowerK.includes('results') || lowerK.includes('conversions') || lowerK.includes('전환') || lowerK.includes('결과')) conv = parseNum(val);
+            
+            // 3. 핵심 지표 스마트 매핑 (🌟 CPC 등 단어 혼동 방지)
+            else if (lowerK === '노출' || lowerK === '노출수' || lowerK.includes('impressions')) imp = parseNum(val);
+            else if (lowerK === '도달' || lowerK === '도달수' || lowerK.includes('reach')) reach = parseNum(val);
+            else if (lowerK === '링크 클릭' || lowerK === '클릭(전체)' || lowerK === '클릭수' || lowerK === 'clicks') clicks = parseNum(val);
+            else if (lowerK.includes('지출 금액') || lowerK.includes('소진') || lowerK === '총 비용' || lowerK === 'amount spent' || (lowerK.includes('비용') && !lowerK.includes('당'))) cost = parseNum(val);
+            else if (lowerK === '결과' || lowerK === '전환' || lowerK === '전환수' || lowerK === 'results') conv = parseNum(val);
           });
 
           if (dateVal && (imp > 0 || clicks > 0 || cost > 0)) {
@@ -544,7 +542,7 @@
               alert('✨ 엑셀/CSV 데이터가 성공적으로 매핑되어 등록되었습니다!');
            }
         } else {
-           alert('유효한 데이터(날짜 및 노출/클릭/비용 지표)를 찾지 못했습니다.');
+           alert('유효한 데이터(날짜 및 노출/클릭/비용 지표)를 찾지 못했습니다. 매체사 보고서 양식이 맞는지 확인해주세요.');
         }
         event.target.value = '';
       };
