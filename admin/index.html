@@ -54,7 +54,7 @@
           <h1 class="text-sm sm:text-base font-bold">통합 매체 관리자 시스템</h1>
         </div>
 
-        <!-- 🌟 원클릭 GitHub REST API 자동 배포 버튼 그룹 -->
+        <!-- 🌟 우측 상단 기능 버튼 그룹 -->
         <div class="flex items-center space-x-2">
           <button onclick="setGitHubTokenPrompt()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-lg text-xs font-bold transition flex items-center space-x-1" title="GitHub Personal Access Token 설정">
             <span>🔑 토큰 설정</span>
@@ -64,9 +64,15 @@
             <span>🚀 GitHub 즉시 배포 (원클릭 자동 커밋)</span>
           </button>
           
-          <a id="preview-client-link" href="../coway-perfectmall.html" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm">
-            <span>👁️ <span id="preview-filename-text">coway-perfectmall.html</span> 미리보기</span>
+          <!-- 🌟 404 해결: 링크가 JS 로직에 의해 깃허브 절대경로로 자동 세팅됩니다 -->
+          <a id="preview-client-link" href="#" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm">
+            <span>👁️ <span id="preview-filename-text">미리보기</span></span>
           </a>
+
+          <!-- 🌟 [신규] 로그아웃 버튼 추가 -->
+          <button onclick="handleLogout()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-100 rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm ml-2">
+            <span>🚪 로그아웃</span>
+          </button>
         </div>
       </div>
     </header>
@@ -163,18 +169,18 @@
         </div>
       </div>
 
-      <!-- 3. 운영 특이사항 및 🌟 4. [신규] 광고 소재 피드백 관리 -->
+      <!-- 🌟 [수정/추가됨] 3. 운영 특이사항 및 4. 광고 소재 피드백 관리 -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- 좌측: 운영 이슈 -->
+        <!-- 3. 운영 특이사항 및 조치 내역 -->
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
           <label class="block text-xs font-bold text-amber-800 mb-1.5">
-            ⚡ 운영 이슈 및 최적화 대응 내역 (Operational Actions - 줄바꿈으로 리스트화)
+            ⚡ 운영 이슈 및 최적화 대응 내역 (Operational Actions - 줄바꿈으로 자동 리스트화)
           </label>
           <textarea id="edit-anomaly-comment" rows="4" onchange="saveCommentsFromAdmin()" class="w-full flex-grow text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="CPC 급등 대응, 소재 교체 등 운영 이슈를 줄바꿈(Enter)으로 구분해 입력하세요."></textarea>
         </div>
 
-        <!-- 우측: 광고 소재 이미지 & 피드백 관리 -->
+        <!-- 🌟 [핵심] 광고 소재 피드백 관리 (이미지 업로드) -->
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
           <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
             <h2 class="text-sm font-bold text-indigo-700 flex items-center space-x-1.5">
@@ -203,9 +209,9 @@
             ↓ 현재 소재 리스트에 등록하기
           </button>
           
-          <!-- 등록된 소재 목록 -->
+          <!-- 등록된 소재 목록 표출 영역 -->
           <div class="flex-grow bg-slate-50 rounded-lg border border-slate-200 p-2 overflow-y-auto max-h-40" id="admin-creatives-list">
-            <!-- 자바스크립트 자동 렌더링 영역 -->
+            <!-- JS 렌더링 영역 -->
           </div>
         </div>
       </div>
@@ -292,7 +298,7 @@
             strategyComment: "<h4 class='text-sm font-bold text-slate-900 mb-1.5'>퍼포먼스 마케팅 종합 성과 평가</h4>\n<p>총 집행비용은 <b class='text-slate-900'>44.3만 원 (VAT포함)</b>으로 숏폼 동영상 크리에이티브 중심 집중 집행되었습니다.</p>\n<p class='mt-1'><mark class='bg-yellow-200 px-1 rounded font-semibold'>인스타그램 프로필 방문 및 링크 클릭률 3.79%</mark>의 높은 반응도를 유지했습니다.</p>",
             anomalyComment: "인스타그램 숏폼 비디오 소재 A/B 테스트 진행 (30초 vs 60초)\n30~59초 소재에서 전환율 76% 집중 발생 확인에 따라 예산 80% 집중 배정 완료",
             rawDataset: [],
-            creatives: [] // 🌟 신규 소재 저장 배열
+            creatives: [] // 소재 데이터 초기 배열
           }
         }
       }
@@ -301,6 +307,13 @@
     let db = {};
     let currentClient = "코웨이 퍼펙트몰";
     let currentPeriod = "2026.09.22 ~ 2026.10.13";
+
+    // 🌟 [추가/수정됨] 페이지 로드 시 로그인 상태 체크
+    document.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('IS_ADMIN_LOGGED_IN') === 'true') {
+        showAdminPanel();
+      }
+    });
 
     function loadDatabase() {
       const saved = localStorage.getItem('MEDIA_REPORT_DB');
@@ -316,7 +329,7 @@
                 months: oldMonths
               };
             }
-            // 🌟 마이그레이션: 기존 DB에 creatives 속성이 없으면 강제 주입하여 에러 방지
+            // 소재(creatives) 배열이 없을 경우를 대비한 자동 추가
             Object.keys(db[client].months).forEach(periodKey => {
               if (!db[client].months[periodKey].creatives) {
                 db[client].months[periodKey].creatives = [];
@@ -349,7 +362,6 @@
       localStorage.setItem('MEDIA_REPORT_DB', JSON.stringify(db));
     }
 
-    // 🌟 GitHub 토큰 설정
     function setGitHubTokenPrompt() {
       const currentToken = localStorage.getItem('GH_PAT_TOKEN') || '';
       const input = prompt('GitHub Personal Access Token (classic)을 입력하세요:\n(권한: repo 체크 필수)', currentToken);
@@ -365,7 +377,6 @@
       }
     }
 
-    // 🌟 브라우저에서 다운로드 창 없이 GitHub API로 database.json 직접 자동 커밋/발행
     async function deployDirectlyToGitHub() {
       const token = localStorage.getItem('GH_PAT_TOKEN');
       if (!token) {
@@ -374,7 +385,7 @@
         return;
       }
 
-      saveDatabase();
+      saveDatabase(); // 저장 전 시작일~종료일 동기화
 
       const btn = document.getElementById('btn-gh-deploy');
       const originalText = btn.innerHTML;
@@ -384,7 +395,6 @@
       try {
         const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
 
-        // 1. 기존 파일 SHA 조회
         let sha = null;
         const getRes = await fetch(url, {
           headers: {
@@ -398,7 +408,6 @@
           sha = fileData.sha;
         }
 
-        // 2. Base64 인코딩
         const jsonString = JSON.stringify(db, null, 2);
         const utf8Bytes = new TextEncoder().encode(jsonString);
         let binaryStr = "";
@@ -407,7 +416,6 @@
         }
         const base64Content = btoa(binaryStr);
 
-        // 3. GitHub API 전송
         const putBody = {
           message: `Auto-deploy report database: ${currentClient} (${currentPeriod})`,
           content: base64Content,
@@ -440,24 +448,36 @@
       }
     }
 
+    // 🌟 [추가/수정됨] 로그인 및 패널 렌더링 분리
     function handleLogin(e) {
       e.preventDefault();
       const id = document.getElementById('input-admin-id').value.trim();
       const pw = document.getElementById('input-admin-pw').value.trim();
 
       if (id === 'admina' && pw === '12341') {
-        document.getElementById('login-modal').classList.add('hidden');
-        document.getElementById('admin-main-content').classList.remove('hidden');
-        document.getElementById('admin-main-content').classList.add('flex');
-        
-        loadDatabase();
-        currentClient = Object.keys(db)[0]; 
-        renderClientSelect();
-        renderPeriodNav();
-        renderAdminPanel();
+        localStorage.setItem('IS_ADMIN_LOGGED_IN', 'true'); // 로그인 세션 유지
+        showAdminPanel();
       } else {
         document.getElementById('login-error').classList.remove('hidden');
       }
+    }
+
+    // 🌟 [신규 추가] 로그아웃 기능
+    function handleLogout() {
+      localStorage.removeItem('IS_ADMIN_LOGGED_IN');
+      window.location.href = 'https://admin.placepartner.cloud/reports';
+    }
+
+    function showAdminPanel() {
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('admin-main-content').classList.remove('hidden');
+      document.getElementById('admin-main-content').classList.add('flex');
+      
+      loadDatabase();
+      currentClient = Object.keys(db)[0]; 
+      renderClientSelect();
+      renderPeriodNav();
+      renderAdminPanel();
     }
 
     function renderClientSelect() {
@@ -473,12 +493,15 @@
       updateClientHtmlLinkDisplay();
     }
 
+    // 🌟 [수정됨] 404 문제 해결을 위한 미리보기 링크 절대경로 변경
     function updateClientHtmlLinkDisplay() {
       const clientData = db[currentClient] || {};
       const filename = clientData.htmlFilename || `${currentClient}.html`;
       document.getElementById('edit-client-html-file').value = filename;
       document.getElementById('preview-filename-text').innerText = filename;
-      document.getElementById('preview-client-link').href = `../${filename}`;
+      
+      // 404가 나던 상대경로를 지우고, 깃허브 배포 주소로 직접 꽂아줌
+      document.getElementById('preview-client-link').href = `https://stackover-dev.github.io/Looker-Studio/${filename}`;
     }
 
     function updateClientHtmlFilename() {
@@ -610,7 +633,7 @@
 
       updateLiveCommentPreview();
       renderAdminDataTable(activeData.rawDataset || []);
-      renderCreativesList(); // 🌟 신규: 소재 리스트 렌더링
+      renderCreativesList(); // 🌟 소재 리스트 렌더링 호출
     }
 
     function handleCommentInput() {
@@ -649,7 +672,7 @@
       saveDatabase();
     }
 
-    // 🌟 [신규] 광고 소재 이미지 자동 압축 변환 엔진 (Base64)
+    // 🌟 광고 소재 이미지 자동 압축 로직
     function processCreativeImage(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -659,7 +682,7 @@
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 500; // 가로 최대 크기 제한 (용량 최적화)
+          const MAX_WIDTH = 500; 
           let width = img.width;
           let height = img.height;
 
@@ -673,7 +696,6 @@
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
-          // 70% 품질로 JPEG 압축하여 JSON 용량 폭발 방지
           const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
 
           document.getElementById('creative-preview-img').src = dataUrl;
@@ -686,7 +708,6 @@
       reader.readAsDataURL(file);
     }
 
-    // 🌟 [신규] 현재 소재를 배열에 추가하고 저장
     function addCreative() {
       const base64Str = document.getElementById('creative-base64').value;
       const title = document.getElementById('creative-title').value.trim();
@@ -706,7 +727,6 @@
       });
       saveDatabase();
       
-      // 입력 폼 초기화
       document.getElementById('creative-preview-img').src = '';
       document.getElementById('creative-preview-img').classList.add('hidden');
       document.getElementById('creative-placeholder').classList.remove('hidden');
@@ -718,14 +738,12 @@
       renderCreativesList();
     }
 
-    // 🌟 [신규] 저장된 소재 삭제 기능
     function deleteCreative(index) {
       db[currentClient].months[currentPeriod].creatives.splice(index, 1);
       saveDatabase();
       renderCreativesList();
     }
 
-    // 🌟 [신규] 관리자 화면 우측 하단에 등록된 소재 리스트 렌더링
     function renderCreativesList() {
       const listContainer = document.getElementById('admin-creatives-list');
       const creatives = db[currentClient].months[currentPeriod].creatives || [];
