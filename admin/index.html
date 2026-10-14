@@ -54,9 +54,15 @@
           <h1 class="text-sm sm:text-base font-bold">통합 매체 관리자 시스템</h1>
         </div>
 
-        <a id="preview-client-link" href="../coway-perfectmall.html" target="_blank" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm">
-          <span>👁️ <span id="preview-filename-text">coway-perfectmall.html</span> 보고서 미리보기</span>
-        </a>
+        <!-- 🌟 새롭게 추가된 우측 상단 데이터 배포/미리보기 버튼 영역 -->
+        <div class="flex items-center space-x-3">
+          <button onclick="downloadDatabaseJson()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1.5 shadow-sm">
+            <span>💾 Github 영구 배포 (database.json 저장)</span>
+          </button>
+          <a id="preview-client-link" href="../coway-perfectmall.html" target="_blank" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm">
+            <span>👁️ <span id="preview-filename-text">coway-perfectmall.html</span> 미리보기</span>
+          </a>
+        </div>
       </div>
     </header>
 
@@ -112,7 +118,6 @@
           </div>
 
           <div id="admin-period-buttons" class="flex flex-wrap items-center gap-2 pt-1">
-            <!-- 자바스크립트가 등록된 기간 버튼들을 동적 생성 -->
           </div>
         </div>
 
@@ -284,6 +289,18 @@
       localStorage.setItem('MEDIA_REPORT_DB', JSON.stringify(db));
     }
 
+    // 🌟 깃허브 영구 배포 파일 (database.json) 다운로드 함수
+    function downloadDatabaseJson() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
+      const dlAnchor = document.createElement('a');
+      dlAnchor.setAttribute("href", dataStr);
+      dlAnchor.setAttribute("download", "database.json");
+      document.body.appendChild(dlAnchor);
+      dlAnchor.click();
+      dlAnchor.remove();
+      alert('✅ database.json 파일이 성공적으로 다운로드되었습니다.\n\n이 파일을 [public/reports/] 폴더 안에 덮어씌운 뒤 깃허브에 푸시(업로드)하면,\n고객사가 어디서 접속하든 데이터가 정상적으로 나타납니다!');
+    }
+
     function handleLogin(e) {
       e.preventDefault();
       const id = document.getElementById('input-admin-id').value.trim();
@@ -366,7 +383,6 @@
       }
     }
 
-    // 🌟 광고주별 맞춤 집행 기간 버튼 동적 렌더링
     function renderPeriodNav() {
       const container = document.getElementById('admin-period-buttons');
       container.innerHTML = '';
@@ -401,7 +417,6 @@
       });
     }
 
-    // 맞춤 기간 수동 추가
     function addNewPeriodPrompt() {
       const periodName = prompt('추가할 집행 기간 또는 회차명을 입력하세요:\n(예: 2026.09.14 ~ 2026.10.13 또는 2026.09.28 ~ 2027.01.27 (4개월))');
       if (periodName && periodName.trim()) {
@@ -418,7 +433,6 @@
       }
     }
 
-    // 현재 선택된 기간명 수정
     function editCurrentPeriodPrompt() {
       const newName = prompt('현재 집행 기간명을 수정하세요:', currentPeriod);
       if (newName && newName.trim() && newName.trim() !== currentPeriod) {
@@ -433,7 +447,6 @@
       }
     }
 
-    // 현재 선택된 기간 삭제
     function deleteCurrentPeriod() {
       const periods = Object.keys(db[currentClient].months);
       if (periods.length <= 1) {
@@ -557,7 +570,6 @@
       renderAdminPanel();
     }
 
-    // 🌟 완전 무결점 자체 CSV 파서 (따옴표, 쉼표, 줄바꿈 완벽 지원)
     function parseCSVText(text) {
       const lines = text.split(/\r?\n/).filter(line => line.trim().length > 0);
       if (lines.length < 2) return [];
@@ -600,7 +612,6 @@
       return rows;
     }
 
-    // 🌟 파일 업로드 및 스마트 파싱 핵심 함수
     function handleFileUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -642,14 +653,12 @@
               const lk = key.toLowerCase().trim();
               const val = row[key];
 
-              // 매체 식별
               if (lk.includes('캠페인') || lk.includes('매체') || lk.includes('광고 세트') || lk.includes('광고 이름')) {
                 const sv = String(val).toLowerCase();
                 if (sv.includes('naver') || sv.includes('네이버')) mediaVal = 'Naver';
                 else if (sv.includes('google') || sv.includes('구글')) mediaVal = 'Google';
               }
 
-              // 날짜 식별
               if (lk === '보고 시작' || lk === '시작일' || lk === 'date' || lk === '날짜' || lk === '일자' || lk === 'reporting starts') {
                 if (!dateVal && val) {
                   dateVal = String(val).trim();
@@ -660,7 +669,6 @@
                 if (!autoEndDate && val) autoEndDate = String(val).trim();
               }
 
-              // 🎯 지표 정확 매핑 (컬럼명 중복 간섭 완전 차단)
               if (lk === '노출' || lk === '노출수' || lk === 'impressions') imp = parseNum(val);
               else if (lk === '도달' || lk === '도달수' || lk === 'reach') reach = parseNum(val);
               else if (lk === '클릭(전체)' || lk === '링크 클릭' || lk === '클릭수' || lk === 'clicks') {
@@ -669,7 +677,6 @@
               else if (lk.startsWith('지출 금액') || lk === '총 비용' || lk === 'amount spent' || (lk.includes('비용') && !lk.includes('당') && !lk.includes('cpc'))) {
                 cost = parseNum(val);
               }
-              // 정확히 '결과' 또는 '전환' 컬럼만 추출 ('결과 표시 도구' 등 무시)
               else if (lk === '결과' || lk === '전환' || lk === '전환수' || lk === 'results' || lk === 'conversions') {
                 conv = parseNum(val);
               }
