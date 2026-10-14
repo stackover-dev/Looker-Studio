@@ -3,615 +3,508 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>대행사 관제탑 관리자 시스템 (Admin Control Tower)</title>
   
-  <link rel="icon" type="image/png" href="favicon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="월간 퍼포먼스 광고 성과 보고서 - 코웨이 퍼펙트몰">
+  <meta property="og:description" content="코웨이 퍼펙트몰 월간 퍼포먼스 디지털 매체 결산 보고서입니다.">
+  <meta property="og:image" content="./og-imageg.png">
+  <link rel="icon" type="image/png" href="./favicon-497.png">
+
+  <title>월간 퍼포먼스 광고 성과 보고서</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- SheetJS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-
+  
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap');
-    body { font-family: 'Pretendard', sans-serif; background-color: #F1F5F9; }
+    body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; }
+    
+    @font-face {
+        font-family: 'Binggrae';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Binggrae.woff') format('woff');
+        font-weight: 400;
+        font-style: normal;
+    }
+
+    [id*="strategy-comment-box"], [id*="anomaly-comment-box"] {
+        font-family: 'Binggrae', sans-serif !important;
+        font-size: 16px !important;
+        line-height: 1.8 !important;
+        word-break: keep-all !important;
+    }
+
+    [id*="strategy-comment-box"] p, [id*="strategy-comment-box"] h4, [id*="strategy-comment-box"] li,
+    [id*="anomaly-comment-box"] p, [id*="anomaly-comment-box"] li {
+        color: #F8FAFC !important;
+        font-family: 'Binggrae', sans-serif !important;
+        font-size: 16px !important;
+    }
+
+    [id*="strategy-comment-box"] b, [id*="strategy-comment-box"] strong,
+    [id*="anomaly-comment-box"] b, [id*="anomaly-comment-box"] strong {
+        color: #FDE047 !important;
+        font-weight: bold !important;
+        font-size: 17px !important;
+    }
+
+    [id*="strategy-comment-box"] mark, [id*="anomaly-comment-box"] mark {
+        background-color: rgba(253, 224, 71, 0.2) !important;
+        color: #FDE047 !important;
+        padding: 2px 6px !important;
+        border-radius: 4px !important;
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased">
+<body class="bg-slate-950 text-slate-100 min-h-screen">
 
-  <!-- 보안 로그인 모달 -->
-  <div id="login-modal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200">
-      <div class="text-center mb-6">
-        <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
-          &#128274;
-        </div>
-        <h3 class="text-lg font-bold text-slate-900">대행사 관리자 관제탑 로그인</h3>
-        <p class="text-xs text-slate-500 mt-1">고객사 보고서 데이터 등록 및 코멘트 수정을 위해 인증하세요.</p>
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
+        <h1 class="text-base font-bold tracking-tight text-white">PERFORMANCE AD REPOSITORY <span id="client-name-display" class="text-xs text-slate-400 font-normal ml-1">| 고객사 데이터 로딩 중...</span></h1>
       </div>
 
-      <form onsubmit="handleLogin(event)" class="space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">관리자 ID</label>
-          <input type="text" id="input-admin-id" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900" placeholder="ID 입력" required>
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">비밀번호</label>
-          <input type="password" id="input-admin-pw" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900" placeholder="비밀번호 입력" required>
-        </div>
-        <div id="login-error" class="text-xs text-red-600 font-semibold hidden">아이디 또는 비밀번호가 올바르지 않습니다.</div>
+      <!-- 🌟 광고주별 맞춤 집행 기간 탭 자동 생성 영역 -->
+      <nav id="dynamic-period-nav" class="flex items-center space-x-1.5 overflow-x-auto py-1">
+      </nav>
 
-        <button type="submit" class="w-full py-2.5 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition shadow">관제탑 접속하기</button>
-      </form>
+      <div class="flex items-center space-x-2">
+        <button onclick="exportToExcel()" class="flex items-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-2 rounded-lg transition shadow-sm">
+          <span>Excel 리포트 다운로드</span>
+        </button>
+      </div>
     </div>
-  </div>
+  </header>
 
-  <!-- 관리자 대시보드 메인 영역 -->
-  <div id="admin-main-content" class="hidden flex-col min-h-screen">
-    
-    <!-- 어드민 상단 네비게이션 헤더 -->
-    <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <span class="px-2 py-0.5 text-[10px] font-extrabold bg-amber-500 text-slate-950 rounded uppercase">ADMIN CONTROL TOWER</span>
-          <h1 class="text-sm sm:text-base font-bold">통합 매체 관리자 시스템</h1>
-        </div>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
-        <a id="preview-client-link" href="../coway-perfectmall.html" target="_blank" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm">
-          <span>&#128065; <span id="preview-filename-text">coway-perfectmall.html</span> 보고서 미리보기</span>
-        </a>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      <div>
+        <p class="text-xs font-medium uppercase tracking-wider text-emerald-400">Monthly Performance Media Audit</p>
+        <h2 class="text-2xl font-bold text-white mt-1"><span id="report-period-title">2026.09.14 ~ 2026.10.13</span> 디지털 매체 결산 보고서</h2>
       </div>
-    </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 flex-grow w-full">
-      
-      <!-- 1. 고객사 및 집행월 선택 셀렉터 -->
-      <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-        <div class="flex flex-wrap items-start gap-6 w-full">
-          <div>
-            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">고객사 선택</label>
-            <select id="admin-client-select" onchange="changeClient(this.value)" class="bg-slate-50 border border-slate-300 font-bold text-xs text-slate-900 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-slate-900">
-            </select>
-          </div>
+      <div class="flex bg-slate-900 border border-slate-800 rounded-xl p-1 shadow-inner" id="media-filter-container">
+        <button onclick="setMediaFilter('ALL')" data-media="ALL" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow">통합(전체)</button>
+        <button onclick="setMediaFilter('Naver')" data-media="Naver" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white">네이버 검색</button>
+        <button onclick="setMediaFilter('Meta')" data-media="Meta" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white">메타 (DA/SA)</button>
+        <button onclick="setMediaFilter('Google')" data-media="Google" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white">구글 애즈</button>
+      </div>
+    </div>
 
-          <div>
-            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">연결된 HTML 파일명</label>
-            <div class="flex items-center space-x-1">
-              <input type="text" id="edit-client-html-file" class="bg-slate-50 border border-slate-300 font-mono text-xs text-slate-800 rounded-lg px-2.5 py-1.5 w-44 focus:outline-none focus:ring-2 focus:ring-slate-900" placeholder="coway-perfectmall.html">
-              <button onclick="updateClientHtmlFilename()" class="px-2.5 py-1.5 text-xs font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-lg transition">수정</button>
-            </div>
-          </div>
-
-          <div class="flex-1 min-w-[280px]">
-            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">집행월 선택 (2026년)</label>
-            <div id="admin-month-buttons" class="flex flex-wrap gap-1.5">
-            </div>
-          </div>
+    <!-- 1단계: 전략 코멘트 & 운영 특이사항 -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-blue-400 text-xs font-bold tracking-wide">STRATEGY COMMENT</span>
+          <span id="strategy-date-display" class="text-[11px] text-slate-400">기준: 집행 기간 결산</span>
         </div>
-
-        <div class="flex items-center space-x-2 shrink-0 mt-4 md:mt-0">
-          <button onclick="addNewClientPrompt()" class="px-3.5 py-2 text-xs font-bold bg-slate-800 text-white hover:bg-slate-700 rounded-lg transition shadow-sm">
-            + 신규 고객사 추가
-          </button>
-          <button onclick="resetCurrentClientData()" class="px-3.5 py-2 text-xs font-bold bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 rounded-lg transition">
-            초기화 (샘플 로드)
-          </button>
+        <div id="strategy-comment-box" class="text-xs leading-relaxed text-slate-300">
+          <p class="text-slate-500 animate-pulse">관리자 데이터 로딩 중...</p>
         </div>
       </div>
 
-      <!-- 2. 최상단 HTML 편집 가능한 전략 코멘트 박스 -->
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-          <div>
-            <h2 class="text-sm font-bold text-slate-900 flex items-center space-x-1.5">
-              <span>&#128221;</span>
-              <span>최상단 전략 HTML 코멘트 박스 (HTML Comment Box)</span>
-            </h2>
-            <p class="text-[11px] text-slate-500 mt-0.5">클라이언트 보고서 최상단에 노출되는 서식 태그(HTML) 적용 가능 총평 영역입니다.</p>
-          </div>
-
-          <!-- HTML 태그 빠른 삽입 툴바 -->
-          <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1.5 rounded-xl border border-slate-200">
-            <span class="text-[10px] font-bold text-slate-400 px-1">빠른 서식:</span>
-            <button type="button" onclick="insertHtmlTag('<b>', '</b>')" class="px-2 py-1 text-[11px] font-bold bg-white border border-slate-300 rounded hover:bg-slate-100" title="진하게"><b>B</b></button>
-            <button type="button" onclick="insertHtmlTag('<mark class=\'bg-yellow-200 px-1 rounded font-semibold\'>', '</mark>')" class="px-2 py-1 text-[11px] bg-yellow-100 text-yellow-800 font-bold border border-yellow-300 rounded hover:bg-yellow-200" title="형광펜">Highlight</button>
-            <button type="button" onclick="insertHtmlTag('<span class=\'text-emerald-600 font-bold\'>', '</span>')" class="px-2 py-1 text-[11px] bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 rounded hover:bg-emerald-100" title="초록 강조">Green</button>
-            <button type="button" onclick="insertHtmlTag('<ul class=\'list-disc list-inside space-y-1 my-2\'>\n  <li>', '</li>\n</ul>')" class="px-2 py-1 text-[11px] bg-white border border-slate-300 rounded hover:bg-slate-100" title="목록">• List</button>
-          </div>
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1.5 h-full bg-amber-500"></div>
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-amber-400 text-xs font-bold tracking-wide">ANOMALIES & OPERATIONAL ACTIONS</span>
         </div>
+        <h3 class="text-base font-bold text-white mb-2">운영 이슈 분석 및 사후 대응 내역</h3>
+        <div id="anomaly-comment-box">
+          <p class="text-slate-500 text-xs animate-pulse">관리자 데이터 로딩 중...</p>
+        </div>
+      </div>
+    </section>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">HTML 코드 편집기</label>
-            <textarea id="edit-strategy-comment" rows="7" oninput="handleCommentInput()" class="w-full font-mono text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-slate-50 focus:bg-white"></textarea>
-          </div>
+    <!-- 2단계: 핵심 KPI 스코어카드 -->
+    <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" id="kpi-cards-container">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <span class="text-xs font-medium text-slate-400">총 광고비 (VAT포함)</span>
+        <div class="text-lg font-bold text-white mt-1" id="kpi-cost">₩0</div>
+        <span class="text-[10px] text-emerald-400 font-semibold mt-1 inline-block">MoM +4.2%</span>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <span class="text-xs font-medium text-slate-400">총 노출수</span>
+        <div class="text-lg font-bold text-white mt-1" id="kpi-impressions">0</div>
+        <span class="text-[10px] text-emerald-400 font-semibold mt-1 inline-block">MoM +8.1%</span>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <span class="text-xs font-medium text-slate-400">총 클릭수</span>
+        <div class="text-lg font-bold text-white mt-1" id="kpi-clicks">0</div>
+        <span class="text-[10px] text-emerald-400 font-semibold mt-1 inline-block">MoM +12.4%</span>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <span class="text-xs font-medium text-slate-400">평균 클릭률 (CTR)</span>
+        <div class="text-lg font-bold text-white mt-1" id="kpi-ctr">0.00%</div>
+        <span class="text-[10px] text-emerald-400 font-semibold mt-1 inline-block">MoM +0.28%p</span>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <span class="text-xs font-medium text-slate-400">평균 클릭비용 (CPC)</span>
+        <div class="text-lg font-bold text-white mt-1" id="kpi-cpc">₩0</div>
+        <span class="text-[10px] text-emerald-400 font-semibold mt-1 inline-block">MoM -7.3%</span>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <span class="text-xs font-medium text-slate-400">총 전환수 (CV)</span>
+        <div class="text-lg font-bold text-white mt-1" id="kpi-conversions">0</div>
+        <span class="text-[10px] text-emerald-400 font-semibold mt-1 inline-block">MoM +15.0%</span>
+      </div>
+    </section>
 
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">클라이언트 실제 노출 프리뷰 (Live Preview)</label>
-            <div id="comment-live-preview" class="w-full h-full min-h-[148px] text-xs p-4 border border-slate-200 rounded-xl bg-slate-50/50 leading-relaxed overflow-y-auto">
-            </div>
-          </div>
+    <!-- 인터랙티브 시각화 차트 -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold text-white">일별 집행 비용 및 유입 클릭수 추이</h3>
+          <span class="text-[11px] text-slate-400">좌축: 비용(원) / 우축: 클릭수(건)</span>
+        </div>
+        <div class="relative h-72">
+          <canvas id="trendChart"></canvas>
         </div>
       </div>
 
-      <!-- 3. 운영 특이사항 및 조치 내역 -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-        <label class="block text-xs font-bold text-amber-800 mb-1.5">
-          &#1601; 운영 이슈 및 최적화 대응 내역 (Operational Actions - 줄바꿈으로 자동 리스트화)
-        </label>
-        <textarea id="edit-anomaly-comment" rows="3" onchange="saveCommentsFromAdmin()" class="w-full text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="CPC 급등 대응, 소재 교체 등 운영 이슈를 줄바꿈(Enter)으로 구분해 입력하세요."></textarea>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold text-white">매체별 비용 소진 비중</h3>
+          <span class="text-[11px] text-slate-400">VAT 포함</span>
+        </div>
+        <div class="relative h-64 flex items-center justify-center">
+          <canvas id="shareChart"></canvas>
+        </div>
+        <p class="text-[11px] text-center text-slate-400 mt-2">상단 매체 필터 클릭 시 피벗 집계와 즉각 연동됩니다.</p>
+      </div>
+    </section>
+
+    <!-- 3단계: 하단 일별 상세 피벗 테이블 -->
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+      <div class="p-6 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 class="text-sm font-bold text-white">일별 성과 상세 집계 내역</h3>
+          <p class="text-xs text-slate-400 mt-0.5">상단 선택 매체 기준 자동 피벗 연산 테이블</p>
+        </div>
+        <span class="text-xs text-slate-400" id="table-row-count">집계 일수: 0일</span>
       </div>
 
-      <!-- 4. 데이터 업로드 -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-          <div>
-            <h3 class="text-sm font-bold text-blue-700 flex items-center gap-1.5">
-              <span class="text-lg">📁</span> CSV / Excel 매체 보고서 자동 업로드 (UTF-8 한글 엔진 탑재)
-            </h3>
-            <p class="text-[11px] text-slate-500 mt-0.5">메타(페이스북), 구글, 네이버 관리자 보고서 원본을 그대로 업로드하세요.</p>
-          </div>
-          
-          <div class="relative w-full sm:w-auto flex-shrink-0">
-            <input type="file" id="excel-upload-input" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" class="hidden" onchange="handleFileUpload(event)">
-            <label for="excel-upload-input" class="cursor-pointer w-full flex items-center justify-center space-x-1.5 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition shadow-md">
-              <span class="text-base leading-none">&#128229;</span> <span>보고서 파일 업로드 (.csv, .xlsx)</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="pt-2">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-            <div>
-              <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1">
-                <span>📋</span> 수동 텍스트 복사-붙여넣기 (Bulk Paste)
-              </h3>
-              <p class="text-[11px] text-slate-500">열 순서: [ 날짜 | 매체 | 노출수 | 도달수 | 클릭수 | 비용 | 전환수 ]</p>
-            </div>
-            <button onclick="parseBulkPasteData()" class="px-3 py-1.5 text-[11px] font-bold bg-slate-700 hover:bg-slate-800 text-white rounded-lg transition shadow-sm self-start sm:self-auto">
-              붙여넣은 텍스트 적용하기
-            </button>
-          </div>
-          <textarea id="bulk-paste-area" rows="2" class="w-full font-mono text-[10px] p-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900" placeholder="2026-03-01 Naver 45200 38000 1250 1375000 62"></textarea>
-        </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs" id="performance-table">
+          <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase tracking-wider">
+            <tr>
+              <th class="py-3.5 px-4 font-semibold">집행일자</th>
+              <th class="py-3.5 px-4 font-semibold">매체</th>
+              <th class="py-3.5 px-4 font-semibold text-right">노출수</th>
+              <th class="py-3.5 px-4 font-semibold text-right">클릭수</th>
+              <th class="py-3.5 px-4 font-semibold text-right">클릭률 (CTR)</th>
+              <th class="py-3.5 px-4 font-semibold text-right">평균클릭비용 (CPC)</th>
+              <th class="py-3.5 px-4 font-semibold text-right">총비용 (VAT포함)</th>
+              <th class="py-3.5 px-4 font-semibold text-right text-blue-400">전환수(CV)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/60 font-mono text-slate-300" id="table-body">
+          </tbody>
+        </table>
       </div>
+    </section>
 
-      <!-- 5. 등록된 일별 매체 데이터 (수정 & 삭제) -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-          <h3 class="text-xs font-bold text-slate-900">등록된 일별 매체 데이터 (수정 & 삭제)</h3>
-          <button onclick="addEmptyDataRow()" class="px-3 py-1.5 text-xs font-bold bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition">
-            + 빈 행 수동 추가
-          </button>
-        </div>
-        <div class="max-h-96 overflow-y-auto overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-100 text-slate-600 sticky top-0 border-b border-slate-200 z-10 shadow-sm">
-              <tr>
-                <th class="py-2.5 px-3">날짜</th>
-                <th class="py-2.5 px-3">매체</th>
-                <th class="py-2.5 px-3 text-right">노출수</th>
-                <th class="py-2.5 px-3 text-right">도달수</th>
-                <th class="py-2.5 px-3 text-right">클릭수</th>
-                <th class="py-2.5 px-3 text-right">비용 (VAT포함)</th>
-                <th class="py-2.5 px-3 text-right text-blue-600">전환수(CV)</th>
-                <th class="py-2.5 px-3 text-center">작업</th>
-              </tr>
-            </thead>
-            <tbody id="admin-table-body" class="divide-y divide-slate-100 font-mono">
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </main>
-  </div>
+  </main>
 
   <script>
-    const defaultDatabase = {
-      "코웨이 퍼펙트몰": {
-        htmlFilename: "coway-perfectmall.html",
-        months: {
-          "2026.03": {
-            strategyComment: "<h4 class='text-sm font-bold text-slate-900 mb-1.5'>3월 퍼포먼스 마케팅 종합 성과 평가</h4>\n<p>3월 총 집행비용은 <b class='text-slate-900'>1,485만 원 (VAT포함)</b>으로 계획 대비 99.0%의 안정적인 예산 소진율을 기록했습니다.</p>\n<p class='mt-1'>구글 검색광고의 고효율 키워드 재배치와 메타 숏폼 크리에이티브 투입을 통해 <mark class='bg-yellow-200 px-1 rounded font-semibold'>평균 CTR이 전월 대비 +0.28%p 개선</mark>되었습니다.</p>",
-            anomalyComment: "네이버 3월 3주차 CPC 일시 상승: 경쟁사 봄 시즌 프로모션 입찰로 메인 키워드 CPC가 22% 급증하여 실시간 자동입찰 상한선을 1,800원으로 제한 설정.\n메타 광고 크리에이티브 피로도 감지: 3월 18일 기점으로 노출 빈도수가 3.8회에 도달하여 신규 숏폼 동영상 소재 2종 투입, 주간 클릭률 1.85% 회복.",
-            rawDataset: [
-              { date: '2026-03-01', media: 'Naver', impressions: 45200, reach: 38000, clicks: 1250, cost: 1375000, conv: 62 },
-              { date: '2026-03-01', media: 'Meta', impressions: 89000, reach: 64000, clicks: 1420, cost: 715000, conv: 35 },
-              { date: '2026-03-01', media: 'Google', impressions: 32000, reach: 27000, clicks: 880, cost: 660000, conv: 41 }
-            ]
+    let dbReportData = null;
+    let currentSelectedPeriod = "2026.09.14 ~ 2026.10.13";
+    let rawDataset = [];
+    let currentMedia = 'ALL';
+    let trendChartInstance = null;
+    let shareChartInstance = null;
+
+    const formatNumber = num => new Intl.NumberFormat('ko-KR').format(Math.round(num));
+    const formatCurrency = num => '₩' + new Intl.NumberFormat('ko-KR').format(Math.round(num));
+
+    function initDataLoad() {
+      let clientName = "알 수 없는 고객사";
+      const currentFilename = window.location.pathname.split('/').pop() || 'coway-perfectmall.html';
+      const savedDb = localStorage.getItem('MEDIA_REPORT_DB');
+      
+      if (savedDb) {
+        try {
+          const db = JSON.parse(savedDb);
+          for (const key in db) {
+            if (db[key].htmlFilename === currentFilename) {
+              clientName = key;
+              dbReportData = db[key];
+              break;
+            }
+          }
+        } catch (e) { console.error("DB 로드 실패:", e); }
+      }
+
+      document.getElementById('client-name-display').innerText = `| 고객사: ${clientName}`;
+
+      if (dbReportData && dbReportData.months) {
+        const availablePeriods = Object.keys(dbReportData.months);
+        if (availablePeriods.length > 0) {
+          if (!availablePeriods.includes(currentSelectedPeriod)) {
+            currentSelectedPeriod = availablePeriods[0];
           }
         }
       }
-    };
 
-    let db = {};
-    let currentClient = "코웨이 퍼펙트몰";
-    let currentMonth = "2026.03";
-
-    function loadDatabase() {
-      const saved = localStorage.getItem('MEDIA_REPORT_DB');
-      if (saved) {
-        try { 
-          db = JSON.parse(saved); 
-          Object.keys(db).forEach(client => {
-            if (!db[client].months) {
-              const oldMonths = { ...db[client] };
-              delete oldMonths.htmlFilename;
-              db[client] = {
-                htmlFilename: `${client.toLowerCase()}.html`,
-                months: oldMonths
-              };
-            }
-          });
-        } catch(e) { db = defaultDatabase; }
-      } else {
-        db = defaultDatabase;
-        saveDatabase();
-      }
+      renderPeriodNavigation();
+      loadPeriodDataAndRender();
     }
 
-    function saveDatabase() {
-      localStorage.setItem('MEDIA_REPORT_DB', JSON.stringify(db));
-    }
+    // 🌟 등록된 맞춤 기간들로 상단 탭 자동 구성
+    function renderPeriodNavigation() {
+      const navContainer = document.getElementById('dynamic-period-nav');
+      navContainer.innerHTML = '';
 
-    function handleLogin(e) {
-      e.preventDefault();
-      const id = document.getElementById('input-admin-id').value.trim();
-      const pw = document.getElementById('input-admin-pw').value.trim();
+      if (!dbReportData || !dbReportData.months) return;
 
-      if (id === 'admina' && pw === '12341') {
-        document.getElementById('login-modal').classList.add('hidden');
-        document.getElementById('admin-main-content').classList.remove('hidden');
-        document.getElementById('admin-main-content').classList.add('flex');
+      const periods = Object.keys(dbReportData.months);
+      periods.forEach(p => {
+        const aTag = document.createElement('a');
+        aTag.href = "javascript:void(0);";
         
-        loadDatabase();
-        currentClient = Object.keys(db)[0]; 
-        renderClientSelect();
-        renderMonthNav();
-        renderAdminPanel();
-      } else {
-        document.getElementById('login-error').classList.remove('hidden');
-      }
-    }
-
-    function renderClientSelect() {
-      const select = document.getElementById('admin-client-select');
-      select.innerHTML = '';
-      Object.keys(db).forEach(client => {
-        const opt = document.createElement('option');
-        opt.value = client;
-        opt.innerText = client;
-        if (client === currentClient) opt.selected = true;
-        select.appendChild(opt);
-      });
-      updateClientHtmlLinkDisplay();
-    }
-
-    function updateClientHtmlLinkDisplay() {
-      const clientData = db[currentClient] || {};
-      const filename = clientData.htmlFilename || `${currentClient}.html`;
-      document.getElementById('edit-client-html-file').value = filename;
-      document.getElementById('preview-filename-text').innerText = filename;
-      document.getElementById('preview-client-link').href = `../${filename}`;
-    }
-
-    function updateClientHtmlFilename() {
-      const newFilename = document.getElementById('edit-client-html-file').value.trim();
-      if (newFilename) {
-        if (!db[currentClient]) db[currentClient] = { htmlFilename: newFilename, months: {} };
-        db[currentClient].htmlFilename = newFilename;
-        saveDatabase();
-        updateClientHtmlLinkDisplay();
-        alert(`고객사 [${currentClient}]의 연동 파일명이 [${newFilename}]으로 업데이트되었습니다.`);
-      }
-    }
-
-    function changeClient(clientName) {
-      currentClient = clientName;
-      const months = Object.keys(db[currentClient]?.months || {});
-      if (months.length > 0 && !months.includes(currentMonth)) {
-        currentMonth = months[0];
-      }
-      updateClientHtmlLinkDisplay();
-      renderMonthNav();
-      renderAdminPanel();
-    }
-
-    function addNewClientPrompt() {
-      const name = prompt('신규 고객사명을 입력하세요:');
-      if (name && name.trim()) {
-        const trimmed = name.trim();
-        if (!db[trimmed]) {
-          const defaultFilename = `${trimmed.toLowerCase()}.html`;
-          db[trimmed] = {
-            htmlFilename: defaultFilename,
-            months: {
-              "2026.03": {
-                strategyComment: "<p>신규 고객사 전략 총평 코멘트를 입력하세요.</p>",
-                anomalyComment: "특이사항을 입력하세요.",
-                rawDataset: []
-              }
-            }
-          };
-          saveDatabase();
-          renderClientSelect();
-          changeClient(trimmed);
-        }
-      }
-    }
-
-    function renderMonthNav() {
-      const container = document.getElementById('admin-month-buttons');
-      container.innerHTML = '';
-      const months = Array.from({ length: 12 }, (_, i) => `2026.${String(i + 1).padStart(2, '0')}`);
-
-      months.forEach(m => {
-        const btn = document.createElement('button');
-        btn.onclick = () => { currentMonth = m; renderMonthNav(); renderAdminPanel(); };
-        if (m === currentMonth) {
-          btn.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-900 text-white shadow-sm shrink-0 transition-colors";
+        if (p === currentSelectedPeriod) {
+          aTag.className = "px-3 py-1.5 text-xs font-semibold rounded-md border border-emerald-500/60 bg-emerald-500/10 text-emerald-400 shrink-0";
+          aTag.innerText = `${p} (현재)`;
         } else {
-          btn.className = "px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shrink-0";
+          aTag.className = "px-3 py-1.5 text-xs font-semibold rounded-md border border-slate-700 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition shrink-0";
+          aTag.innerText = p;
+          aTag.onclick = () => { currentSelectedPeriod = p; renderPeriodNavigation(); loadPeriodDataAndRender(); };
         }
-        btn.innerText = m;
-        container.appendChild(btn);
+        navContainer.appendChild(aTag);
       });
     }
 
-    function renderAdminPanel() {
-      if (!db[currentClient]) db[currentClient] = { htmlFilename: `${currentClient}.html`, months: {} };
-      if (!db[currentClient].months) db[currentClient].months = {};
-      if (!db[currentClient].months[currentMonth]) {
-        db[currentClient].months[currentMonth] = { strategyComment: '', anomalyComment: '', rawDataset: [] };
+    function loadPeriodDataAndRender() {
+      if (dbReportData && dbReportData.months && dbReportData.months[currentSelectedPeriod]) {
+        const periodData = dbReportData.months[currentSelectedPeriod];
+        rawDataset = periodData.rawDataset || [];
+
+        // 타이틀 업데이트
+        document.getElementById('report-period-title').innerText = currentSelectedPeriod;
+        document.getElementById('strategy-date-display').innerText = `기준: ${currentSelectedPeriod} 결산`;
+
+        const strategyBox = document.getElementById('strategy-comment-box');
+        if (strategyBox && periodData.strategyComment) {
+          strategyBox.innerHTML = periodData.strategyComment;
+        } else if (strategyBox) {
+           strategyBox.innerHTML = "<p class='text-slate-400'>등록된 전략 총평이 없습니다.</p>";
+        }
+
+        const anomalyBox = document.getElementById('anomaly-comment-box');
+        if (anomalyBox && periodData.anomalyComment) {
+          const anomalies = periodData.anomalyComment.split('\n').filter(t => t.trim() !== '');
+          if (anomalies.length > 0) {
+             let html = '<ul class="text-xs leading-relaxed text-slate-300 space-y-2 list-disc list-inside">';
+             anomalies.forEach(a => { html += `<li><strong class="text-slate-100">${a}</strong></li>`; });
+             html += '</ul>';
+             anomalyBox.innerHTML = html;
+          } else {
+             anomalyBox.innerHTML = '<p class="text-xs text-slate-400">등록된 특이사항이 없습니다.</p>';
+          }
+        }
+      } else {
+        rawDataset = [];
+        document.getElementById('strategy-comment-box').innerHTML = "<p class='text-red-400'>관리자 시스템에 연동된 데이터가 없습니다.</p>";
+        document.getElementById('anomaly-comment-box').innerHTML = "<p class='text-red-400'>데이터가 없습니다.</p>";
       }
-
-      const activeData = db[currentClient].months[currentMonth];
-      document.getElementById('edit-strategy-comment').value = activeData.strategyComment || '';
-      document.getElementById('edit-anomaly-comment').value = activeData.anomalyComment || '';
-
-      updateLiveCommentPreview();
-      renderAdminDataTable(activeData.rawDataset || []);
+      
+      renderDashboard();
     }
 
-    function handleCommentInput() {
-      updateLiveCommentPreview();
-      saveCommentsFromAdmin();
+    function setMediaFilter(media) {
+      currentMedia = media;
+      document.querySelectorAll('.media-btn').forEach(btn => {
+        if(btn.dataset.media === media) {
+          btn.className = 'media-btn px-4 py-2 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow';
+        } else {
+          btn.className = 'media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white';
+        }
+      });
+      renderDashboard();
     }
 
-    function updateLiveCommentPreview() {
-      const htmlVal = document.getElementById('edit-strategy-comment').value;
-      const previewBox = document.getElementById('comment-live-preview');
-      previewBox.innerHTML = htmlVal || '<span class="text-slate-400 font-sans">실시간 프리뷰 영역입니다. 상단에 코멘트를 입력하세요.</span>';
-    }
+    function renderDashboard() {
+      const filtered = currentMedia === 'ALL' 
+        ? rawDataset 
+        : rawDataset.filter(item => item.media === currentMedia);
 
-    function insertHtmlTag(startTag, endTag) {
-      const textarea = document.getElementById('edit-strategy-comment');
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const text = textarea.value;
-      const selectedText = text.substring(start, end) || '강조 문구';
-      const replacement = startTag + selectedText + endTag;
+      let totalImp = 0, totalClicks = 0, totalCost = 0, totalConv = 0;
+      filtered.forEach(d => {
+        totalImp += (d.impressions || 0);
+        totalClicks += (d.clicks || 0);
+        totalCost += (d.cost || 0);
+        totalConv += (d.conv || d.result || 0);
+      });
 
-      textarea.value = text.substring(0, start) + replacement + text.substring(end);
-      textarea.focus();
-      textarea.selectionStart = start + startTag.length;
-      textarea.selectionEnd = start + startTag.length + selectedText.length;
+      const avgCtr = totalImp > 0 ? (totalClicks / totalImp) * 100 : 0;
+      const avgCpc = totalClicks > 0 ? (totalCost / totalClicks) : 0;
 
-      handleCommentInput();
-    }
+      document.getElementById('kpi-cost').innerText = formatCurrency(totalCost);
+      document.getElementById('kpi-impressions').innerText = formatNumber(totalImp);
+      document.getElementById('kpi-clicks').innerText = formatNumber(totalClicks);
+      document.getElementById('kpi-ctr').innerText = avgCtr.toFixed(2) + '%';
+      document.getElementById('kpi-cpc').innerText = formatCurrency(avgCpc);
+      document.getElementById('kpi-conversions').innerText = formatNumber(totalConv);
 
-    function saveCommentsFromAdmin() {
-      db[currentClient].months[currentMonth].strategyComment = document.getElementById('edit-strategy-comment').value;
-      db[currentClient].months[currentMonth].anomalyComment = document.getElementById('edit-anomaly-comment').value;
-      saveDatabase();
-    }
+      const dailyMap = {};
+      filtered.forEach(item => {
+        if (!dailyMap[item.date]) {
+          dailyMap[item.date] = { date: item.date, media: currentMedia === 'ALL' ? '통합' : item.media, impressions: 0, clicks: 0, cost: 0, conv: 0 };
+        }
+        dailyMap[item.date].impressions += (item.impressions || 0);
+        dailyMap[item.date].clicks += (item.clicks || 0);
+        dailyMap[item.date].cost += (item.cost || 0);
+        dailyMap[item.date].conv += (item.conv || item.result || 0);
+      });
 
-    function renderAdminDataTable(dataset) {
-      const tbody = document.getElementById('admin-table-body');
+      const dailyAggregated = Object.values(dailyMap).sort((a,b) => a.date.localeCompare(b.date));
+
+      const tbody = document.getElementById('table-body');
       tbody.innerHTML = '';
+      if(dailyAggregated.length === 0) {
+         tbody.innerHTML = '<tr><td colspan="8" class="py-6 text-center text-slate-500 font-sans">조건에 맞는 데이터가 존재하지 않습니다.</td></tr>';
+      } else {
+        dailyAggregated.forEach(row => {
+          const rowCtr = row.impressions > 0 ? ((row.clicks / row.impressions) * 100).toFixed(2) : '0.00';
+          const rowCpc = row.clicks > 0 ? formatCurrency(row.cost / row.clicks) : '₩0';
 
-      if (dataset.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="py-6 text-center text-slate-400 font-sans">등록된 데이터가 없습니다. 파일 업로드 또는 수동 행 추가를 이용하세요.</td></tr>';
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-800/40 transition border-b border-slate-800/40';
+          tr.innerHTML = `
+            <td class="py-3 px-4 font-sans font-medium text-slate-200">${row.date}</td>
+            <td class="py-3 px-4 font-sans"><span class="px-2 py-0.5 rounded text-[11px] bg-slate-800 text-slate-300 font-semibold">${row.media}</span></td>
+            <td class="py-3 px-4 text-right">${formatNumber(row.impressions)}</td>
+            <td class="py-3 px-4 text-right">${formatNumber(row.clicks)}</td>
+            <td class="py-3 px-4 text-right text-emerald-400 font-semibold">${rowCtr}%</td>
+            <td class="py-3 px-4 text-right">${rowCpc}</td>
+            <td class="py-3 px-4 text-right font-semibold text-slate-100">${formatCurrency(row.cost)}</td>
+            <td class="py-3 px-4 text-right text-blue-400 font-semibold">${formatNumber(row.conv)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+      document.getElementById('table-row-count').innerText = `집계 일수: ${dailyAggregated.length}일`;
+
+      updateCharts(dailyAggregated);
+    }
+
+    function updateCharts(dailyData) {
+      if(dailyData.length === 0) {
+        if (trendChartInstance) trendChartInstance.clear();
+        if (shareChartInstance) shareChartInstance.clear();
         return;
       }
 
-      dataset.forEach((row, idx) => {
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50 transition-colors';
-        const rowConv = row.conv !== undefined ? row.conv : (row.result || 0);
-        
-        tr.innerHTML = `
-          <td class="py-2 px-3"><input type="date" value="${row.date}" onchange="updateRowData(${idx}, 'date', this.value)" class="border border-slate-300 px-2 py-1.5 rounded-lg text-xs font-sans focus:ring-1 focus:ring-blue-500 w-full outline-none"></td>
-          <td class="py-2 px-3">
-            <select onchange="updateRowData(${idx}, 'media', this.value)" class="border border-slate-300 px-2 py-1.5 rounded-lg text-xs font-sans focus:ring-1 focus:ring-blue-500 outline-none">
-              <option value="Naver" ${row.media==='Naver'?'selected':''}>Naver</option>
-              <option value="Meta" ${row.media==='Meta'?'selected':''}>Meta</option>
-              <option value="Google" ${row.media==='Google'?'selected':''}>Google</option>
-            </select>
-          </td>
-          <td class="py-2 px-3"><input type="number" value="${row.impressions||0}" onchange="updateRowData(${idx}, 'impressions', this.value)" class="border border-slate-300 px-2 py-1.5 rounded-lg text-xs w-24 text-right focus:ring-1 focus:ring-blue-500 outline-none"></td>
-          <td class="py-2 px-3"><input type="number" value="${row.reach||0}" onchange="updateRowData(${idx}, 'reach', this.value)" class="border border-slate-300 px-2 py-1.5 rounded-lg text-xs w-24 text-right focus:ring-1 focus:ring-blue-500 outline-none"></td>
-          <td class="py-2 px-3"><input type="number" value="${row.clicks||0}" onchange="updateRowData(${idx}, 'clicks', this.value)" class="border border-slate-300 px-2 py-1.5 rounded-lg text-xs w-20 text-right focus:ring-1 focus:ring-blue-500 outline-none"></td>
-          <td class="py-2 px-3"><input type="number" value="${row.cost||0}" onchange="updateRowData(${idx}, 'cost', this.value)" class="border border-slate-300 px-2 py-1.5 rounded-lg text-xs w-28 text-right bg-slate-50 focus:bg-white focus:ring-1 focus:ring-blue-500 outline-none"></td>
-          <td class="py-2 px-3"><input type="number" value="${rowConv}" onchange="updateRowData(${idx}, 'conv', this.value)" class="border border-blue-300 px-2 py-1.5 rounded-lg text-xs w-20 text-right text-blue-700 font-bold bg-blue-50 focus:bg-white focus:ring-1 focus:ring-blue-500 outline-none"></td>
-          <td class="py-2 px-3 text-center">
-            <button onclick="deleteRowData(${idx})" class="text-slate-400 hover:text-red-600 font-bold text-xs bg-slate-100 hover:bg-red-50 px-2 py-1.5 rounded-lg transition-colors">삭제</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
+      const labels = dailyData.map(d => d.date.slice(5));
+      const costs = dailyData.map(d => d.cost);
+      const clicks = dailyData.map(d => d.clicks);
 
-    function updateRowData(idx, field, val) {
-      const dataset = db[currentClient].months[currentMonth].rawDataset;
-      if (field === 'media' || field === 'date') {
-        dataset[idx][field] = val;
-      } else {
-        dataset[idx][field] = Number(val) || 0;
-      }
-      saveDatabase();
-    }
-
-    function deleteRowData(idx) {
-      db[currentClient].months[currentMonth].rawDataset.splice(idx, 1);
-      saveDatabase();
-      renderAdminPanel();
-    }
-
-    function addEmptyDataRow() {
-      if (!db[currentClient].months[currentMonth].rawDataset) db[currentClient].months[currentMonth].rawDataset = [];
-      const today = new Date().toISOString().split('T')[0];
-      db[currentClient].months[currentMonth].rawDataset.push({
-        date: today, media: 'Meta', impressions: 0, reach: 0, clicks: 0, cost: 0, conv: 0
-      });
-      saveDatabase();
-      renderAdminPanel();
-    }
-
-    // 🌟 UTF-8 텍스트 모드로 한글 깨짐을 원천 차단한 스마트 파싱 함수
-    function handleFileUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const isCsv = file.name.toLowerCase().endsWith('.csv');
-      const reader = new FileReader();
-
-      reader.onload = function(e) {
-        try {
-          let workbook;
-          if (isCsv) {
-            // CSV는 UTF-8 문자열로 직접 파싱하여 한글 헤더 보존
-            workbook = XLSX.read(e.target.result, { type: 'string' });
-          } else {
-            const data = new Uint8Array(e.target.result);
-            workbook = XLSX.read(data, { type: 'array' });
-          }
-
-          const firstSheetName = workbook.SheetNames[0];
-          const worksheet = workbook.Sheets[firstSheetName];
-          const json = XLSX.utils.sheet_to_json(worksheet, { raw: false });
-
-          if (!json || json.length === 0) {
-            alert('데이터가 비어있는 파일입니다.');
-            return;
-          }
-
-          const newRows = [];
-          const parseNum = (val) => Number(String(val || 0).replace(/[^0-9.-]+/g, '')) || 0;
-
-          json.forEach(row => {
-            const keys = Object.keys(row);
-            let dateVal = '', mediaVal = 'Meta';
-            let imp = 0, reach = 0, clicks = 0, cost = 0, conv = 0;
-
-            keys.forEach(key => {
-              const lowerK = key.toLowerCase().trim();
-              const val = row[key];
-
-              // 1. 매체 구분
-              if (lowerK.includes('캠페인') || lowerK.includes('매체') || lowerK.includes('platform') || lowerK.includes('광고 세트') || lowerK.includes('광고 이름')) {
-                const strVal = String(val).toLowerCase();
-                if (strVal.includes('naver') || strVal.includes('네이버')) mediaVal = 'Naver';
-                else if (strVal.includes('google') || strVal.includes('구글') || lowerK.includes('ad group')) mediaVal = 'Google';
-              }
-
-              // 2. 날짜 추출 (페이스북 '보고 시작' 완벽 대응)
-              if (lowerK.includes('보고 시작') || lowerK.includes('시작일') || lowerK.includes('날짜') || lowerK.includes('일자') || lowerK === 'date' || lowerK.includes('reporting starts')) {
-                if (!dateVal && val) dateVal = String(val).trim();
-              }
-              
-              // 3. 지표 스마트 매핑
-              else if (lowerK.includes('노출') || lowerK.includes('impressions')) imp = parseNum(val);
-              else if (lowerK.includes('도달') || lowerK.includes('reach')) reach = parseNum(val);
-              else if (lowerK.includes('링크 클릭') || lowerK.includes('클릭(전체)') || lowerK.includes('클릭수') || lowerK === 'clicks') clicks = parseNum(val);
-              else if (lowerK.includes('지출 금액') || lowerK.includes('소진') || lowerK === '총 비용' || lowerK.includes('amount spent') || (lowerK.includes('비용') && !lowerK.includes('당'))) cost = parseNum(val);
-              else if (lowerK.includes('결과') || lowerK.includes('전환') || lowerK.includes('results')) conv = parseNum(val);
-            });
-
-            if (dateVal && (imp > 0 || clicks > 0 || cost > 0)) {
-              let formattedDate = dateVal.substring(0, 10).replace(/[\./]/g, '-');
-              newRows.push({
-                date: formattedDate,
-                media: mediaVal,
-                impressions: imp,
-                reach: reach,
-                clicks: clicks,
-                cost: cost,
-                conv: conv
-              });
+      if (trendChartInstance) trendChartInstance.destroy();
+      const ctxTrend = document.getElementById('trendChart').getContext('2d');
+      trendChartInstance = new Chart(ctxTrend, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              type: 'line',
+              label: '클릭수 (건)',
+              data: clicks,
+              borderColor: '#10b981',
+              backgroundColor: '#10b981',
+              yAxisID: 'yClicks',
+              borderWidth: 2,
+              pointRadius: 4,
+              tension: 0.2
+            },
+            {
+              type: 'bar',
+              label: '총비용 (원)',
+              data: costs,
+              backgroundColor: 'rgba(59, 130, 246, 0.4)',
+              borderColor: '#3b82f6',
+              borderWidth: 1,
+              borderRadius: 4,
+              yAxisID: 'yCost'
             }
-          });
-
-          if (newRows.length > 0) {
-            if (confirm(`총 ${newRows.length}개의 데이터 행을 파싱했습니다.\n현재 [${currentMonth}] 표에 등록하시겠습니까?`)) {
-              if (!db[currentClient].months[currentMonth].rawDataset) {
-                db[currentClient].months[currentMonth].rawDataset = [];
-              }
-              db[currentClient].months[currentMonth].rawDataset.push(...newRows);
-              saveDatabase();
-              renderAdminPanel();
-              alert('✨ 메타(페이스북) CSV 데이터가 정상 등록되었습니다!');
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          scales: {
+            x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+            yCost: {
+              type: 'linear',
+              position: 'left',
+              grid: { color: '#1e293b' },
+              ticks: { color: '#94a3b8', font: { size: 10 }, callback: v => '₩' + (v/10000) + '만' }
+            },
+            yClicks: {
+              type: 'linear',
+              position: 'right',
+              grid: { drawOnChartArea: false },
+              ticks: { color: '#10b981', font: { size: 10 } }
             }
-          } else {
-            alert('유효한 데이터(날짜 및 노출/클릭/비용 지표)를 찾지 못했습니다. 매체사 보고서 양식이 맞는지 확인해주세요.');
+          },
+          plugins: {
+            legend: { labels: { color: '#cbd5e1', font: { size: 11 } } }
           }
-        } catch (err) {
-          console.error(err);
-          alert('파일 처리 중 오류가 발생했습니다: ' + err.message);
-        }
-        event.target.value = '';
-      };
-
-      if (isCsv) {
-        reader.readAsText(file, 'utf-8');
-      } else {
-        reader.readAsArrayBuffer(file);
-      }
-    }
-
-    function parseBulkPasteData() {
-      const pasteText = document.getElementById('bulk-paste-area').value.trim();
-      if (!pasteText) return alert('붙여넣을 텍스트 데이터를 입력해주세요.');
-
-      const lines = pasteText.split('\n');
-      const parsedRows = [];
-
-      lines.forEach(line => {
-        const cols = line.split('\t').map(c => c.trim());
-        if (cols.length >= 6) {
-          const date = cols[0];
-          const media = cols[1];
-          const impressions = Number(cols[2].replace(/,/g, '')) || 0;
-          const reach = Number(cols[3].replace(/,/g, '')) || 0;
-          const clicks = Number(cols[4].replace(/,/g, '')) || 0;
-          const cost = Number(cols[5].replace(/,/g, '')) || 0;
-          const conv = cols[6] ? (Number(cols[6].replace(/,/g, '')) || 0) : 0;
-
-          if (date && media) parsedRows.push({ date, media, impressions, reach, clicks, cost, conv });
         }
       });
 
-      if (parsedRows.length > 0) {
-        if (!db[currentClient].months[currentMonth].rawDataset) db[currentClient].months[currentMonth].rawDataset = [];
-        db[currentClient].months[currentMonth].rawDataset.push(...parsedRows);
-        saveDatabase();
-        document.getElementById('bulk-paste-area').value = '';
-        renderAdminPanel();
-        alert(`${parsedRows.length}건의 데이터가 수동으로 파싱되었습니다.`);
-      } else {
-        alert('올바른 데이터 형식이 아닙니다. 탭으로 구분된 형식을 확인하세요.');
-      }
+      if (shareChartInstance) shareChartInstance.destroy();
+      const mediaCosts = { Naver: 0, Meta: 0, Google: 0 };
+      rawDataset.forEach(d => { 
+        if(mediaCosts[d.media] !== undefined) mediaCosts[d.media] += (d.cost || 0); 
+      });
+
+      const ctxShare = document.getElementById('shareChart').getContext('2d');
+      shareChartInstance = new Chart(ctxShare, {
+        type: 'doughnut',
+        data: {
+          labels: ['네이버', '메타', '구글'],
+          datasets: [{
+            data: [mediaCosts.Naver, mediaCosts.Meta, mediaCosts.Google],
+            backgroundColor: ['#03c75a', '#0668e1', '#ea4335'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 11 }, padding: 14 } }
+          },
+          cutout: '72%'
+        }
+      });
     }
 
-    function resetCurrentClientData() {
-      if(confirm('현재 데이터를 초기 샘플 데이터로 복구하시겠습니까?')) {
-        db = JSON.parse(JSON.stringify(defaultDatabase));
-        saveDatabase();
-        currentClient = Object.keys(db)[0]; 
-        renderClientSelect();
-        renderAdminPanel();
-      }
+    function exportToExcel() {
+      const table = document.getElementById('performance-table');
+      if(!table || rawDataset.length === 0) return alert('다운로드할 데이터가 없습니다.');
+
+      const wb = XLSX.utils.book_new();
+      const wsAggregated = XLSX.utils.table_to_sheet(table);
+
+      const rawHeaders = [["Date", "Media", "Impressions", "Clicks", "Cost_Gross_VAT_Included", "Conversions"]];
+      const rawRows = rawDataset.map(d => [d.date, d.media, d.impressions, d.clicks, d.cost, (d.conv || d.result || 0)]);
+      const wsRaw = XLSX.utils.aoa_to_sheet([...rawHeaders, ...rawRows]);
+
+      XLSX.utils.book_append_sheet(wb, wsAggregated, "Period_Report");
+      XLSX.utils.book_append_sheet(wb, wsRaw, "Raw_Data");
+
+      const cleanFilename = currentSelectedPeriod.replace(/[^0-9a-zA-Z가-힣.-]/g, '_');
+      XLSX.writeFile(wb, `Performance_Report_${cleanFilename}_${currentMedia}.xlsx`);
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initDataLoad();
+    });
   </script>
 </body>
 </html>
