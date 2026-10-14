@@ -304,7 +304,7 @@
     let currentClient = "코웨이 퍼펙트몰";
     let currentPeriod = "2026.09.22 ~ 2026.10.13";
 
-    // 🌟 [수정됨] 페이지 로드 시 새로고침 방어: 로그인 유지 체크
+    // 🌟 [수정됨] 새로고침 시 자동 로그아웃 방어 로직
     document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.getItem('IS_ADMIN_LOGGED_IN') === 'true') {
         showAdminPanel();
@@ -323,7 +323,7 @@
       renderAdminPanel();
     }
 
-    // 🌟 [추가됨] 로그아웃 버튼 동작 (지정된 경로로 리다이렉트)
+    // 🌟 [신규] 로그아웃 버튼 동작
     function handleLogout() {
       localStorage.removeItem('IS_ADMIN_LOGGED_IN');
       window.location.href = 'https://admin.placepartner.cloud/reports';
@@ -335,7 +335,7 @@
       const pw = document.getElementById('input-admin-pw').value.trim();
 
       if (id === 'admina' && pw === '12341') {
-        localStorage.setItem('IS_ADMIN_LOGGED_IN', 'true'); // 로그인 성공 기록
+        localStorage.setItem('IS_ADMIN_LOGGED_IN', 'true');
         showAdminPanel();
       } else {
         document.getElementById('login-error').classList.remove('hidden');
@@ -423,8 +423,12 @@
 
         let sha = null;
         const getRes = await fetch(url, {
-          headers: { "Authorization": `Bearer ${token}`, "Accept": "application/vnd.github.v3+json" }
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Accept": "application/vnd.github.v3+json"
+          }
         });
+
         if (getRes.ok) {
           const fileData = await getRes.json();
           sha = fileData.sha;
@@ -491,7 +495,7 @@
       document.getElementById('preview-filename-text').innerText = filename;
       
       // 고객이 지정하신 도메인으로 직행
-      document.getElementById('preview-client-link').href = `https://stackover-dev.github.io/${filename}`;
+      document.getElementById('preview-client-link').href = `https://stackover-dev.github.io/Looker-Studio/${filename}`;
     }
 
     function updateClientHtmlFilename() {
@@ -662,7 +666,7 @@
       saveDatabase();
     }
 
-    // 🌟 광고 소재 이미지 자동 압축 변환 엔진 (Base64)
+    // 🌟 [추가됨] 광고 소재 이미지 자동 압축 로직
     function processCreativeImage(event) {
       const file = event.target.files[0];
       if (!file) return;
