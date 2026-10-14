@@ -102,7 +102,7 @@
         <div>
           <div class="flex items-center justify-between mb-2">
             <label class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
-              <span>📅</span> <span>광고 집행 기간 선택 (광고주 계약 일정에 맞춘 자유 설정)</span>
+              <span>📅</span> <span>광고 집행 기간 선택 (데이터 기반 자동 동기화 탭)</span>
             </label>
             <div class="flex items-center space-x-1.5">
               <button onclick="addNewPeriodPrompt()" class="px-2.5 py-1 text-[11px] font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-md transition">
@@ -233,27 +233,15 @@
   </div>
 
   <script>
-    // 기본 샘플 데이터 (맞춤 기간 형태 적용)
+    // 🌟 불필요한 기간 탭을 완전히 제거하고 오직 실제 기간만 남긴 초기화 세팅
     const defaultDatabase = {
       "코웨이 퍼펙트몰": {
         htmlFilename: "coway-perfectmall.html",
         months: {
-          "2026.09.14 ~ 2026.10.13": {
+          "2026.09.22 ~ 2026.10.13": {
             strategyComment: "<h4 class='text-sm font-bold text-slate-900 mb-1.5'>퍼포먼스 마케팅 종합 성과 평가</h4>\n<p>총 집행비용은 <b class='text-slate-900'>44.3만 원 (VAT포함)</b>으로 숏폼 동영상 크리에이티브 중심 집중 집행되었습니다.</p>\n<p class='mt-1'><mark class='bg-yellow-200 px-1 rounded font-semibold'>인스타그램 프로필 방문 및 링크 클릭률 3.79%</mark>의 높은 반응도를 유지했습니다.</p>",
             anomalyComment: "인스타그램 숏폼 비디오 소재 A/B 테스트 진행 (30초 vs 60초)\n30~59초 소재에서 전환율 76% 집중 발생 확인에 따라 예산 80% 집중 배정 완료",
-            rawDataset: [
-              { date: '2026-09-14', media: 'Meta', impressions: 28636, reach: 14125, clicks: 1086, cost: 222229, conv: 1109 },
-              { date: '2026-09-14', media: 'Meta', impressions: 9346, reach: 6172, clicks: 320, cost: 98205, conv: 337 },
-              { date: '2026-09-14', media: 'Meta', impressions: 1713, reach: 1059, clicks: 32, cost: 122564, conv: 1 }
-            ]
-          },
-          "2026.03": {
-            strategyComment: "<h4 class='text-sm font-bold text-slate-900 mb-1.5'>3월 퍼포먼스 마케팅 성과</h4><p>안정적인 예산 소진율을 기록했습니다.</p>",
-            anomalyComment: "네이버 검색광고 입찰 최적화 진행",
-            rawDataset: [
-              { date: '2026-03-01', media: 'Naver', impressions: 45200, reach: 38000, clicks: 1250, cost: 1375000, conv: 62 },
-              { date: '2026-03-01', media: 'Meta', impressions: 89000, reach: 64000, clicks: 1420, cost: 715000, conv: 35 }
-            ]
+            rawDataset: []
           }
         }
       }
@@ -261,7 +249,7 @@
 
     let db = {};
     let currentClient = "코웨이 퍼펙트몰";
-    let currentPeriod = "2026.09.14 ~ 2026.10.13"; // 현재 선택된 집행 기간
+    let currentPeriod = "2026.09.22 ~ 2026.10.13"; // 단일 현재 기간
 
     function loadDatabase() {
       const saved = localStorage.getItem('MEDIA_REPORT_DB');
@@ -286,11 +274,28 @@
     }
 
     function saveDatabase() {
+      // 저장 시점에 데이터셋 내부의 날짜들을 기반으로 현재 기간의 탭 이름을 자동 업데이트!
+      if (db[currentClient] && db[currentClient].months[currentPeriod]) {
+        const dataset = db[currentClient].months[currentPeriod].rawDataset || [];
+        if (dataset.length > 0) {
+          const dates = dataset.map(d => d.date).sort();
+          const firstDate = dates[0].replace(/-/g, '.');
+          const lastDate = dates[dates.length - 1].replace(/-/g, '.');
+          const autoPeriodName = `${firstDate} ~ ${lastDate}`;
+          
+          if (autoPeriodName !== currentPeriod) {
+            db[currentClient].months[autoPeriodName] = db[currentClient].months[currentPeriod];
+            delete db[currentClient].months[currentPeriod];
+            currentPeriod = autoPeriodName;
+          }
+        }
+      }
       localStorage.setItem('MEDIA_REPORT_DB', JSON.stringify(db));
     }
 
     // 🌟 깃허브 영구 배포 파일 (database.json) 다운로드 함수
     function downloadDatabaseJson() {
+      saveDatabase(); // 저장 전 자동 날짜 동기화 한번 실행
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
       const dlAnchor = document.createElement('a');
       dlAnchor.setAttribute("href", dataStr);
@@ -298,7 +303,7 @@
       document.body.appendChild(dlAnchor);
       dlAnchor.click();
       dlAnchor.remove();
-      alert('✅ database.json 파일이 성공적으로 다운로드되었습니다.\n\n이 파일을 [public/reports/] 폴더 안에 덮어씌운 뒤 깃허브에 푸시(업로드)하면,\n고객사가 어디서 접속하든 데이터가 정상적으로 나타납니다!');
+      alert('✅ database.json 파일이 성공적으로 추출되었습니다.\n\n이 파일을 [public/reports/] 폴더에 덮어씌운 뒤 깃허브에 푸시해주세요!');
     }
 
     function handleLogin(e) {
@@ -369,7 +374,7 @@
           db[trimmed] = {
             htmlFilename: defaultFilename,
             months: {
-              "2026.09.14 ~ 2026.10.13": {
+              "신규 집행 기간": {
                 strategyComment: "<p>신규 고객사 전략 총평 코멘트를 입력하세요.</p>",
                 anomalyComment: "특이사항을 입력하세요.",
                 rawDataset: []
@@ -390,10 +395,10 @@
       if (!db[currentClient]) db[currentClient] = { htmlFilename: `${currentClient}.html`, months: {} };
       if (!db[currentClient].months) db[currentClient].months = {};
 
-      const periods = Object.keys(db[currentClient].months);
+      let periods = Object.keys(db[currentClient].months);
       if (periods.length === 0) {
-        db[currentClient].months["2026.09.14 ~ 2026.10.13"] = { strategyComment: '', anomalyComment: '', rawDataset: [] };
-        periods.push("2026.09.14 ~ 2026.10.13");
+        db[currentClient].months["신규 집행 기간"] = { strategyComment: '', anomalyComment: '', rawDataset: [] };
+        periods.push("신규 집행 기간");
         saveDatabase();
       }
 
@@ -418,7 +423,7 @@
     }
 
     function addNewPeriodPrompt() {
-      const periodName = prompt('추가할 집행 기간 또는 회차명을 입력하세요:\n(예: 2026.09.14 ~ 2026.10.13 또는 2026.09.28 ~ 2027.01.27 (4개월))');
+      const periodName = prompt('추가할 집행 기간 또는 회차명을 입력하세요:\n(예: 2026.09.14 ~ 2026.10.13)');
       if (periodName && periodName.trim()) {
         const trimmed = periodName.trim();
         if (!db[currentClient].months[trimmed]) {
@@ -552,11 +557,13 @@
         dataset[idx][field] = Number(val) || 0;
       }
       saveDatabase();
+      renderPeriodNav(); // 날짜가 바뀌었을 수 있으므로 탭 자동 동기화 렌더링
     }
 
     function deleteRowData(idx) {
       db[currentClient].months[currentPeriod].rawDataset.splice(idx, 1);
       saveDatabase();
+      renderPeriodNav(); // 날짜가 바뀌었을 수 있으므로 탭 자동 동기화 렌더링
       renderAdminPanel();
     }
 
@@ -567,6 +574,7 @@
         date: today, media: 'Meta', impressions: 0, reach: 0, clicks: 0, cost: 0, conv: 0
       });
       saveDatabase();
+      renderPeriodNav();
       renderAdminPanel();
     }
 
@@ -642,9 +650,6 @@
             return isNaN(num) ? 0 : num;
           };
 
-          let autoStartDate = '';
-          let autoEndDate = '';
-
           rowsData.forEach(row => {
             let dateVal = '', mediaVal = 'Meta';
             let imp = 0, reach = 0, clicks = 0, cost = 0, conv = 0;
@@ -662,11 +667,7 @@
               if (lk === '보고 시작' || lk === '시작일' || lk === 'date' || lk === '날짜' || lk === '일자' || lk === 'reporting starts') {
                 if (!dateVal && val) {
                   dateVal = String(val).trim();
-                  if (!autoStartDate) autoStartDate = dateVal;
                 }
-              }
-              if (lk === '보고 종료' || lk === '종료일' || lk === 'reporting ends') {
-                if (!autoEndDate && val) autoEndDate = String(val).trim();
               }
 
               if (lk === '노출' || lk === '노출수' || lk === 'impressions') imp = parseNum(val);
@@ -697,30 +698,14 @@
           });
 
           if (newRows.length > 0) {
-            let targetPeriod = currentPeriod;
-            if (autoStartDate && autoEndDate) {
-              const suggestedPeriod = `${autoStartDate.substring(0, 10).replace(/-/g, '.')} ~ ${autoEndDate.substring(0, 10).replace(/-/g, '.')}`;
-              if (confirm(`✨ 총 ${newRows.length}개의 데이터 행이 감지되었습니다.\n\n[보고서 집행 기간: ${suggestedPeriod}]\n\n이 맞춤 기간으로 신규 등록하시겠습니까?\n('취소'를 누르면 현재 선택된 [${currentPeriod}]에 등록됩니다)`)) {
-                targetPeriod = suggestedPeriod;
-                if (!db[currentClient].months[targetPeriod]) {
-                  db[currentClient].months[targetPeriod] = {
-                    strategyComment: `<h4 class='text-sm font-bold text-slate-900 mb-1.5'>${targetPeriod} 광고 성과 종합 평가</h4>\n<p>총 집행비용은 <b class='text-slate-900'>${Math.round(newRows.reduce((a,b)=>a+b.cost, 0)/10000)}만 원</b>입니다.</p>`,
-                    anomalyComment: "소재별 효율 분석 진행 완료",
-                    rawDataset: []
-                  };
-                }
-                currentPeriod = targetPeriod;
-              }
-            }
-
             if (!db[currentClient].months[currentPeriod].rawDataset) {
               db[currentClient].months[currentPeriod].rawDataset = [];
             }
             db[currentClient].months[currentPeriod].rawDataset.push(...newRows);
-            saveDatabase();
+            saveDatabase(); // 🌟 데이터 저장 시 시작일~종료일 기반으로 탭 이름이 자동 연동 변경됨!
             renderPeriodNav();
             renderAdminPanel();
-            alert(`🎉 데이터 ${newRows.length}건이 [${currentPeriod}] 기간에 완벽하게 등록되었습니다!`);
+            alert(`🎉 데이터 ${newRows.length}건이 성공적으로 등록되었으며, 집행 기간이 표 내부 일자 기준으로 자동 동기화되었습니다!`);
           } else {
             alert('유효한 데이터(날짜 및 노출/클릭/비용 지표)를 찾지 못했습니다. 매체사 보고서 양식이 맞는지 확인해주세요.');
           }
@@ -765,21 +750,23 @@
         db[currentClient].months[currentPeriod].rawDataset.push(...parsedRows);
         saveDatabase();
         document.getElementById('bulk-paste-area').value = '';
+        renderPeriodNav();
         renderAdminPanel();
-        alert(`${parsedRows.length}건의 데이터가 수동으로 파싱되었습니다.`);
+        alert(`${parsedRows.length}건의 데이터가 수동으로 파싱 및 자동 동기화되었습니다.`);
       } else {
         alert('올바른 데이터 형식이 아닙니다. 탭으로 구분된 형식을 확인하세요.');
       }
     }
 
     function resetCurrentClientData() {
-      if(confirm('현재 데이터를 초기 샘플 데이터로 복구하시겠습니까?')) {
+      if(confirm('현재 데이터를 초기화 하시겠습니까? (불필요한 탭을 완전히 지우고 백지 상태로 시작합니다)')) {
         db = JSON.parse(JSON.stringify(defaultDatabase));
         saveDatabase();
         currentClient = Object.keys(db)[0]; 
         renderClientSelect();
         renderPeriodNav();
         renderAdminPanel();
+        alert('모든 테스트 기간이 삭제되고 초기화되었습니다.');
       }
     }
   </script>
