@@ -163,15 +163,54 @@
         </div>
       </div>
 
-      <!-- 3. 운영 특이사항 및 조치 내역 -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-        <label class="block text-xs font-bold text-amber-800 mb-1.5">
-          ⚡ 운영 이슈 및 최적화 대응 내역 (Operational Actions - 줄바꿈으로 자동 리스트화)
-        </label>
-        <textarea id="edit-anomaly-comment" rows="3" onchange="saveCommentsFromAdmin()" class="w-full text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="CPC 급등 대응, 소재 교체 등 운영 이슈를 줄바꿈(Enter)으로 구분해 입력하세요."></textarea>
+      <!-- 3. 운영 특이사항 및 🌟 4. [신규] 광고 소재 피드백 관리 -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- 좌측: 운영 이슈 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+          <label class="block text-xs font-bold text-amber-800 mb-1.5">
+            ⚡ 운영 이슈 및 최적화 대응 내역 (Operational Actions - 줄바꿈으로 리스트화)
+          </label>
+          <textarea id="edit-anomaly-comment" rows="4" onchange="saveCommentsFromAdmin()" class="w-full flex-grow text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="CPC 급등 대응, 소재 교체 등 운영 이슈를 줄바꿈(Enter)으로 구분해 입력하세요."></textarea>
+        </div>
+
+        <!-- 우측: 광고 소재 이미지 & 피드백 관리 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+          <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+            <h2 class="text-sm font-bold text-indigo-700 flex items-center space-x-1.5">
+              <span>🖼️</span><span>광고 소재 성과 피드백 관리</span>
+            </h2>
+            <span class="text-[10px] text-slate-400">이미지는 자동 용량 최적화 저장됩니다.</span>
+          </div>
+          
+          <div class="flex space-x-3 mb-4">
+            <!-- 이미지 업로드 영역 -->
+            <div class="w-24 h-24 bg-slate-100 border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center overflow-hidden relative cursor-pointer hover:bg-slate-50 transition shrink-0" onclick="document.getElementById('creative-upload').click()">
+              <span class="text-xs text-slate-400 font-bold text-center px-1" id="creative-placeholder">+ 이미지<br>선택</span>
+              <img id="creative-preview-img" class="absolute inset-0 w-full h-full object-cover hidden">
+              <input type="file" id="creative-upload" accept="image/*" class="hidden" onchange="processCreativeImage(event)">
+            </div>
+            
+            <!-- 텍스트 입력 영역 -->
+            <div class="flex-grow flex flex-col space-y-2">
+              <input type="text" id="creative-title" placeholder="소재명 (예: 메인 A안 30초)" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+              <textarea id="creative-feedback" rows="2" placeholder="해당 소재에 대한 성과 피드백을 입력하세요." class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+              <input type="hidden" id="creative-base64">
+            </div>
+          </div>
+          
+          <button onclick="addCreative()" class="w-full py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 rounded-lg text-xs font-bold transition mb-3">
+            ↓ 현재 소재 리스트에 등록하기
+          </button>
+          
+          <!-- 등록된 소재 목록 -->
+          <div class="flex-grow bg-slate-50 rounded-lg border border-slate-200 p-2 overflow-y-auto max-h-40" id="admin-creatives-list">
+            <!-- 자바스크립트 자동 렌더링 영역 -->
+          </div>
+        </div>
       </div>
 
-      <!-- 4. 데이터 업로드 (정밀 UTF-8 파서 탑재) -->
+      <!-- 5. 데이터 업로드 (정밀 UTF-8 파서 탑재) -->
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
         
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
@@ -206,7 +245,7 @@
         </div>
       </div>
 
-      <!-- 5. 등록된 일별 매체 데이터 (수정 & 삭제) -->
+      <!-- 6. 등록된 일별 매체 데이터 (수정 & 삭제) -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
           <h3 class="text-xs font-bold text-slate-900">등록된 일별 매체 데이터 (<span id="active-period-label" class="text-blue-600 font-bold"></span>)</h3>
@@ -252,7 +291,8 @@
           "2026.09.22 ~ 2026.10.13": {
             strategyComment: "<h4 class='text-sm font-bold text-slate-900 mb-1.5'>퍼포먼스 마케팅 종합 성과 평가</h4>\n<p>총 집행비용은 <b class='text-slate-900'>44.3만 원 (VAT포함)</b>으로 숏폼 동영상 크리에이티브 중심 집중 집행되었습니다.</p>\n<p class='mt-1'><mark class='bg-yellow-200 px-1 rounded font-semibold'>인스타그램 프로필 방문 및 링크 클릭률 3.79%</mark>의 높은 반응도를 유지했습니다.</p>",
             anomalyComment: "인스타그램 숏폼 비디오 소재 A/B 테스트 진행 (30초 vs 60초)\n30~59초 소재에서 전환율 76% 집중 발생 확인에 따라 예산 80% 집중 배정 완료",
-            rawDataset: []
+            rawDataset: [],
+            creatives: [] // 🌟 신규 소재 저장 배열
           }
         }
       }
@@ -276,6 +316,12 @@
                 months: oldMonths
               };
             }
+            // 🌟 마이그레이션: 기존 DB에 creatives 속성이 없으면 강제 주입하여 에러 방지
+            Object.keys(db[client].months).forEach(periodKey => {
+              if (!db[client].months[periodKey].creatives) {
+                db[client].months[periodKey].creatives = [];
+              }
+            });
           });
         } catch(e) { db = defaultDatabase; }
       } else {
@@ -328,7 +374,7 @@
         return;
       }
 
-      saveDatabase(); // 저장 전 시작일~종료일 동기화
+      saveDatabase();
 
       const btn = document.getElementById('btn-gh-deploy');
       const originalText = btn.innerHTML;
@@ -338,7 +384,7 @@
       try {
         const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
 
-        // 1. 기존 파일의 SHA 해시값 조회
+        // 1. 기존 파일 SHA 조회
         let sha = null;
         const getRes = await fetch(url, {
           headers: {
@@ -352,7 +398,7 @@
           sha = fileData.sha;
         }
 
-        // 2. 한글 깨짐 방지 UTF-8 -> Base64 인코딩
+        // 2. Base64 인코딩
         const jsonString = JSON.stringify(db, null, 2);
         const utf8Bytes = new TextEncoder().encode(jsonString);
         let binaryStr = "";
@@ -361,7 +407,7 @@
         }
         const base64Content = btoa(binaryStr);
 
-        // 3. GitHub API로 파일 직접 커밋/푸시 (PUT)
+        // 3. GitHub API 전송
         const putBody = {
           message: `Auto-deploy report database: ${currentClient} (${currentPeriod})`,
           content: base64Content,
@@ -465,7 +511,8 @@
               "신규 집행 기간": {
                 strategyComment: "<p>신규 고객사 전략 총평 코멘트를 입력하세요.</p>",
                 anomalyComment: "특이사항을 입력하세요.",
-                rawDataset: []
+                rawDataset: [],
+                creatives: []
               }
             }
           };
@@ -485,7 +532,7 @@
 
       let periods = Object.keys(db[currentClient].months);
       if (periods.length === 0) {
-        db[currentClient].months["신규 집행 기간"] = { strategyComment: '', anomalyComment: '', rawDataset: [] };
+        db[currentClient].months["신규 집행 기간"] = { strategyComment: '', anomalyComment: '', rawDataset: [], creatives: [] };
         periods.push("신규 집행 기간");
         saveDatabase();
       }
@@ -515,7 +562,7 @@
       if (periodName && periodName.trim()) {
         const trimmed = periodName.trim();
         if (!db[currentClient].months[trimmed]) {
-          db[currentClient].months[trimmed] = { strategyComment: '', anomalyComment: '', rawDataset: [] };
+          db[currentClient].months[trimmed] = { strategyComment: '', anomalyComment: '', rawDataset: [], creatives: [] };
           saveDatabase();
           currentPeriod = trimmed;
           renderPeriodNav();
@@ -557,12 +604,13 @@
 
     function renderAdminPanel() {
       document.getElementById('active-period-label').innerText = currentPeriod;
-      const activeData = db[currentClient].months[currentPeriod] || { strategyComment: '', anomalyComment: '', rawDataset: [] };
+      const activeData = db[currentClient].months[currentPeriod] || { strategyComment: '', anomalyComment: '', rawDataset: [], creatives: [] };
       document.getElementById('edit-strategy-comment').value = activeData.strategyComment || '';
       document.getElementById('edit-anomaly-comment').value = activeData.anomalyComment || '';
 
       updateLiveCommentPreview();
       renderAdminDataTable(activeData.rawDataset || []);
+      renderCreativesList(); // 🌟 신규: 소재 리스트 렌더링
     }
 
     function handleCommentInput() {
@@ -594,11 +642,109 @@
 
     function saveCommentsFromAdmin() {
       if (!db[currentClient].months[currentPeriod]) {
-        db[currentClient].months[currentPeriod] = { strategyComment: '', anomalyComment: '', rawDataset: [] };
+        db[currentClient].months[currentPeriod] = { strategyComment: '', anomalyComment: '', rawDataset: [], creatives: [] };
       }
       db[currentClient].months[currentPeriod].strategyComment = document.getElementById('edit-strategy-comment').value;
       db[currentClient].months[currentPeriod].anomalyComment = document.getElementById('edit-anomaly-comment').value;
       saveDatabase();
+    }
+
+    // 🌟 [신규] 광고 소재 이미지 자동 압축 변환 엔진 (Base64)
+    function processCreativeImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 500; // 가로 최대 크기 제한 (용량 최적화)
+          let width = img.width;
+          let height = img.height;
+
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // 70% 품질로 JPEG 압축하여 JSON 용량 폭발 방지
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+          document.getElementById('creative-preview-img').src = dataUrl;
+          document.getElementById('creative-preview-img').classList.remove('hidden');
+          document.getElementById('creative-placeholder').classList.add('hidden');
+          document.getElementById('creative-base64').value = dataUrl;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // 🌟 [신규] 현재 소재를 배열에 추가하고 저장
+    function addCreative() {
+      const base64Str = document.getElementById('creative-base64').value;
+      const title = document.getElementById('creative-title').value.trim();
+      const feedback = document.getElementById('creative-feedback').value.trim();
+      
+      if (!base64Str) return alert('광고 소재 이미지를 먼저 선택해주세요.');
+      if (!title) return alert('소재명을 입력해주세요.');
+      
+      if (!db[currentClient].months[currentPeriod].creatives) {
+        db[currentClient].months[currentPeriod].creatives = [];
+      }
+      
+      db[currentClient].months[currentPeriod].creatives.push({
+        image: base64Str,
+        title: title,
+        feedback: feedback
+      });
+      saveDatabase();
+      
+      // 입력 폼 초기화
+      document.getElementById('creative-preview-img').src = '';
+      document.getElementById('creative-preview-img').classList.add('hidden');
+      document.getElementById('creative-placeholder').classList.remove('hidden');
+      document.getElementById('creative-base64').value = '';
+      document.getElementById('creative-title').value = '';
+      document.getElementById('creative-feedback').value = '';
+      document.getElementById('creative-upload').value = '';
+      
+      renderCreativesList();
+    }
+
+    // 🌟 [신규] 저장된 소재 삭제 기능
+    function deleteCreative(index) {
+      db[currentClient].months[currentPeriod].creatives.splice(index, 1);
+      saveDatabase();
+      renderCreativesList();
+    }
+
+    // 🌟 [신규] 관리자 화면 우측 하단에 등록된 소재 리스트 렌더링
+    function renderCreativesList() {
+      const listContainer = document.getElementById('admin-creatives-list');
+      const creatives = db[currentClient].months[currentPeriod].creatives || [];
+      
+      if (creatives.length === 0) {
+        listContainer.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">등록된 소재가 없습니다.</p>';
+        return;
+      }
+      
+      listContainer.innerHTML = creatives.map((item, index) => `
+        <div class="flex items-start space-x-2 bg-white p-2 rounded border border-slate-200 mb-2 shadow-sm">
+          <img src="${item.image}" class="w-12 h-12 object-cover rounded bg-slate-100 shrink-0 border border-slate-200">
+          <div class="flex-grow min-w-0">
+            <h4 class="text-xs font-bold text-slate-800 truncate">${item.title}</h4>
+            <p class="text-[10px] text-slate-500 line-clamp-2 mt-0.5">${item.feedback || '피드백 없음'}</p>
+          </div>
+          <button onclick="deleteCreative(${index})" class="text-xs text-red-500 hover:text-red-700 font-bold px-2 py-1 shrink-0">삭제</button>
+        </div>
+      `).join('');
     }
 
     function renderAdminDataTable(dataset) {
