@@ -116,7 +116,7 @@
       </div>
     </section>
 
-    <!-- KPI 상단 요약 카드 (동적 렌더링) -->
+    <!-- KPI 상단 요약 카드 -->
     <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" id="kpi-cards-container">
     </section>
 
@@ -137,6 +137,8 @@
           <span class="text-[11px] text-slate-400" id="share-chart-label">기준 지표 비율</span>
         </div>
         <div class="relative h-64 flex items-center justify-center">
+          <!-- 도넛 차트가 비어보이지 않도록 No Data 텍스트 영역 추가 -->
+          <div id="no-share-data-msg" class="hidden absolute inset-0 flex items-center justify-center text-xs text-slate-500">등록된 지표 데이터가 없습니다.</div>
           <canvas id="shareChart"></canvas>
         </div>
         <p class="text-[11px] text-center text-slate-400 mt-2">상단 매체 필터 클릭 시 피벗 집계와 즉각 연동됩니다.</p>
@@ -189,7 +191,6 @@
 
     async function initDataLoad() {
       let clientName = "알 수 없는 고객사";
-      // 현재 파일의 이름(jungwonyong.html)을 스스로 인식
       const currentFilename = window.location.pathname.split('/').pop() || 'jungwonyong.html';
       
       let db = null;
@@ -339,12 +340,27 @@
       const kpiContainer = document.getElementById('kpi-cards-container');
       kpiContainer.innerHTML = '';
 
-      let hasClicks = currentColumns.some(c => c.key === 'clicks');
-      let hasImpressions = currentColumns.some(c => c.key === 'impressions');
-      let hasCost = currentColumns.some(c => c.key === 'cost');
-
+      let hasClicks = false;
+      let hasImpressions = false;
+      
       const kpiTotals = {};
-      currentColumns.forEach(c => {
+      
+      // 🌟 [핵심 수정 1] 강제 이중 차단 로직
+      // columns 배열에 'cost'가 있더라도 실제 데이터 총합이 0이면 비용/CPC 열을 그리지 않음
+      let totalCostSum = 0;
+      filtered.forEach(d => { totalCostSum += Number(d.cost) || 0; });
+      let realHasCost = (totalCostSum > 0); 
+
+      // 렌더링에 사용할 최종 컬럼 배열 (데이터가 0인 cost 열은 강제 필터링 제거)
+      let displayColumns = currentColumns.filter(c => {
+        if (c.key === 'cost' && !realHasCost) return false;
+        return true;
+      });
+
+      displayColumns.forEach(c => {
+        if (c.key === 'clicks') hasClicks = true;
+        if (c.key === 'impressions') hasImpressions = true;
+
         kpiTotals[c.key] = 0;
         filtered.forEach(d => {
           kpiTotals[c.key] += Number(d[c.key]) || (c.key === 'conv' ? Number(d.result) || 0 : 0);
@@ -373,7 +389,8 @@
         `;
       }
       
-      if (hasClicks && hasCost) {
+      // 🌟 [핵심 수정 2] realHasCost가 true일 때만 CPC 카드 렌더링
+      if (hasClicks && realHasCost) {
         const cpc = kpiTotals['clicks'] > 0 ? (kpiTotals['cost'] / kpiTotals['clicks']) : 0;
         kpiContainer.innerHTML += `
           <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
@@ -383,29 +400,31 @@
         `;
       }
 
+      // --- 테이블 헤더 생성 ---
       const theadRow = document.getElementById('table-header-row');
       let headerHTML = `
         <th class="py-3.5 px-4 font-semibold">집행일자</th>
         <th class="py-3.5 px-4 font-semibold">매체</th>
       `;
-      currentColumns.forEach(c => {
+      displayColumns.forEach(c => {
         const colorClass = c.isConv ? 'text-blue-400' : '';
         headerHTML += `<th class="py-3.5 px-4 font-semibold text-right ${colorClass}">${c.label}</th>`;
       });
       if (hasClicks && hasImpressions) headerHTML += `<th class="py-3.5 px-4 font-semibold text-right">클릭률 (CTR)</th>`;
       
-      // 🌟 비용이 있을 때만 헤더에 CPC 생성
-      if (hasClicks && hasCost) headerHTML += `<th class="py-3.5 px-4 font-semibold text-right">평균클릭비용 (CPC)</th>`;
+      // 🌟 [핵심 수정 3] realHasCost가 true일 때만 CPC 헤더 생성
+      if (hasClicks && realHasCost) headerHTML += `<th class="py-3.5 px-4 font-semibold text-right">평균클릭비용 (CPC)</th>`;
       
       theadRow.innerHTML = headerHTML;
 
+      // --- 일별 데이터 집계 및 표 렌더링 ---
       const dailyMap = {};
       filtered.forEach(item => {
         if (!dailyMap[item.date]) {
           dailyMap[item.date] = { date: item.date, media: currentMedia === 'ALL' ? '통합' : item.media };
-          currentColumns.forEach(c => dailyMap[item.date][c.key] = 0);
+          displayColumns.forEach(c => dailyMap[item.date][c.key] = 0);
         }
-        currentColumns.forEach(c => {
+        displayColumns.forEach(c => {
           dailyMap[item.date][c.key] += Number(item[c.key]) || (c.key === 'conv' ? Number(item.result) || 0 : 0);
         });
       });
@@ -415,7 +434,7 @@
       tbody.innerHTML = '';
       
       if(dailyAggregated.length === 0) {
-         tbody.innerHTML = `<tr><td colspan="${currentColumns.length + 4}" class="py-6 text-center text-slate-500 font-sans">조건에 맞는 데이터가 존재하지 않습니다.</td></tr>`;
+         tbody.innerHTML = `<tr><td colspan="${displayColumns.length + 4}" class="py-6 text-center text-slate-500 font-sans">조건에 맞는 데이터가 존재하지 않습니다.</td></tr>`;
       } else {
         const totalTr = document.createElement('tr');
         totalTr.className = 'bg-slate-800/90 border-b-2 border-slate-700 font-bold';
@@ -425,7 +444,7 @@
           <td class="py-3.5 px-4 font-sans"><span class="px-2 py-0.5 rounded text-[11px] bg-slate-700 text-slate-300 font-semibold">${currentMedia === 'ALL' ? '통합' : currentMedia}</span></td>
         `;
 
-        currentColumns.forEach(c => {
+        displayColumns.forEach(c => {
           let displayVal = formatNumber(kpiTotals[c.key]);
           if (c.key === 'cost' || c.label.includes('비용') || c.label.includes('단가')) {
             displayVal = formatCurrency(kpiTotals[c.key]);
@@ -438,7 +457,9 @@
           const avgCtr = kpiTotals['impressions'] > 0 ? ((kpiTotals['clicks'] / kpiTotals['impressions']) * 100).toFixed(2) : '0.00';
           totalCellsHTML += `<td class="py-3.5 px-4 text-right text-emerald-400">${avgCtr}%</td>`;
         }
-        if (hasClicks && hasCost) {
+        
+        // 🌟 [핵심 수정 4] CPC 총합계 표시 조건 강화
+        if (hasClicks && realHasCost) {
           const avgCpc = kpiTotals['clicks'] > 0 ? formatCurrency(kpiTotals['cost'] / kpiTotals['clicks']) : '₩0';
           totalCellsHTML += `<td class="py-3.5 px-4 text-right text-emerald-400">${avgCpc}</td>`;
         }
@@ -455,7 +476,7 @@
             <td class="py-3 px-4 font-sans"><span class="px-2 py-0.5 rounded text-[11px] bg-slate-800 text-slate-300 font-semibold">${row.media}</span></td>
           `;
 
-          currentColumns.forEach(c => {
+          displayColumns.forEach(c => {
             let rowVal = formatNumber(row[c.key]);
             if (c.key === 'cost' || c.label.includes('비용') || c.label.includes('단가')) {
               rowVal = formatCurrency(row[c.key]);
@@ -469,8 +490,8 @@
              rowCellsHTML += `<td class="py-3 px-4 text-right text-emerald-400 font-semibold">${rCtr}%</td>`;
           }
           
-          // 🌟 비용이 있을 때만 표의 행에 CPC 데이터 생성
-          if (hasClicks && hasCost) {
+          // 🌟 [핵심 수정 5] 각 행 CPC 표시 조건 강화
+          if (hasClicks && realHasCost) {
              const rCpc = row['clicks'] > 0 ? formatCurrency(row['cost'] / row['clicks']) : '₩0';
              rowCellsHTML += `<td class="py-3 px-4 text-right">${rCpc}</td>`;
           }
@@ -481,10 +502,12 @@
       }
       document.getElementById('table-row-count').innerText = `집계 일수: ${dailyAggregated.length}일`;
 
-      updateCharts(dailyAggregated, hasCost, hasClicks, hasImpressions);
+      // 차트에도 정제된 displayColumns 정보를 넘겨서 비용 막대가 안 나오게 보장
+      updateCharts(dailyAggregated, realHasCost, hasClicks, hasImpressions, displayColumns);
     }
 
-    function updateCharts(dailyData, hasCost, hasClicks, hasImpressions) {
+    // --- 4. 차트 동적 연동 (오류 방지 로직 적용) ---
+    function updateCharts(dailyData, realHasCost, hasClicks, hasImpressions, displayColumns) {
       if(dailyData.length === 0) {
         if (trendChartInstance) trendChartInstance.clear();
         if (shareChartInstance) shareChartInstance.clear();
@@ -495,7 +518,7 @@
       const datasets = [];
       let chartLegendText = "";
 
-      // 우측 축: 클릭수 (초록색 선)
+      // 우축: 클릭수 
       if (hasClicks) {
         datasets.push({
           type: 'line',
@@ -511,12 +534,12 @@
         chartLegendText += "우축: 클릭수";
       }
 
-      // 🌟 좌측 축: 비용이 없으면 전환수(CV)나 노출수를 파란색 막대로 표시
-      let hasConv = currentColumns.some(c => c.key === 'conv');
+      // 좌축 렌더링 로직
+      let hasConv = displayColumns.some(c => c.key === 'conv');
       let leftAxisLabel = "";
       let leftAxisFormat = 'number';
 
-      if (hasCost) {
+      if (realHasCost) {
         datasets.push({
           type: 'bar',
           label: '총비용 (원)',
@@ -529,22 +552,8 @@
         });
         leftAxisLabel = "비용(원)";
         leftAxisFormat = 'currency';
-      } else if (hasConv) {
-        // 비용이 없으므로 전환수를 그립니다.
-        datasets.push({
-          type: 'bar',
-          label: '전환수 (CV)',
-          data: dailyData.map(d => d.conv || d.result || 0),
-          backgroundColor: 'rgba(59, 130, 246, 0.4)',
-          borderColor: '#3b82f6',
-          borderWidth: 1,
-          borderRadius: 4,
-          yAxisID: 'yLeft'
-        });
-        leftAxisLabel = "전환수(건)";
-        leftAxisFormat = 'number';
       } else if (hasImpressions) {
-        // 전환수도 없으면 노출수를 그립니다.
+        // 비용이 없으면 노출수를 우선적으로 파란 막대로 표시
         datasets.push({
           type: 'bar',
           label: '노출수 (회)',
@@ -556,6 +565,19 @@
           yAxisID: 'yLeft'
         });
         leftAxisLabel = "노출수(회)";
+        leftAxisFormat = 'number';
+      } else if (hasConv) {
+        datasets.push({
+          type: 'bar',
+          label: '전환수 (CV)',
+          data: dailyData.map(d => d.conv || d.result || 0),
+          backgroundColor: 'rgba(59, 130, 246, 0.4)',
+          borderColor: '#3b82f6',
+          borderWidth: 1,
+          borderRadius: 4,
+          yAxisID: 'yLeft'
+        });
+        leftAxisLabel = "전환수(건)";
         leftAxisFormat = 'number';
       }
       
@@ -597,26 +619,46 @@
         }
       });
 
-      // 🌟 도넛 차트 비중 렌더링 로직 수정
+      // 🌟 [핵심 수정 6] 도넛 차트 비중 렌더링 빈 화면(Blank) 방지 보완
       if (shareChartInstance) shareChartInstance.destroy();
       
       let shareTargetKey = null;
-      if (hasCost) shareTargetKey = 'cost';
-      else if (hasConv) shareTargetKey = 'conv';
-      else if (hasClicks) shareTargetKey = 'clicks';
-      else if (currentColumns.length > 0) shareTargetKey = currentColumns[0].key;
+      
+      // 값이 존재하는(총합이 0이 아닌) 컬럼을 찾아 도넛 차트의 기준으로 삼음
+      const findValidKey = (keys) => {
+        for (let k of keys) {
+          let sum = 0;
+          rawDataset.forEach(d => { sum += Number(d[k] || (k === 'conv' ? d.result : 0) || 0); });
+          if (sum > 0) return k;
+        }
+        return null;
+      };
 
-      const shareTargetName = currentColumns.find(c => c.key === shareTargetKey)?.label || '지표';
+      // 우선순위: 비용 -> 노출수 -> 클릭수 -> 전환수
+      shareTargetKey = findValidKey(['cost', 'impressions', 'clicks', 'conv']);
+      
+      const msgElem = document.getElementById('no-share-data-msg');
+
+      if (!shareTargetKey) {
+        // 모든 데이터가 0이거나 비어있을 경우 도넛 차트 대신 안내 문구 출력
+        msgElem.classList.remove('hidden');
+        document.getElementById('share-chart-label').innerText = `데이터 부족`;
+        return;
+      } else {
+        msgElem.classList.add('hidden');
+      }
+
+      const shareTargetName = displayColumns.find(c => c.key === shareTargetKey)?.label || 
+                              (shareTargetKey === 'impressions' ? '노출수' : 
+                               (shareTargetKey === 'clicks' ? '클릭수' : '지표'));
+      
       document.getElementById('share-chart-label').innerText = `${shareTargetName} 기준 비중`;
 
       const mediaShare = { Naver: 0, Meta: 0, Google: 0 };
-      if (shareTargetKey) {
-        rawDataset.forEach(d => { 
-          // 안전한 숫자 변환 (result 키워드 호환성 포함)
-          const val = Number(d[shareTargetKey] || (shareTargetKey === 'conv' ? d.result : 0) || 0);
-          mediaShare[d.media] = (mediaShare[d.media] || 0) + val; 
-        });
-      }
+      rawDataset.forEach(d => { 
+        const val = Number(d[shareTargetKey] || (shareTargetKey === 'conv' ? d.result : 0) || 0);
+        if(mediaShare[d.media] !== undefined) mediaShare[d.media] += val; 
+      });
 
       const ctxShare = document.getElementById('shareChart').getContext('2d');
       shareChartInstance = new Chart(ctxShare, {
