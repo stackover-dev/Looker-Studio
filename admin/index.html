@@ -64,12 +64,12 @@
             <span>🚀 GitHub 즉시 배포 (원클릭 자동 커밋)</span>
           </button>
           
-          <!-- 🌟 [수정됨] 미리보기 링크 (지정해주신 stackover-dev.github.io 도메인 기반으로 직결) -->
+          <!-- 🌟 [수정됨] 미리보기 링크 (지정해주신 stackover-dev.github.io 도메인 기반 직결) -->
           <a id="preview-client-link" href="#" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm">
             <span>👁️ <span id="preview-filename-text">coway-perfectmall.html</span> 미리보기</span>
           </a>
 
-          <!-- 🌟 [신규] 로그아웃 버튼 (지정해주신 도메인으로 리다이렉션) -->
+          <!-- 🌟 [신규] 로그아웃 버튼 (지정 도메인으로 리다이렉션) -->
           <button onclick="handleLogout()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-100 rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm ml-2">
             <span>🚪 로그아웃</span>
           </button>
@@ -83,23 +83,40 @@
       <div class="flex flex-col gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
         
         <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-100">
-          <div class="flex flex-wrap items-center gap-4">
+          <div class="flex flex-wrap items-center gap-3">
+            <!-- 🌟 고객사 선택 드롭다운 -->
             <div>
               <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">고객사 선택</label>
               <select id="admin-client-select" onchange="changeClient(this.value)" class="bg-slate-50 border border-slate-300 font-bold text-xs text-slate-900 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-slate-900">
               </select>
             </div>
 
+            <!-- 🌟 [신규 추가] 수동 상호명(고객사명) 변경 인풋 및 버튼 -->
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">고객사 상호명 수정 (직접 입력)</label>
+              <div class="flex items-center space-x-1">
+                <input type="text" id="edit-client-name" class="bg-slate-50 border border-slate-300 font-bold text-xs text-slate-900 rounded-lg px-2.5 py-1.5 w-40 focus:outline-none focus:ring-2 focus:ring-slate-900" placeholder="상호명 입력">
+                <button onclick="updateClientName()" class="px-2.5 py-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition shadow-sm">상호명 변경</button>
+              </div>
+            </div>
+
+            <!-- 연결된 HTML 파일명 인풋 및 datalist -->
             <div>
               <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">연결된 HTML 파일명</label>
               <div class="flex items-center space-x-1">
-                <input type="text" id="edit-client-html-file" class="bg-slate-50 border border-slate-300 font-mono text-xs text-slate-800 rounded-lg px-2.5 py-1.5 w-48 focus:outline-none focus:ring-2 focus:ring-slate-900" placeholder="coway-perfectmall.html">
+                <input type="text" id="edit-client-html-file" list="repo-html-datalist" class="bg-slate-50 border border-slate-300 font-mono text-xs text-slate-800 rounded-lg px-2.5 py-1.5 w-48 focus:outline-none focus:ring-2 focus:ring-slate-900" placeholder="coway-perfectmall.html">
+                <datalist id="repo-html-datalist"></datalist>
                 <button onclick="updateClientHtmlFilename()" class="px-2.5 py-1.5 text-xs font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-lg transition">수정</button>
               </div>
             </div>
           </div>
 
+          <!-- 상단 관리 버튼들 -->
           <div class="flex items-center space-x-2">
+            <!-- 🌟 [신규 추가] 레포 HTML 자동 감지/동기화 버튼 -->
+            <button onclick="syncRepoHtmlFiles(true)" class="px-3 py-1.5 text-xs font-bold bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200 rounded-lg transition shadow-sm flex items-center space-x-1">
+              <span>🔄 레포 HTML 동기화</span>
+            </button>
             <button onclick="addNewClientPrompt()" class="px-3 py-1.5 text-xs font-bold bg-slate-800 text-white hover:bg-slate-700 rounded-lg transition shadow-sm">
               + 신규 고객사 추가
             </button>
@@ -158,7 +175,6 @@
             <label class="block text-xs font-bold text-slate-700 mb-1">HTML 코드 편집기</label>
             <textarea id="edit-strategy-comment" rows="7" oninput="handleCommentInput()" class="w-full font-mono text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-slate-50 focus:bg-white"></textarea>
           </div>
-
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">클라이언트 실제 노출 프리뷰 (Live Preview)</label>
             <div id="comment-live-preview" class="w-full h-full min-h-[148px] text-xs p-4 border border-slate-200 rounded-xl bg-slate-50/50 leading-relaxed overflow-y-auto">
@@ -167,16 +183,18 @@
         </div>
       </div>
 
-      <!-- 🌟 [복구됨] 3. 운영 특이사항 및 4. 광고 소재 피드백 관리 -->
+      <!-- 🌟 3. 운영 이슈 & 4. 광고 소재 피드백 관리 -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
+        <!-- 좌측: 운영 이슈 -->
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
           <label class="block text-xs font-bold text-amber-800 mb-1.5">
-            ⚡ 운영 이슈 및 최적화 대응 내역 (Operational Actions - 줄바꿈으로 자동 리스트화)
+            ⚡ 운영 이슈 및 최적화 대응 내역 (줄바꿈으로 리스트화)
           </label>
           <textarea id="edit-anomaly-comment" rows="4" onchange="saveCommentsFromAdmin()" class="w-full flex-grow text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="CPC 급등 대응, 소재 교체 등 운영 이슈를 줄바꿈(Enter)으로 구분해 입력하세요."></textarea>
         </div>
 
+        <!-- 우측: 광고 소재 이미지 & 피드백 관리 -->
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
           <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
             <h2 class="text-sm font-bold text-indigo-700 flex items-center space-x-1.5">
@@ -186,12 +204,14 @@
           </div>
           
           <div class="flex space-x-3 mb-4">
+            <!-- 이미지 업로드 영역 -->
             <div class="w-24 h-24 bg-slate-100 border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center overflow-hidden relative cursor-pointer hover:bg-slate-50 transition shrink-0" onclick="document.getElementById('creative-upload').click()">
               <span class="text-xs text-slate-400 font-bold text-center px-1" id="creative-placeholder">+ 이미지<br>선택</span>
               <img id="creative-preview-img" class="absolute inset-0 w-full h-full object-cover hidden">
               <input type="file" id="creative-upload" accept="image/*" class="hidden" onchange="processCreativeImage(event)">
             </div>
             
+            <!-- 텍스트 입력 영역 -->
             <div class="flex-grow flex flex-col space-y-2">
               <input type="text" id="creative-title" placeholder="소재명 (예: 메인 A안 30초)" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
               <textarea id="creative-feedback" rows="2" placeholder="해당 소재에 대한 성과 피드백을 입력하세요." class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
@@ -203,14 +223,14 @@
             ↓ 현재 소재 리스트에 등록하기
           </button>
           
+          <!-- 등록된 소재 목록 표출 영역 -->
           <div class="flex-grow bg-slate-50 rounded-lg border border-slate-200 p-2 overflow-y-auto max-h-40" id="admin-creatives-list">
           </div>
         </div>
       </div>
 
-      <!-- 5. 데이터 업로드 (정밀 UTF-8 파서 탑재) -->
+      <!-- 5. 데이터 업로드 -->
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
           <div>
             <h3 class="text-sm font-bold text-blue-700 flex items-center gap-1.5">
@@ -243,7 +263,7 @@
         </div>
       </div>
 
-      <!-- 6. 등록된 일별 매체 데이터 (수정 & 삭제) -->
+      <!-- 6. 등록된 일별 매체 데이터 -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
           <h3 class="text-xs font-bold text-slate-900">등록된 일별 매체 데이터 (<span id="active-period-label" class="text-blue-600 font-bold"></span>)</h3>
@@ -290,7 +310,7 @@
             strategyComment: "<h4 class='text-sm font-bold text-slate-900 mb-1.5'>퍼포먼스 마케팅 종합 성과 평가</h4>\n<p>총 집행비용은 <b class='text-slate-900'>44.3만 원 (VAT포함)</b>으로 숏폼 동영상 크리에이티브 중심 집중 집행되었습니다.</p>\n<p class='mt-1'><mark class='bg-yellow-200 px-1 rounded font-semibold'>인스타그램 프로필 방문 및 링크 클릭률 3.79%</mark>의 높은 반응도를 유지했습니다.</p>",
             anomalyComment: "인스타그램 숏폼 비디오 소재 A/B 테스트 진행 (30초 vs 60초)\n30~59초 소재에서 전환율 76% 집중 발생 확인에 따라 예산 80% 집중 배정 완료",
             rawDataset: [],
-            creatives: [] // 🌟 신규 소재 저장 배열 보장
+            creatives: []
           }
         }
       }
@@ -299,8 +319,9 @@
     let db = {};
     let currentClient = "코웨이 퍼펙트몰";
     let currentPeriod = "2026.09.22 ~ 2026.10.13";
+    let repoHtmlFiles = [];
 
-    // 🌟 [수정됨] 새로고침 시 자동 로그아웃 방어 로직 추가
+    // 🌟 페이지 로드 시 새로고침 방어: 로그인 유지 체크
     document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.getItem('IS_ADMIN_LOGGED_IN') === 'true') {
         showAdminPanel();
@@ -317,9 +338,95 @@
       renderClientSelect();
       renderPeriodNav();
       renderAdminPanel();
+      
+      // 🌟 로그인 즉시 stackover-dev 레포지토리의 HTML 파일 자동 조회 및 연동
+      syncRepoHtmlFiles(false);
     }
 
-    // 🌟 [신규] 로그아웃 버튼 동작
+    // 🌟 [핵심 신규 기능] GitHub 레포지토리(stackover-dev/Looker-Studio) 내 HTML 파일 목록 자동 연동
+    async function syncRepoHtmlFiles(showNotice = false) {
+      try {
+        const headers = { "Accept": "application/vnd.github.v3+json" };
+        const token = localStorage.getItem('GH_PAT_TOKEN');
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+
+        const res = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/`, { headers });
+        if (res.ok) {
+          const items = await res.json();
+          // 레포 내 모든 .html 파일 필터링 (admin 내 index 제외)
+          repoHtmlFiles = items
+            .filter(item => item.type === 'file' && item.name.endsWith('.html') && item.name.toLowerCase() !== 'index.html')
+            .map(item => item.name);
+
+          // datalist 갱신
+          updateRepoHtmlDatalist();
+
+          // 레포에 있는 HTML 파일 중 db에 아직 등록되지 않은 파일 자동 추가
+          let addedCount = 0;
+          repoHtmlFiles.forEach(file => {
+            const exists = Object.values(db).some(c => c.htmlFilename === file);
+            if (!exists) {
+              const defaultName = file.replace(/\.html$/i, '');
+              let finalName = defaultName;
+              let counter = 1;
+              while (db[finalName]) {
+                finalName = `${defaultName}_${counter++}`;
+              }
+              db[finalName] = {
+                htmlFilename: file,
+                months: {
+                  "신규 집행 기간": {
+                    strategyComment: "<p>전략 총평을 입력하세요.</p>",
+                    anomalyComment: "특이사항을 입력하세요.",
+                    rawDataset: [],
+                    creatives: []
+                  }
+                }
+              };
+              addedCount++;
+            }
+          });
+
+          if (addedCount > 0) {
+            saveDatabase();
+            renderClientSelect();
+          }
+
+          if (showNotice) {
+            alert(`✅ stackover-dev 레포지토리 HTML 연동 완료!\n\n발견된 HTML 파일 (${repoHtmlFiles.length}개): ${repoHtmlFiles.join(', ')}\n새로 감지되어 등록된 고객사: ${addedCount}개\n\n업체명은 [고객사 상호명 수정] 칸에서 수동으로 자유롭게 변경하세요!`);
+          }
+        }
+      } catch (e) {
+        console.warn("GitHub 레포 HTML 파일 목록 조회 실패:", e);
+        if (showNotice) alert("레포지토리 HTML 파일 목록을 가져오지 못했습니다. 인터넷 연결 또는 토큰 설정을 확인하세요.");
+      }
+    }
+
+    function updateRepoHtmlDatalist() {
+      const datalist = document.getElementById('repo-html-datalist');
+      if (!datalist) return;
+      datalist.innerHTML = repoHtmlFiles.map(f => `<option value="${f}">`).join('');
+    }
+
+    // 🌟 [핵심 신규 기능] 수동 고객사 상호명 변경 저장
+    function updateClientName() {
+      const newName = document.getElementById('edit-client-name').value.trim();
+      if (!newName) return alert('고객사 상호명을 입력해주세요.');
+      if (newName === currentClient) return alert('기존 상호명과 동일합니다.');
+      if (db[newName]) return alert('이미 존재하는 고객사 상호명입니다. 다른 이름을 사용해주세요.');
+
+      // 데이터 키 변경
+      db[newName] = db[currentClient];
+      delete db[currentClient];
+      currentClient = newName;
+      saveDatabase();
+      renderClientSelect();
+      renderPeriodNav();
+      renderAdminPanel();
+      alert(`고객사 상호명이 [${newName}]으로 성공적으로 변경되었습니다.`);
+    }
+
+    // 🌟 로그아웃 버튼 동작 (지정된 경로로 리다이렉트)
     function handleLogout() {
       localStorage.removeItem('IS_ADMIN_LOGGED_IN');
       window.location.href = 'https://admin.placepartner.cloud/reports';
@@ -392,6 +499,7 @@
         if (trimmed) {
           localStorage.setItem('GH_PAT_TOKEN', trimmed);
           alert('✅ GitHub 토큰이 브라우저에 안전하게 저장되었습니다!');
+          syncRepoHtmlFiles(false);
         } else {
           localStorage.removeItem('GH_PAT_TOKEN');
           alert('토큰이 제거되었습니다.');
@@ -419,12 +527,8 @@
 
         let sha = null;
         const getRes = await fetch(url, {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Accept": "application/vnd.github.v3+json"
-          }
+          headers: { "Authorization": `Bearer ${token}`, "Accept": "application/vnd.github.v3+json" }
         });
-
         if (getRes.ok) {
           const fileData = await getRes.json();
           sha = fileData.sha;
@@ -476,17 +580,20 @@
       Object.keys(db).forEach(client => {
         const opt = document.createElement('option');
         opt.value = client;
-        opt.innerText = client;
+        const filename = db[client].htmlFilename || `${client}.html`;
+        opt.innerText = `${client} (${filename})`;
         if (client === currentClient) opt.selected = true;
         select.appendChild(opt);
       });
       updateClientHtmlLinkDisplay();
     }
 
-    // 🌟 [수정됨] 404 문제 해결을 위해 미리보기 링크를 GitHub Pages 절대경로로 설정
+    // 🌟 상호명 인풋 및 HTML 링크, 미리보기 업데이트
     function updateClientHtmlLinkDisplay() {
       const clientData = db[currentClient] || {};
       const filename = clientData.htmlFilename || `${currentClient}.html`;
+      
+      document.getElementById('edit-client-name').value = currentClient;
       document.getElementById('edit-client-html-file').value = filename;
       document.getElementById('preview-filename-text').innerText = filename;
       
@@ -500,7 +607,7 @@
         if (!db[currentClient]) db[currentClient] = { htmlFilename: newFilename, months: {} };
         db[currentClient].htmlFilename = newFilename;
         saveDatabase();
-        updateClientHtmlLinkDisplay();
+        renderClientSelect();
         alert(`고객사 [${currentClient}]의 연동 파일명이 [${newFilename}]으로 업데이트되었습니다.`);
       }
     }
@@ -513,7 +620,7 @@
     }
 
     function addNewClientPrompt() {
-      const name = prompt('신규 고객사명을 입력하세요:');
+      const name = prompt('신규 고객사 상호명을 입력하세요:');
       if (name && name.trim()) {
         const trimmed = name.trim();
         if (!db[trimmed]) {
@@ -623,7 +730,7 @@
 
       updateLiveCommentPreview();
       renderAdminDataTable(activeData.rawDataset || []);
-      renderCreativesList(); // 🌟 소재 리스트 렌더링 호출
+      renderCreativesList();
     }
 
     function handleCommentInput() {
@@ -662,7 +769,6 @@
       saveDatabase();
     }
 
-    // 🌟 광고 소재 이미지 자동 압축 변환 엔진 (Base64)
     function processCreativeImage(event) {
       const file = event.target.files[0];
       if (!file) return;
