@@ -265,139 +265,22 @@
         "anomalyComment": "[계정 인증 오류 대응 및 CPA 구축] 타 계정 대비 잦은 인증 오류 리스크를 통제하고 안정적 성과를 확보하기 위해 별도 CPA(DB 수집) 캠페인을 세팅 중이며, 차주 중 세팅 및 검수를 완료할 예정입니다.\n[노아유니버스컴퍼니 예산 및 타겟팅 최적화] 단순 도달(브랜딩) 목적의 예산 분산을 지양하고 즉각적인 고객 DB 확보에 예산을 집중 투입하며, 광고비 대비 전환 효율 극대화를 위한 타겟팅 구조를 재설계합니다.",
         "rawDataset": [
           {
-            "date": "2026-09-17",
+            "date": "2026-10-16",
             "media": "Meta",
-            "impressions": 34377,
-            "reach": 18839,
-            "clicks": 958,
-            "cost": 291133,
-            "conv": 675
-          },
-          {
-            "date": "2026-09-17",
-            "media": "Meta",
-            "impressions": 15211,
-            "reach": 9897,
-            "clicks": 510,
-            "cost": 159543,
-            "conv": 334
-          },
-          {
-            "date": "2026-10-07",
-            "media": "Meta",
-            "impressions": 31,
-            "reach": 30,
-            "clicks": 2,
-            "cost": 253,
-            "conv": 1
-          },
-          {
-            "date": "2026-09-28",
-            "media": "Meta",
-            "impressions": 414,
-            "reach": 322,
-            "clicks": 23,
-            "cost": 5479,
-            "conv": 18
-          },
-          {
-            "date": "2026-10-07",
-            "media": "Meta",
-            "impressions": 350,
-            "reach": 320,
-            "clicks": 19,
-            "cost": 4542,
-            "conv": 15
-          },
-          {
-            "date": "2026-09-26",
-            "media": "Meta",
-            "impressions": 1096,
-            "reach": 932,
-            "clicks": 49,
-            "cost": 10502,
-            "conv": 36
-          },
-          {
-            "date": "2026-10-11",
-            "media": "Meta",
-            "impressions": 731,
-            "reach": 679,
-            "clicks": 34,
-            "cost": 11200,
-            "conv": 26
-          },
-          {
-            "date": "2026-09-18",
-            "media": "Meta",
-            "impressions": 1073,
-            "reach": 967,
-            "clicks": 53,
-            "cost": 17308,
-            "conv": 45
-          },
-          {
-            "date": "2026-09-23",
-            "media": "Meta",
-            "impressions": 1321,
-            "reach": 1054,
-            "clicks": 60,
-            "cost": 16040,
-            "conv": 34
-          },
-          {
-            "date": "2026-10-06",
-            "media": "Meta",
-            "impressions": 419,
-            "reach": 378,
-            "clicks": 17,
-            "cost": 6136,
-            "conv": 14
-          },
-          {
-            "date": "2026-09-25",
-            "media": "Meta",
-            "impressions": 1140,
-            "reach": 910,
-            "clicks": 43,
-            "cost": 13194,
-            "conv": 35
-          },
-          {
-            "date": "2026-10-07",
-            "media": "Meta",
-            "impressions": 670,
-            "reach": 583,
-            "clicks": 27,
-            "cost": 9068,
-            "conv": 19
-          },
-          {
-            "date": "2026-10-09",
-            "media": "Meta",
-            "impressions": 100,
-            "reach": 92,
-            "clicks": 4,
-            "cost": 1542,
-            "conv": 3
-          },
-          {
-            "date": "2026-09-30",
-            "media": "Meta",
-            "impressions": 100,
-            "reach": 97,
-            "clicks": 4,
-            "cost": 1366,
-            "conv": 3
-          },
-          {
-            "date": "2026-09-29",
-            "media": "Meta",
-            "impressions": 977,
-            "reach": 879,
-            "clicks": 43,
-            "cost": 10892,
+            "impressions": 838,
+            "reach": 762,
+            "clicks": 32,
+            "cost": 12235,
             "conv": 29
+          },
+          {
+            "date": "2026-10-16",
+            "media": "Meta",
+            "impressions": 341,
+            "reach": 319,
+            "clicks": 7,
+            "cost": 3267,
+            "conv": 6
           },
           {
             "date": "2026-10-15",
@@ -409,76 +292,13 @@
             "conv": 8
           },
           {
-            "date": "2026-09-19",
+            "date": "2026-10-15",
             "media": "Meta",
-            "impressions": 849,
-            "reach": 727,
-            "clicks": 33,
-            "cost": 11727,
-            "conv": 28
-          },
-          {
-            "date": "2026-10-13",
-            "media": "Meta",
-            "impressions": 1142,
-            "reach": 1056,
-            "clicks": 45,
-            "cost": 13815,
-            "conv": 35
-          },
-          {
-            "date": "2026-10-12",
-            "media": "Meta",
-            "impressions": 611,
-            "reach": 561,
-            "clicks": 25,
-            "cost": 8711,
-            "conv": 21
-          },
-          {
-            "date": "2026-09-20",
-            "media": "Meta",
-            "impressions": 1548,
-            "reach": 1277,
-            "clicks": 57,
-            "cost": 19766,
-            "conv": 49
-          },
-          {
-            "date": "2026-10-05",
-            "media": "Meta",
-            "impressions": 509,
-            "reach": 450,
-            "clicks": 22,
-            "cost": 6882,
-            "conv": 15
-          },
-          {
-            "date": "2026-09-21",
-            "media": "Meta",
-            "impressions": 1257,
-            "reach": 1095,
-            "clicks": 51,
-            "cost": 14790,
-            "conv": 37
-          },
-          {
-            "date": "2026-10-11",
-            "media": "Meta",
-            "impressions": 638,
-            "reach": 617,
-            "clicks": 23,
-            "cost": 7767,
+            "impressions": 730,
+            "reach": 642,
+            "clicks": 26,
+            "cost": 10926,
             "conv": 18
-          },
-          {
-            "date": "2026-09-27",
-            "media": "Meta",
-            "impressions": 1806,
-            "reach": 1243,
-            "clicks": 62,
-            "cost": 15500,
-            "conv": 43
           },
           {
             "date": "2026-10-14",
@@ -490,139 +310,22 @@
             "conv": 20
           },
           {
-            "date": "2026-10-16",
+            "date": "2026-10-14",
             "media": "Meta",
-            "impressions": 838,
-            "reach": 762,
-            "clicks": 32,
-            "cost": 12235,
-            "conv": 29
+            "impressions": 487,
+            "reach": 455,
+            "clicks": 10,
+            "cost": 4702,
+            "conv": 6
           },
           {
-            "date": "2026-10-12",
+            "date": "2026-10-13",
             "media": "Meta",
-            "impressions": 291,
-            "reach": 276,
-            "clicks": 13,
-            "cost": 3785,
-            "conv": 9
-          },
-          {
-            "date": "2026-10-15",
-            "media": "Meta",
-            "impressions": 730,
-            "reach": 642,
-            "clicks": 26,
-            "cost": 10926,
-            "conv": 18
-          },
-          {
-            "date": "2026-09-24",
-            "media": "Meta",
-            "impressions": 1239,
-            "reach": 1029,
-            "clicks": 42,
-            "cost": 12524,
-            "conv": 32
-          },
-          {
-            "date": "2026-10-10",
-            "media": "Meta",
-            "impressions": 397,
-            "reach": 366,
-            "clicks": 13,
-            "cost": 4254,
-            "conv": 10
-          },
-          {
-            "date": "2026-09-28",
-            "media": "Meta",
-            "impressions": 1277,
-            "reach": 1262,
-            "clicks": 39,
-            "cost": 4215,
-            "conv": 2
-          },
-          {
-            "date": "2026-09-28",
-            "media": "Meta",
-            "impressions": 856,
-            "reach": 801,
-            "clicks": 28,
-            "cost": 3946,
-            "conv": 5
-          },
-          {
-            "date": "2026-10-08",
-            "media": "Meta",
-            "impressions": 738,
-            "reach": 678,
-            "clicks": 26,
-            "cost": 6870,
-            "conv": 18
-          },
-          {
-            "date": "2026-10-05",
-            "media": "Meta",
-            "impressions": 860,
-            "reach": 804,
-            "clicks": 26,
-            "cost": 8120,
-            "conv": 19
-          },
-          {
-            "date": "2026-10-08",
-            "media": "Meta",
-            "impressions": 517,
-            "reach": 420,
-            "clicks": 15,
-            "cost": 6616,
-            "conv": 15
-          },
-          {
-            "date": "2026-09-30",
-            "media": "Meta",
-            "impressions": 1315,
-            "reach": 1198,
-            "clicks": 42,
-            "cost": 10719,
-            "conv": 32
-          },
-          {
-            "date": "2026-09-30",
-            "media": "Meta",
-            "impressions": 208,
-            "reach": 202,
-            "clicks": 7,
-            "cost": 1250,
-            "conv": 5
-          },
-          {
-            "date": "2026-09-22",
-            "media": "Meta",
-            "impressions": 1423,
-            "reach": 1121,
-            "clicks": 40,
-            "cost": 14144,
-            "conv": 28
-          },
-          {
-            "date": "2026-10-09",
-            "media": "Meta",
-            "impressions": 1298,
-            "reach": 1161,
-            "clicks": 41,
-            "cost": 12744,
-            "conv": 29
-          },
-          {
-            "date": "2026-10-05",
-            "media": "Meta",
-            "impressions": 325,
-            "reach": 301,
-            "clicks": 15,
-            "cost": 2305,
-            "conv": 4
+            "impressions": 1142,
+            "reach": 1056,
+            "clicks": 45,
+            "cost": 13815,
+            "conv": 35
           },
           {
             "date": "2026-10-13",
@@ -634,40 +337,94 @@
             "conv": 6
           },
           {
-            "date": "2026-10-02",
+            "date": "2026-10-12",
             "media": "Meta",
-            "impressions": 687,
-            "reach": 608,
-            "clicks": 22,
-            "cost": 7414,
-            "conv": 16
+            "impressions": 611,
+            "reach": 561,
+            "clicks": 25,
+            "cost": 8711,
+            "conv": 21
           },
           {
-            "date": "2026-09-30",
+            "date": "2026-10-12",
             "media": "Meta",
-            "impressions": 147,
-            "reach": 138,
-            "clicks": 4,
-            "cost": 904,
-            "conv": 2
+            "impressions": 291,
+            "reach": 276,
+            "clicks": 13,
+            "cost": 3785,
+            "conv": 9
           },
           {
-            "date": "2026-09-28",
+            "date": "2026-10-11",
             "media": "Meta",
-            "impressions": 154,
-            "reach": 147,
+            "impressions": 731,
+            "reach": 679,
+            "clicks": 34,
+            "cost": 11200,
+            "conv": 26
+          },
+          {
+            "date": "2026-10-11",
+            "media": "Meta",
+            "impressions": 638,
+            "reach": 617,
+            "clicks": 23,
+            "cost": 7767,
+            "conv": 18
+          },
+          {
+            "date": "2026-10-10",
+            "media": "Meta",
+            "impressions": 397,
+            "reach": 366,
+            "clicks": 13,
+            "cost": 4254,
+            "conv": 10
+          },
+          {
+            "date": "2026-10-10",
+            "media": "Meta",
+            "impressions": 1172,
+            "reach": 1115,
+            "clicks": 24,
+            "cost": 8610,
+            "conv": 21
+          },
+          {
+            "date": "2026-10-09",
+            "media": "Meta",
+            "impressions": 100,
+            "reach": 92,
             "clicks": 4,
-            "cost": 1588,
+            "cost": 1542,
             "conv": 3
           },
           {
-            "date": "2026-10-02",
+            "date": "2026-10-09",
             "media": "Meta",
-            "impressions": 116,
-            "reach": 111,
-            "clicks": 5,
-            "cost": 599,
-            "conv": 2
+            "impressions": 1298,
+            "reach": 1161,
+            "clicks": 41,
+            "cost": 12744,
+            "conv": 29
+          },
+          {
+            "date": "2026-10-08",
+            "media": "Meta",
+            "impressions": 738,
+            "reach": 678,
+            "clicks": 26,
+            "cost": 6870,
+            "conv": 18
+          },
+          {
+            "date": "2026-10-08",
+            "media": "Meta",
+            "impressions": 517,
+            "reach": 420,
+            "clicks": 15,
+            "cost": 6616,
+            "conv": 15
           },
           {
             "date": "2026-10-08",
@@ -679,31 +436,40 @@
             "conv": 2
           },
           {
-            "date": "2026-09-30",
+            "date": "2026-10-07",
             "media": "Meta",
-            "impressions": 89,
-            "reach": 87,
+            "impressions": 31,
+            "reach": 30,
             "clicks": 2,
-            "cost": 636,
-            "conv": 2
+            "cost": 253,
+            "conv": 1
           },
           {
-            "date": "2026-10-03",
+            "date": "2026-10-07",
             "media": "Meta",
-            "impressions": 908,
-            "reach": 831,
-            "clicks": 23,
-            "cost": 7879,
-            "conv": 16
+            "impressions": 350,
+            "reach": 320,
+            "clicks": 19,
+            "cost": 4542,
+            "conv": 15
           },
           {
-            "date": "2026-10-01",
+            "date": "2026-10-07",
             "media": "Meta",
-            "impressions": 964,
-            "reach": 909,
-            "clicks": 25,
-            "cost": 8494,
-            "conv": 17
+            "impressions": 670,
+            "reach": 583,
+            "clicks": 27,
+            "cost": 9068,
+            "conv": 19
+          },
+          {
+            "date": "2026-10-06",
+            "media": "Meta",
+            "impressions": 419,
+            "reach": 378,
+            "clicks": 17,
+            "cost": 6136,
+            "conv": 14
           },
           {
             "date": "2026-10-06",
@@ -724,15 +490,6 @@
             "conv": 5
           },
           {
-            "date": "2026-10-16",
-            "media": "Meta",
-            "impressions": 341,
-            "reach": 319,
-            "clicks": 7,
-            "cost": 3267,
-            "conv": 6
-          },
-          {
             "date": "2026-10-06",
             "media": "Meta",
             "impressions": 544,
@@ -740,6 +497,132 @@
             "clicks": 12,
             "cost": 5541,
             "conv": 9
+          },
+          {
+            "date": "2026-10-05",
+            "media": "Meta",
+            "impressions": 509,
+            "reach": 450,
+            "clicks": 22,
+            "cost": 6882,
+            "conv": 15
+          },
+          {
+            "date": "2026-10-05",
+            "media": "Meta",
+            "impressions": 860,
+            "reach": 804,
+            "clicks": 26,
+            "cost": 8120,
+            "conv": 19
+          },
+          {
+            "date": "2026-10-05",
+            "media": "Meta",
+            "impressions": 325,
+            "reach": 301,
+            "clicks": 15,
+            "cost": 2305,
+            "conv": 4
+          },
+          {
+            "date": "2026-10-05",
+            "media": "Meta",
+            "impressions": 141,
+            "reach": 132,
+            "clicks": 1,
+            "cost": 555,
+            "conv": 1
+          },
+          {
+            "date": "2026-10-04",
+            "media": "Meta",
+            "impressions": 437,
+            "reach": 383,
+            "clicks": 6,
+            "cost": 3888,
+            "conv": 2
+          },
+          {
+            "date": "2026-10-04",
+            "media": "Meta",
+            "impressions": 1782,
+            "reach": 1695,
+            "clicks": 24,
+            "cost": 11118,
+            "conv": 16
+          },
+          {
+            "date": "2026-10-04",
+            "media": "Meta",
+            "impressions": 218,
+            "reach": 203,
+            "clicks": 3,
+            "cost": 1409,
+            "conv": 2
+          },
+          {
+            "date": "2026-10-03",
+            "media": "Meta",
+            "impressions": 908,
+            "reach": 831,
+            "clicks": 23,
+            "cost": 7879,
+            "conv": 16
+          },
+          {
+            "date": "2026-10-03",
+            "media": "Meta",
+            "impressions": 341,
+            "reach": 305,
+            "clicks": 7,
+            "cost": 1545,
+            "conv": 4
+          },
+          {
+            "date": "2026-10-03",
+            "media": "Meta",
+            "impressions": 528,
+            "reach": 423,
+            "clicks": 9,
+            "cost": 5141,
+            "conv": 6
+          },
+          {
+            "date": "2026-10-02",
+            "media": "Meta",
+            "impressions": 687,
+            "reach": 608,
+            "clicks": 22,
+            "cost": 7414,
+            "conv": 16
+          },
+          {
+            "date": "2026-10-02",
+            "media": "Meta",
+            "impressions": 116,
+            "reach": 111,
+            "clicks": 5,
+            "cost": 599,
+            "conv": 2
+          },
+          {
+            "date": "2026-10-02",
+            "media": "Meta",
+            "impressions": 366,
+            "reach": 213,
+            "clicks": 6,
+            "cost": 3340,
+            "conv": 1
+          },
+          {
+            "date": "2026-10-01",
+            "media": "Meta",
+            "impressions": 964,
+            "reach": 909,
+            "clicks": 25,
+            "cost": 8494,
+            "conv": 17
           },
           {
             "date": "2026-10-01",
@@ -760,276 +643,6 @@
             "conv": 3
           },
           {
-            "date": "2026-09-26",
-            "media": "Meta",
-            "impressions": 108,
-            "reach": 56,
-            "clicks": 2,
-            "cost": 435,
-            "conv": 1
-          },
-          {
-            "date": "2026-09-17",
-            "media": "Meta",
-            "impressions": 1840,
-            "reach": 1626,
-            "clicks": 36,
-            "cost": 15341,
-            "conv": 28
-          },
-          {
-            "date": "2026-10-03",
-            "media": "Meta",
-            "impressions": 341,
-            "reach": 305,
-            "clicks": 7,
-            "cost": 1545,
-            "conv": 4
-          },
-          {
-            "date": "2026-10-10",
-            "media": "Meta",
-            "impressions": 1172,
-            "reach": 1115,
-            "clicks": 24,
-            "cost": 8610,
-            "conv": 21
-          },
-          {
-            "date": "2026-10-02",
-            "media": "Meta",
-            "impressions": 366,
-            "reach": 213,
-            "clicks": 6,
-            "cost": 3340,
-            "conv": 1
-          },
-          {
-            "date": "2026-10-14",
-            "media": "Meta",
-            "impressions": 487,
-            "reach": 455,
-            "clicks": 10,
-            "cost": 4702,
-            "conv": 6
-          },
-          {
-            "date": "2026-09-17",
-            "media": "Meta",
-            "impressions": 70,
-            "reach": 70,
-            "clicks": 1,
-            "cost": 544,
-            "conv": 1
-          },
-          {
-            "date": "2026-10-04",
-            "media": "Meta",
-            "impressions": 437,
-            "reach": 383,
-            "clicks": 6,
-            "cost": 3888,
-            "conv": 2
-          },
-          {
-            "date": "2026-09-29",
-            "media": "Meta",
-            "impressions": 146,
-            "reach": 135,
-            "clicks": 2,
-            "cost": 974,
-            "conv": 0
-          },
-          {
-            "date": "2026-10-04",
-            "media": "Meta",
-            "impressions": 1782,
-            "reach": 1695,
-            "clicks": 24,
-            "cost": 11118,
-            "conv": 16
-          },
-          {
-            "date": "2026-09-29",
-            "media": "Meta",
-            "impressions": 405,
-            "reach": 343,
-            "clicks": 9,
-            "cost": 2419,
-            "conv": 5
-          },
-          {
-            "date": "2026-10-03",
-            "media": "Meta",
-            "impressions": 528,
-            "reach": 423,
-            "clicks": 9,
-            "cost": 5141,
-            "conv": 6
-          },
-          {
-            "date": "2026-09-24",
-            "media": "Meta",
-            "impressions": 1608,
-            "reach": 773,
-            "clicks": 17,
-            "cost": 2603,
-            "conv": 5
-          },
-          {
-            "date": "2026-10-04",
-            "media": "Meta",
-            "impressions": 218,
-            "reach": 203,
-            "clicks": 3,
-            "cost": 1409,
-            "conv": 2
-          },
-          {
-            "date": "2026-09-23",
-            "media": "Meta",
-            "impressions": 272,
-            "reach": 117,
-            "clicks": 2,
-            "cost": 194,
-            "conv": 0
-          },
-          {
-            "date": "2026-10-05",
-            "media": "Meta",
-            "impressions": 141,
-            "reach": 132,
-            "clicks": 1,
-            "cost": 555,
-            "conv": 1
-          },
-          {
-            "date": "2026-09-28",
-            "media": "Meta",
-            "impressions": 2421,
-            "reach": 535,
-            "clicks": 7,
-            "cost": 1006,
-            "conv": 2
-          },
-          {
-            "date": "2026-09-22",
-            "media": "Meta",
-            "impressions": 350,
-            "reach": 192,
-            "clicks": 1,
-            "cost": 468,
-            "conv": 0
-          },
-          {
-            "date": "2026-09-27",
-            "media": "Meta",
-            "impressions": 752,
-            "reach": 267,
-            "clicks": 2,
-            "cost": 476,
-            "conv": 1
-          },
-          {
-            "date": "2026-10-07",
-            "media": "Meta",
-            "impressions": 31,
-            "reach": 30,
-            "clicks": 2,
-            "cost": 253,
-            "conv": 1
-          },
-          {
-            "date": "2026-09-28",
-            "media": "Meta",
-            "impressions": 414,
-            "reach": 322,
-            "clicks": 23,
-            "cost": 5479,
-            "conv": 18
-          },
-          {
-            "date": "2026-10-07",
-            "media": "Meta",
-            "impressions": 350,
-            "reach": 320,
-            "clicks": 19,
-            "cost": 4542,
-            "conv": 15
-          },
-          {
-            "date": "2026-09-26",
-            "media": "Meta",
-            "impressions": 1096,
-            "reach": 932,
-            "clicks": 49,
-            "cost": 10502,
-            "conv": 36
-          },
-          {
-            "date": "2026-10-11",
-            "media": "Meta",
-            "impressions": 731,
-            "reach": 679,
-            "clicks": 34,
-            "cost": 11200,
-            "conv": 26
-          },
-          {
-            "date": "2026-09-18",
-            "media": "Meta",
-            "impressions": 1073,
-            "reach": 967,
-            "clicks": 53,
-            "cost": 17308,
-            "conv": 45
-          },
-          {
-            "date": "2026-09-23",
-            "media": "Meta",
-            "impressions": 1321,
-            "reach": 1054,
-            "clicks": 60,
-            "cost": 16040,
-            "conv": 34
-          },
-          {
-            "date": "2026-10-06",
-            "media": "Meta",
-            "impressions": 419,
-            "reach": 378,
-            "clicks": 17,
-            "cost": 6136,
-            "conv": 14
-          },
-          {
-            "date": "2026-09-25",
-            "media": "Meta",
-            "impressions": 1140,
-            "reach": 910,
-            "clicks": 43,
-            "cost": 13194,
-            "conv": 35
-          },
-          {
-            "date": "2026-10-07",
-            "media": "Meta",
-            "impressions": 670,
-            "reach": 583,
-            "clicks": 27,
-            "cost": 9068,
-            "conv": 19
-          },
-          {
-            "date": "2026-10-09",
-            "media": "Meta",
-            "impressions": 100,
-            "reach": 92,
-            "clicks": 4,
-            "cost": 1542,
-            "conv": 3
-          },
-          {
             "date": "2026-09-30",
             "media": "Meta",
             "impressions": 100,
@@ -1037,195 +650,6 @@
             "clicks": 4,
             "cost": 1366,
             "conv": 3
-          },
-          {
-            "date": "2026-09-29",
-            "media": "Meta",
-            "impressions": 977,
-            "reach": 879,
-            "clicks": 43,
-            "cost": 10892,
-            "conv": 29
-          },
-          {
-            "date": "2026-10-15",
-            "media": "Meta",
-            "impressions": 282,
-            "reach": 259,
-            "clicks": 14,
-            "cost": 3044,
-            "conv": 8
-          },
-          {
-            "date": "2026-09-19",
-            "media": "Meta",
-            "impressions": 849,
-            "reach": 727,
-            "clicks": 33,
-            "cost": 11727,
-            "conv": 28
-          },
-          {
-            "date": "2026-10-13",
-            "media": "Meta",
-            "impressions": 1142,
-            "reach": 1056,
-            "clicks": 45,
-            "cost": 13815,
-            "conv": 35
-          },
-          {
-            "date": "2026-10-12",
-            "media": "Meta",
-            "impressions": 611,
-            "reach": 561,
-            "clicks": 25,
-            "cost": 8711,
-            "conv": 21
-          },
-          {
-            "date": "2026-09-20",
-            "media": "Meta",
-            "impressions": 1548,
-            "reach": 1277,
-            "clicks": 57,
-            "cost": 19766,
-            "conv": 49
-          },
-          {
-            "date": "2026-10-05",
-            "media": "Meta",
-            "impressions": 509,
-            "reach": 450,
-            "clicks": 22,
-            "cost": 6882,
-            "conv": 15
-          },
-          {
-            "date": "2026-09-21",
-            "media": "Meta",
-            "impressions": 1257,
-            "reach": 1095,
-            "clicks": 51,
-            "cost": 14790,
-            "conv": 37
-          },
-          {
-            "date": "2026-10-11",
-            "media": "Meta",
-            "impressions": 638,
-            "reach": 617,
-            "clicks": 23,
-            "cost": 7767,
-            "conv": 18
-          },
-          {
-            "date": "2026-09-27",
-            "media": "Meta",
-            "impressions": 1806,
-            "reach": 1243,
-            "clicks": 62,
-            "cost": 15500,
-            "conv": 43
-          },
-          {
-            "date": "2026-10-14",
-            "media": "Meta",
-            "impressions": 710,
-            "reach": 650,
-            "clicks": 27,
-            "cost": 9519,
-            "conv": 20
-          },
-          {
-            "date": "2026-10-16",
-            "media": "Meta",
-            "impressions": 838,
-            "reach": 762,
-            "clicks": 32,
-            "cost": 12235,
-            "conv": 29
-          },
-          {
-            "date": "2026-10-12",
-            "media": "Meta",
-            "impressions": 291,
-            "reach": 276,
-            "clicks": 13,
-            "cost": 3785,
-            "conv": 9
-          },
-          {
-            "date": "2026-10-15",
-            "media": "Meta",
-            "impressions": 730,
-            "reach": 642,
-            "clicks": 26,
-            "cost": 10926,
-            "conv": 18
-          },
-          {
-            "date": "2026-09-24",
-            "media": "Meta",
-            "impressions": 1239,
-            "reach": 1029,
-            "clicks": 42,
-            "cost": 12524,
-            "conv": 32
-          },
-          {
-            "date": "2026-10-10",
-            "media": "Meta",
-            "impressions": 397,
-            "reach": 366,
-            "clicks": 13,
-            "cost": 4254,
-            "conv": 10
-          },
-          {
-            "date": "2026-09-28",
-            "media": "Meta",
-            "impressions": 1277,
-            "reach": 1262,
-            "clicks": 39,
-            "cost": 4215,
-            "conv": 2
-          },
-          {
-            "date": "2026-09-28",
-            "media": "Meta",
-            "impressions": 856,
-            "reach": 801,
-            "clicks": 28,
-            "cost": 3946,
-            "conv": 5
-          },
-          {
-            "date": "2026-10-08",
-            "media": "Meta",
-            "impressions": 738,
-            "reach": 678,
-            "clicks": 26,
-            "cost": 6870,
-            "conv": 18
-          },
-          {
-            "date": "2026-10-05",
-            "media": "Meta",
-            "impressions": 860,
-            "reach": 804,
-            "clicks": 26,
-            "cost": 8120,
-            "conv": 19
-          },
-          {
-            "date": "2026-10-08",
-            "media": "Meta",
-            "impressions": 517,
-            "reach": 420,
-            "clicks": 15,
-            "cost": 6616,
-            "conv": 15
           },
           {
             "date": "2026-09-30",
@@ -1246,84 +670,12 @@
             "conv": 5
           },
           {
-            "date": "2026-09-22",
-            "media": "Meta",
-            "impressions": 1423,
-            "reach": 1121,
-            "clicks": 40,
-            "cost": 14144,
-            "conv": 28
-          },
-          {
-            "date": "2026-10-09",
-            "media": "Meta",
-            "impressions": 1298,
-            "reach": 1161,
-            "clicks": 41,
-            "cost": 12744,
-            "conv": 29
-          },
-          {
-            "date": "2026-10-05",
-            "media": "Meta",
-            "impressions": 325,
-            "reach": 301,
-            "clicks": 15,
-            "cost": 2305,
-            "conv": 4
-          },
-          {
-            "date": "2026-10-13",
-            "media": "Meta",
-            "impressions": 253,
-            "reach": 227,
-            "clicks": 8,
-            "cost": 2604,
-            "conv": 6
-          },
-          {
-            "date": "2026-10-02",
-            "media": "Meta",
-            "impressions": 687,
-            "reach": 608,
-            "clicks": 22,
-            "cost": 7414,
-            "conv": 16
-          },
-          {
             "date": "2026-09-30",
             "media": "Meta",
             "impressions": 147,
             "reach": 138,
             "clicks": 4,
             "cost": 904,
-            "conv": 2
-          },
-          {
-            "date": "2026-09-28",
-            "media": "Meta",
-            "impressions": 154,
-            "reach": 147,
-            "clicks": 4,
-            "cost": 1588,
-            "conv": 3
-          },
-          {
-            "date": "2026-10-02",
-            "media": "Meta",
-            "impressions": 116,
-            "reach": 111,
-            "clicks": 5,
-            "cost": 599,
-            "conv": 2
-          },
-          {
-            "date": "2026-10-08",
-            "media": "Meta",
-            "impressions": 83,
-            "reach": 75,
-            "clicks": 3,
-            "cost": 596,
             "conv": 2
           },
           {
@@ -1336,148 +688,13 @@
             "conv": 2
           },
           {
-            "date": "2026-10-03",
+            "date": "2026-09-29",
             "media": "Meta",
-            "impressions": 908,
-            "reach": 831,
-            "clicks": 23,
-            "cost": 7879,
-            "conv": 16
-          },
-          {
-            "date": "2026-10-01",
-            "media": "Meta",
-            "impressions": 964,
-            "reach": 909,
-            "clicks": 25,
-            "cost": 8494,
-            "conv": 17
-          },
-          {
-            "date": "2026-10-06",
-            "media": "Meta",
-            "impressions": 92,
-            "reach": 84,
-            "clicks": 2,
-            "cost": 504,
-            "conv": 0
-          },
-          {
-            "date": "2026-10-06",
-            "media": "Meta",
-            "impressions": 579,
-            "reach": 509,
-            "clicks": 15,
-            "cost": 3085,
-            "conv": 5
-          },
-          {
-            "date": "2026-10-16",
-            "media": "Meta",
-            "impressions": 341,
-            "reach": 319,
-            "clicks": 7,
-            "cost": 3267,
-            "conv": 6
-          },
-          {
-            "date": "2026-10-06",
-            "media": "Meta",
-            "impressions": 544,
-            "reach": 511,
-            "clicks": 12,
-            "cost": 5541,
-            "conv": 9
-          },
-          {
-            "date": "2026-10-01",
-            "media": "Meta",
-            "impressions": 834,
-            "reach": 781,
-            "clicks": 20,
-            "cost": 7988,
-            "conv": 11
-          },
-          {
-            "date": "2026-10-01",
-            "media": "Meta",
-            "impressions": 267,
-            "reach": 241,
-            "clicks": 5,
-            "cost": 1113,
-            "conv": 3
-          },
-          {
-            "date": "2026-09-26",
-            "media": "Meta",
-            "impressions": 108,
-            "reach": 56,
-            "clicks": 2,
-            "cost": 435,
-            "conv": 1
-          },
-          {
-            "date": "2026-09-17",
-            "media": "Meta",
-            "impressions": 1840,
-            "reach": 1626,
-            "clicks": 36,
-            "cost": 15341,
-            "conv": 28
-          },
-          {
-            "date": "2026-10-03",
-            "media": "Meta",
-            "impressions": 341,
-            "reach": 305,
-            "clicks": 7,
-            "cost": 1545,
-            "conv": 4
-          },
-          {
-            "date": "2026-10-10",
-            "media": "Meta",
-            "impressions": 1172,
-            "reach": 1115,
-            "clicks": 24,
-            "cost": 8610,
-            "conv": 21
-          },
-          {
-            "date": "2026-10-02",
-            "media": "Meta",
-            "impressions": 366,
-            "reach": 213,
-            "clicks": 6,
-            "cost": 3340,
-            "conv": 1
-          },
-          {
-            "date": "2026-10-14",
-            "media": "Meta",
-            "impressions": 487,
-            "reach": 455,
-            "clicks": 10,
-            "cost": 4702,
-            "conv": 6
-          },
-          {
-            "date": "2026-09-17",
-            "media": "Meta",
-            "impressions": 70,
-            "reach": 70,
-            "clicks": 1,
-            "cost": 544,
-            "conv": 1
-          },
-          {
-            "date": "2026-10-04",
-            "media": "Meta",
-            "impressions": 437,
-            "reach": 383,
-            "clicks": 6,
-            "cost": 3888,
-            "conv": 2
+            "impressions": 977,
+            "reach": 879,
+            "clicks": 43,
+            "cost": 10892,
+            "conv": 29
           },
           {
             "date": "2026-09-29",
@@ -1489,15 +706,6 @@
             "conv": 0
           },
           {
-            "date": "2026-10-04",
-            "media": "Meta",
-            "impressions": 1782,
-            "reach": 1695,
-            "clicks": 24,
-            "cost": 11118,
-            "conv": 16
-          },
-          {
             "date": "2026-09-29",
             "media": "Meta",
             "impressions": 405,
@@ -1507,49 +715,40 @@
             "conv": 5
           },
           {
-            "date": "2026-10-03",
+            "date": "2026-09-28",
             "media": "Meta",
-            "impressions": 528,
-            "reach": 423,
-            "clicks": 9,
-            "cost": 5141,
-            "conv": 6
+            "impressions": 414,
+            "reach": 322,
+            "clicks": 23,
+            "cost": 5479,
+            "conv": 18
           },
           {
-            "date": "2026-09-24",
+            "date": "2026-09-28",
             "media": "Meta",
-            "impressions": 1608,
-            "reach": 773,
-            "clicks": 17,
-            "cost": 2603,
-            "conv": 5
-          },
-          {
-            "date": "2026-10-04",
-            "media": "Meta",
-            "impressions": 218,
-            "reach": 203,
-            "clicks": 3,
-            "cost": 1409,
+            "impressions": 1277,
+            "reach": 1262,
+            "clicks": 39,
+            "cost": 4215,
             "conv": 2
           },
           {
-            "date": "2026-09-23",
+            "date": "2026-09-28",
             "media": "Meta",
-            "impressions": 272,
-            "reach": 117,
-            "clicks": 2,
-            "cost": 194,
-            "conv": 0
+            "impressions": 856,
+            "reach": 801,
+            "clicks": 28,
+            "cost": 3946,
+            "conv": 5
           },
           {
-            "date": "2026-10-05",
+            "date": "2026-09-28",
             "media": "Meta",
-            "impressions": 141,
-            "reach": 132,
-            "clicks": 1,
-            "cost": 555,
-            "conv": 1
+            "impressions": 154,
+            "reach": 147,
+            "clicks": 4,
+            "cost": 1588,
+            "conv": 3
           },
           {
             "date": "2026-09-28",
@@ -1561,6 +760,96 @@
             "conv": 2
           },
           {
+            "date": "2026-09-27",
+            "media": "Meta",
+            "impressions": 1806,
+            "reach": 1243,
+            "clicks": 62,
+            "cost": 15500,
+            "conv": 43
+          },
+          {
+            "date": "2026-09-27",
+            "media": "Meta",
+            "impressions": 752,
+            "reach": 267,
+            "clicks": 2,
+            "cost": 476,
+            "conv": 1
+          },
+          {
+            "date": "2026-09-26",
+            "media": "Meta",
+            "impressions": 1096,
+            "reach": 932,
+            "clicks": 49,
+            "cost": 10502,
+            "conv": 36
+          },
+          {
+            "date": "2026-09-26",
+            "media": "Meta",
+            "impressions": 108,
+            "reach": 56,
+            "clicks": 2,
+            "cost": 435,
+            "conv": 1
+          },
+          {
+            "date": "2026-09-25",
+            "media": "Meta",
+            "impressions": 1140,
+            "reach": 910,
+            "clicks": 43,
+            "cost": 13194,
+            "conv": 35
+          },
+          {
+            "date": "2026-09-24",
+            "media": "Meta",
+            "impressions": 1239,
+            "reach": 1029,
+            "clicks": 42,
+            "cost": 12524,
+            "conv": 32
+          },
+          {
+            "date": "2026-09-24",
+            "media": "Meta",
+            "impressions": 1608,
+            "reach": 773,
+            "clicks": 17,
+            "cost": 2603,
+            "conv": 5
+          },
+          {
+            "date": "2026-09-23",
+            "media": "Meta",
+            "impressions": 1321,
+            "reach": 1054,
+            "clicks": 60,
+            "cost": 16040,
+            "conv": 34
+          },
+          {
+            "date": "2026-09-23",
+            "media": "Meta",
+            "impressions": 272,
+            "reach": 117,
+            "clicks": 2,
+            "cost": 194,
+            "conv": 0
+          },
+          {
+            "date": "2026-09-22",
+            "media": "Meta",
+            "impressions": 1423,
+            "reach": 1121,
+            "clicks": 40,
+            "cost": 14144,
+            "conv": 28
+          },
+          {
             "date": "2026-09-22",
             "media": "Meta",
             "impressions": 350,
@@ -1570,12 +859,57 @@
             "conv": 0
           },
           {
-            "date": "2026-09-27",
+            "date": "2026-09-21",
             "media": "Meta",
-            "impressions": 752,
-            "reach": 267,
-            "clicks": 2,
-            "cost": 476,
+            "impressions": 1257,
+            "reach": 1095,
+            "clicks": 51,
+            "cost": 14790,
+            "conv": 37
+          },
+          {
+            "date": "2026-09-20",
+            "media": "Meta",
+            "impressions": 1548,
+            "reach": 1277,
+            "clicks": 57,
+            "cost": 19766,
+            "conv": 49
+          },
+          {
+            "date": "2026-09-19",
+            "media": "Meta",
+            "impressions": 849,
+            "reach": 727,
+            "clicks": 33,
+            "cost": 11727,
+            "conv": 28
+          },
+          {
+            "date": "2026-09-18",
+            "media": "Meta",
+            "impressions": 1073,
+            "reach": 967,
+            "clicks": 53,
+            "cost": 17308,
+            "conv": 45
+          },
+          {
+            "date": "2026-09-17",
+            "media": "Meta",
+            "impressions": 1840,
+            "reach": 1626,
+            "clicks": 36,
+            "cost": 15341,
+            "conv": 28
+          },
+          {
+            "date": "2026-09-17",
+            "media": "Meta",
+            "impressions": 70,
+            "reach": 70,
+            "clicks": 1,
+            "cost": 544,
             "conv": 1
           }
         ],
