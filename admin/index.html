@@ -64,7 +64,7 @@
           </button>
           
           <a id="preview-client-link" href="#" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm">
-            <span>👁️ <span id="preview-filename-text">coway-perfectmall.html</span> 미리보기</span>
+            <span>👁️ <span id="preview-filename-text">noahuniversecompany.html</span> 미리보기</span>
           </a>
 
           <button onclick="handleLogout()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-100 rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm ml-2">
@@ -98,7 +98,7 @@
             <div>
               <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">연결된 HTML 파일명</label>
               <div class="flex items-center space-x-1">
-                <input type="text" id="edit-client-html-file" list="repo-html-datalist" class="bg-slate-50 border border-slate-300 font-mono text-xs text-slate-800 rounded-lg px-2.5 py-1.5 w-48 focus:outline-none focus:ring-2 focus:ring-slate-900" placeholder="coway-perfectmall.html">
+                <input type="text" id="edit-client-html-file" list="repo-html-datalist" class="bg-slate-50 border border-slate-300 font-mono text-xs text-slate-800 rounded-lg px-2.5 py-1.5 w-48 focus:outline-none focus:ring-2 focus:ring-slate-900" placeholder="noahuniversecompany.html">
                 <datalist id="repo-html-datalist"></datalist>
                 <button onclick="updateClientHtmlFilename()" class="px-2.5 py-1.5 text-xs font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-lg transition">수정</button>
               </div>
@@ -314,31 +314,14 @@
     ];
 
     const defaultDatabase = {
-      "코웨이 퍼펙트몰": {
-        htmlFilename: "coway-perfectmall.html",
-        months: {
-          "1차 (2026.09.22 ~ 2026.10.13)": {
-            comments: {
-              ALL: {
-                strategy: "<h4 class='text-sm font-bold text-slate-900 mb-1.5'>퍼포먼스 마케팅 종합 성과 평가</h4>\n<p>총 집행비용은 <b class='text-slate-900'>44.3만 원 (VAT포함)</b>으로 숏폼 동영상 크리에이티브 중심 집중 집행되었습니다.</p>\n<p class='mt-1'><mark class='bg-yellow-200 px-1 rounded font-semibold'>인스타그램 프로필 방문 및 링크 클릭률 3.79%</mark>의 높은 반응도를 유지했습니다.</p>",
-                anomaly: "인스타그램 숏폼 비디오 소재 A/B 테스트 진행 (30초 vs 60초)\n30~59초 소재에서 전환율 76% 집중 발생 확인에 따라 예산 80% 집중 배정 완료"
-              },
-              Naver: { strategy: "", anomaly: "" },
-              Meta: { strategy: "", anomaly: "" },
-              Google: { strategy: "", anomaly: "" }
-            },
-            strategyComment: "",
-            anomalyComment: "",
-            rawDataset: [],
-            creatives: [],
-            columns: standardColumns.map(c => ({ ...c }))
-          }
-        }
+      "노아유니버스컴퍼니": {
+        htmlFilename: "noahuniversecompany.html",
+        months: {}
       }
     };
 
     let db = {};
-    let currentClient = "코웨이 퍼펙트몰";
+    let currentClient = "노아유니버스컴퍼니";
     let currentPeriod = "";
     let currentCommentMedia = 'ALL';
     let repoHtmlFiles = [];
@@ -349,7 +332,7 @@
       }
     });
 
-    // 🌟 원격 GitHub database.json 우선 로드
+    // 🌟 원격 GitHub database.json 우선 로드 및 고객사/기간 자동 매핑
     async function showAdminPanel() {
       document.getElementById('login-modal').classList.add('hidden');
       document.getElementById('admin-main-content').classList.remove('hidden');
@@ -357,8 +340,13 @@
       
       await loadDatabase();
 
-      if (!currentClient || !db[currentClient]) {
-        currentClient = Object.keys(db).find(k => db[k].htmlFilename === 'noahuniversecompany.html') || Object.keys(db)[0];
+      const clientKeys = Object.keys(db);
+      if (clientKeys.length > 0) {
+        // noahuniversecompany.html과 연결된 고객사 또는 한글 '노아'가 포함된 키 우선 선택
+        const matchedKey = clientKeys.find(k => (db[k].htmlFilename || '').toLowerCase() === 'noahuniversecompany.html')
+                        || clientKeys.find(k => k.includes('노아'))
+                        || clientKeys[0];
+        currentClient = matchedKey;
       }
       
       renderClientSelect();
@@ -368,15 +356,19 @@
       syncRepoHtmlFiles(false);
     }
 
+    // 🌟 admin 폴더 기준 상위(../database.json) 경로 우선 조회
     async function loadDatabase() {
       let remoteDb = null;
       try {
-        const response = await fetch('./database.json?t=' + new Date().getTime());
+        let response = await fetch('../database.json?t=' + new Date().getTime());
+        if (!response.ok) {
+          response = await fetch('./database.json?t=' + new Date().getTime());
+        }
         if (response.ok) {
           remoteDb = await response.json();
         }
       } catch (e) {
-        console.warn("⚠️ 원격 database.json 로드 실패, 로컬 캐시를 조회합니다.");
+        console.warn("⚠️ 원격 database.json 로드 실패, 로컬 캐시를 조회합니다.", e);
       }
 
       if (remoteDb) {
@@ -418,6 +410,7 @@
       });
     }
 
+    // 🌟 실제 배포된 기간 탭 우선 매핑 및 1차, 2차, 3차 원클릭 전환
     function renderPeriodNav() {
       const container = document.getElementById('admin-period-buttons');
       container.innerHTML = '';
@@ -427,7 +420,7 @@
 
       let periods = Object.keys(db[currentClient].months);
       if (periods.length === 0) {
-        const initialPeriod = "1차 집행 기간";
+        const initialPeriod = "1차 (집행 기간)";
         db[currentClient].months[initialPeriod] = { 
           comments: {
             ALL: { strategy: '', anomaly: '' },
@@ -441,8 +434,9 @@
         saveDatabase();
       }
 
+      // 실제 데이터가 있는 기간을 우선 활성화 (신규 집행 기간 덮어쓰기 방지)
       if (!currentPeriod || !periods.includes(currentPeriod)) {
-        currentPeriod = periods[0];
+        currentPeriod = periods.find(p => p !== "신규 집행 기간") || periods[0];
       }
 
       document.getElementById('active-period-label').innerText = currentPeriod;
@@ -701,7 +695,7 @@
 
           let addedCount = 0;
           repoHtmlFiles.forEach(file => {
-            const exists = Object.values(db).some(c => c.htmlFilename === file);
+            const exists = Object.values(db).some(c => (c.htmlFilename || '').toLowerCase() === file.toLowerCase());
             if (!exists) {
               const defaultName = file.replace(/\.html$/i, '');
               let finalName = defaultName;
@@ -711,19 +705,7 @@
               }
               db[finalName] = {
                 htmlFilename: file,
-                months: {
-                  "1차 집행 기간": {
-                    comments: {
-                      ALL: { strategy: "<p>전략 총평을 입력하세요.</p>", anomaly: "특이사항을 입력하세요." },
-                      Naver: { strategy: "", anomaly: "" },
-                      Meta: { strategy: "", anomaly: "" },
-                      Google: { strategy: "", anomaly: "" }
-                    },
-                    rawDataset: [],
-                    creatives: [],
-                    columns: standardColumns.map(c => ({ ...c }))
-                  }
-                }
+                months: {}
               };
               addedCount++;
             }
@@ -920,19 +902,7 @@
           const defaultFilename = `${trimmed.toLowerCase()}.html`;
           db[trimmed] = {
             htmlFilename: defaultFilename,
-            months: {
-              "1차 집행 기간": {
-                comments: {
-                  ALL: { strategy: "<p>신규 고객사 전략 총평 코멘트를 입력하세요.</p>", anomaly: "특이사항을 입력하세요." },
-                  Naver: { strategy: "", anomaly: "" },
-                  Meta: { strategy: "", anomaly: "" },
-                  Google: { strategy: "", anomaly: "" }
-                },
-                rawDataset: [],
-                creatives: [],
-                columns: standardColumns.map(c => ({ ...c }))
-              }
-            }
+            months: {}
           };
           saveDatabase();
           renderClientSelect();
@@ -1174,7 +1144,7 @@
       return rows;
     }
 
-    // 🌟 네이버 1행 메타데이터 스킵 및 다차원 키워드 일별 자동 합산 파서
+    // 🌟 네이버 1행 메타데이터 자동 스킵 및 키워드별 수치 일별 집계 파서
     function handleFileUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1217,7 +1187,6 @@
           const headerStr = Object.keys(rowsData[0] || {}).join(' ');
           const isNaverReport = headerStr.includes('일별') || headerStr.includes('키워드') || headerStr.includes('총비용') || headerStr.includes('평균노출순위');
 
-          // 다차원(키워드별 등) 데이터를 [날짜_매체] 기준으로 일별 합산 집계
           const dailyAggMap = {};
 
           rowsData.forEach(row => {
@@ -1289,7 +1258,6 @@
               db[currentClient].months[currentPeriod].rawDataset = [];
             }
             
-            // 기존 데이터셋에 일치하는 [날짜+매체] 행이 있으면 덮어쓰고, 없으면 추가 병합
             let targetDataset = db[currentClient].months[currentPeriod].rawDataset;
             newRows.forEach(nr => {
               const existIdx = targetDataset.findIndex(r => r.date === nr.date && r.media === nr.media);
