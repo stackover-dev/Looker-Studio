@@ -277,8 +277,9 @@
             
             <span class="text-slate-300">|</span>
 
-            <button onclick="resetColumnsToDefault()" class="px-2.5 py-1.5 text-[11px] font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition" title="커스텀 열 설정을 초기화하고 기본 5개 지표로 복원">
-              ↺ 열 기본값 복원
+            <!-- ★ 사용자 요청 반영: 쓸모없는 '기본값 복원'을 유용한 '현재 데이터 전체 삭제'로 교체 -->
+            <button onclick="clearCurrentPeriodData()" class="px-2.5 py-1.5 text-[11px] font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition" title="현재 회차의 등록된 모든 데이터를 삭제합니다">
+              🗑️ 데이터 전체 삭제
             </button>
           </div>
         </div>
@@ -693,13 +694,14 @@
       }
     }
 
-    function resetColumnsToDefault() {
-      const warningMessage = "⚠️ [경고] 정말 지표 열을 기본값으로 복원하시겠습니까?\n\n현재 고객사에서 삭제한 열(비용 등)이나 새로 추가한 커스텀 지표 열 설정이 모두 사라지고, 기본 5대 지표(노출수, 도달수, 클릭수, 비용, 전환수)로 초기화됩니다.\n\n계속 진행하시려면 [확인]을 누르세요.";
+    // ★ 기능 업데이트: '열 기본값 복원' -> '현재 데이터 전체 삭제'로 교체
+    function clearCurrentPeriodData() {
+      const warningMessage = `⚠️ [경고] 정말 [${currentPeriod}] 회차에 등록된 '모든 엑셀 데이터'를 삭제하시겠습니까?\n\n(참고: 지표 열 설정은 유지되며, 아래 테이블의 데이터 행만 싹 비워집니다. 잘못 올린 파일을 초기화하고 다시 올릴 때 유용합니다.)\n\n계속 진행하시려면 [확인]을 누르세요.`;
       if (confirm(warningMessage)) {
-        db[currentClient].months[currentPeriod].columns = standardColumns.map(c => ({ ...c }));
+        db[currentClient].months[currentPeriod].rawDataset = [];
         saveDatabase();
         renderAdminPanel();
-        alert("✅ 지표 열 구성이 기본값(노출수, 도달수, 클릭수, 비용, 전환수)으로 복원되었습니다.");
+        alert("✅ 현재 회차의 데이터가 모두 깔끔하게 삭제되었습니다.");
       }
     }
 
@@ -1118,7 +1120,7 @@
       renderAdminPanel();
     }
 
-    // 🌟 AI 스코어링 알고리즘이 적용된 헤더 자동 인식 업로드 파서
+    // ★ AI 스코어링 알고리즘 및 파일명 교차 검증 로직이 반영된 최신 파서
     function handleFileUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1128,14 +1130,24 @@
       reader.onload = function(e) {
         try {
           const data = new Uint8Array(e.target.result);
-          // CSV, XLSX 무관하게 SheetJS로 바이너리 파싱 (인코딩 자동 보정)
           const workbook = XLSX.read(data, { type: 'array' });
           const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
           let rawMatrix = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false });
           let headerRowIndex = -1;
           
-          // ★ AI 헤더 판별 스코어링 로직 (메타, 네이버, 구글 모든 양식 대응)
+          // 1. 파일명을 통한 1차 매체 자동 유추
+          const fileNameLower = file.name.toLowerCase();
+          let detectedMediaByFile = null;
+          if (fileNameLower.includes('naver') || fileNameLower.includes('네이버') || fileNameLower.includes('다차원')) {
+            detectedMediaByFile = 'Naver';
+          } else if (fileNameLower.includes('google') || fileNameLower.includes('구글') || fileNameLower.includes('ads')) {
+            detectedMediaByFile = 'Google';
+          } else if (fileNameLower.includes('meta') || fileNameLower.includes('메타') || fileNameLower.includes('facebook') || fileNameLower.includes('페이스북')) {
+            detectedMediaByFile = 'Meta';
+          }
+          
+          // 2. AI 스코어링 기반 실제 데이터 헤더 위치 탐색
           const headerKeywords = ['노출', '클릭', '비용', '지출', '결과', '전환', '일별', '시작일', '보고 시작', '캠페인', 'date', 'day', 'impressions', 'clicks', 'cost', 'amount', 'campaign'];
 
           let maxScore = 0;
@@ -1150,7 +1162,6 @@
               });
             });
 
-            // 핵심 키워드가 최소 2개 이상 포함된 줄 중 가장 스코어가 높은 줄을 데이터의 진짜 헤더로 설정
             if (score > maxScore && score >= 2) { 
               maxScore = score;
               headerRowIndex = i;
@@ -1174,35 +1185,47 @@
             return isNaN(num) ? 0 : num;
           };
 
-          const headerStr = Object.keys(rowsData[0] || {}).join(' ');
-          const isNaverReport = headerStr.includes('일별') || headerStr.includes('키워드') || headerStr.includes('총비용') || headerStr.includes('평균노출순위');
+          // 3. 헤더 컬럼 특성을 통한 2차 매체 자동 유추 (교차 검증)
+          const headerStr = Object.keys(rowsData[0] || {}).join(' ').toLowerCase();
+          const isNaverReport = headerStr.includes('일별') || headerStr.includes('검색어') || headerStr.includes('평균노출순위') || headerStr.includes('확장소재') || headerStr.includes('그룹');
+          const isGoogleReport = headerStr.includes('통화') || headerStr.includes('상호작용') || headerStr.includes('동영상');
+
+          let defaultMediaForFile = 'Meta'; // 최종 기본값
+          
+          if (detectedMediaByFile) {
+            defaultMediaForFile = detectedMediaByFile;
+          } else if (isNaverReport) {
+            defaultMediaForFile = 'Naver';
+          } else if (isGoogleReport) {
+            defaultMediaForFile = 'Google';
+          }
 
           const dailyAggMap = {};
 
           rowsData.forEach(row => {
             let dateVal = '';
-            let mediaVal = isNaverReport ? 'Naver' : 'Meta';
+            // ★ AI가 판별한 기본 매체를 초기값으로 할당
+            let mediaVal = defaultMediaForFile; 
             let imp = 0, reach = 0, clicks = 0, cost = 0, conv = 0;
 
             Object.keys(row).forEach(key => {
               const lk = key.toLowerCase().trim();
               const val = row[key];
 
-              // 매체 판단
+              // 4. 행 내부 데이터 특징으로 3차 매체 유추 (가장 확실함)
               if (lk.includes('캠페인') || lk.includes('매체') || lk.includes('광고 세트') || lk.includes('광고 이름') || lk.includes('campaign')) {
                 const sv = String(val).toLowerCase();
                 if (sv.includes('naver') || sv.includes('네이버')) mediaVal = 'Naver';
                 else if (sv.includes('google') || sv.includes('구글') || sv.includes('youtube')) mediaVal = 'Google';
+                else if (sv.includes('meta') || sv.includes('페이스북') || sv.includes('인스타그램')) mediaVal = 'Meta';
               }
 
-              // ★ 더욱 확장된 날짜 컬럼명 매칭 로직
               if (lk === '보고 시작' || lk === '시작일' || lk === 'date' || lk === 'day' || lk === '날짜' || lk === '일자' || lk === '일별' || lk === '일' || lk === 'reporting starts') {
                 if (!dateVal && val) {
                   dateVal = String(val).trim();
                 }
               }
 
-              // ★ 더욱 확장된 수치 데이터 추출 로직
               if (lk === '노출' || lk === '노출수' || lk === 'impressions' || lk === 'impr.') imp = parseNum(val);
               else if (lk === '도달' || lk === '도달수' || lk === 'reach') reach = parseNum(val);
               else if (lk === '클릭(전체)' || lk === '링크 클릭' || lk === '클릭수' || lk === '클릭' || lk === 'clicks') {
@@ -1266,7 +1289,6 @@
 
             saveDatabase();
             
-            // 데이터 업로드 성공 시 인식된 매체로 탭 자동 전환
             const uploadedMedia = newRows[0].media;
             if (uploadedMedia === 'Meta' || uploadedMedia === 'Naver' || uploadedMedia === 'Google') {
               changeCommentMedia(uploadedMedia);
@@ -1286,7 +1308,6 @@
         event.target.value = '';
       };
 
-      // 바이너리로 읽어 인코딩 문제를 원천 차단
       reader.readAsArrayBuffer(file);
     }
 
@@ -1318,7 +1339,6 @@
         saveDatabase();
         document.getElementById('bulk-paste-area').value = '';
         
-        // 수동 붙여넣기 시 첫 행 매체명 인식하여 탭 자동 전환
         const pastedMedia = parsedRows[0].media;
         if (pastedMedia === 'Meta' || pastedMedia === 'Naver' || pastedMedia === 'Google') {
           changeCommentMedia(pastedMedia);
