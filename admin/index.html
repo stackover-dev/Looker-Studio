@@ -142,6 +142,14 @@
 
       </div>
 
+      <!-- 🌟 매체별 탭 신설 -->
+      <div class="flex items-center space-x-3 mb-2">
+        <span class="text-sm font-bold text-slate-800">✍️ 매체별 코멘트 분리 작성:</span>
+        <div id="comment-media-tabs" class="flex space-x-1 border border-slate-300 bg-white p-1 rounded-lg shadow-sm">
+          <!-- 탭 버튼이 동적으로 렌더링 됩니다 -->
+        </div>
+      </div>
+
       <!-- 2. 최상단 HTML 편집 가능한 전략 코멘트 박스 -->
       <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
@@ -150,7 +158,7 @@
               <span>📝</span>
               <span>최상단 전략 HTML 코멘트 박스 (HTML Comment Box)</span>
             </h2>
-            <p class="text-[11px] text-slate-500 mt-0.5">클라이언트 보고서 최상단에 노출되는 서식 태그(HTML) 적용 가능 총평 영역입니다.</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">클라이언트 보고서 상단 탭 클릭 시 연동되는 해당 매체 전용 전략 코멘트입니다.</p>
           </div>
 
           <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1.5 rounded-xl border border-slate-200">
@@ -180,9 +188,9 @@
         
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
           <label class="block text-xs font-bold text-amber-800 mb-1.5">
-            ⚡ 운영 이슈 및 최적화 대응 내역 (줄바꿈으로 리스트화)
+            ⚡ 운영 이슈 및 최적화 대응 내역 (선택 매체 연동 / 줄바꿈으로 리스트화)
           </label>
-          <textarea id="edit-anomaly-comment" rows="4" onchange="saveCommentsFromAdmin()" class="w-full flex-grow text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="CPC 급등 대응, 소재 교체 등 운영 이슈를 줄바꿈(Enter)으로 구분해 입력하세요."></textarea>
+          <textarea id="edit-anomaly-comment" rows="4" oninput="handleCommentInput()" class="w-full flex-grow text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="CPC 급등 대응, 소재 교체 등 운영 이슈를 줄바꿈(Enter)으로 구분해 입력하세요."></textarea>
         </div>
 
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
@@ -250,7 +258,7 @@
         </div>
       </div>
 
-      <!-- 6. 등록된 일별 매체 데이터 (열 순서 및 위치 완벽 조정) -->
+      <!-- 6. 등록된 일별 매체 데이터 -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50">
           <div class="flex items-center space-x-2">
@@ -258,7 +266,6 @@
             <span class="text-[10px] text-slate-400">| 컬럼명 우측 ✕ 클릭 시 해당 열이 즉시 삭제됩니다</span>
           </div>
           
-          <!-- 🌟 [수정됨] 우측 버튼 그룹: 기본값 복원은 가장 오른쪽 끝으로 격리 배치 -->
           <div class="flex items-center space-x-2">
             <button onclick="addNewColumnPrompt()" class="px-2.5 py-1.5 text-xs font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 rounded-lg transition shadow-sm flex items-center space-x-1">
               <span>+ 새 지표(열) 추가</span>
@@ -269,7 +276,6 @@
             
             <span class="text-slate-300">|</span>
 
-            <!-- 🌟 [가장 오른쪽 배치] 실수 방지용 테두리 및 경고 알림 연결 -->
             <button onclick="resetColumnsToDefault()" class="px-2.5 py-1.5 text-[11px] font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition" title="커스텀 열 설정을 초기화하고 기본 5개 지표로 복원">
               ↺ 열 기본값 복원
             </button>
@@ -307,13 +313,23 @@
       { key: 'conv', label: '전환수(CV)', width: 'w-20', isConv: true }
     ];
 
+    // 기본 데이터 구조 확장 (comments 객체로 매체별 분리)
     const defaultDatabase = {
       "코웨이 퍼펙트몰": {
         htmlFilename: "coway-perfectmall.html",
         months: {
           "2026.09.22 ~ 2026.10.13": {
-            strategyComment: "<h4 class='text-sm font-bold text-slate-900 mb-1.5'>퍼포먼스 마케팅 종합 성과 평가</h4>\n<p>총 집행비용은 <b class='text-slate-900'>44.3만 원 (VAT포함)</b>으로 숏폼 동영상 크리에이티브 중심 집중 집행되었습니다.</p>\n<p class='mt-1'><mark class='bg-yellow-200 px-1 rounded font-semibold'>인스타그램 프로필 방문 및 링크 클릭률 3.79%</mark>의 높은 반응도를 유지했습니다.</p>",
-            anomalyComment: "인스타그램 숏폼 비디오 소재 A/B 테스트 진행 (30초 vs 60초)\n30~59초 소재에서 전환율 76% 집중 발생 확인에 따라 예산 80% 집중 배정 완료",
+            comments: {
+              ALL: {
+                strategy: "<h4 class='text-sm font-bold text-slate-900 mb-1.5'>퍼포먼스 마케팅 종합 성과 평가</h4>\n<p>총 집행비용은 <b class='text-slate-900'>44.3만 원 (VAT포함)</b>으로 숏폼 동영상 크리에이티브 중심 집중 집행되었습니다.</p>\n<p class='mt-1'><mark class='bg-yellow-200 px-1 rounded font-semibold'>인스타그램 프로필 방문 및 링크 클릭률 3.79%</mark>의 높은 반응도를 유지했습니다.</p>",
+                anomaly: "인스타그램 숏폼 비디오 소재 A/B 테스트 진행 (30초 vs 60초)\n30~59초 소재에서 전환율 76% 집중 발생 확인에 따라 예산 80% 집중 배정 완료"
+              },
+              Naver: { strategy: "", anomaly: "" },
+              Meta: { strategy: "", anomaly: "" },
+              Google: { strategy: "", anomaly: "" }
+            },
+            strategyComment: "", // 하위 호환성 유지용 빈값
+            anomalyComment: "", 
             rawDataset: [],
             creatives: [],
             columns: [
@@ -331,6 +347,7 @@
     let db = {};
     let currentClient = "코웨이 퍼펙트몰";
     let currentPeriod = "2026.09.22 ~ 2026.10.13";
+    let currentCommentMedia = 'ALL'; // 매체별 탭 제어용 전역 변수
     let repoHtmlFiles = [];
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -351,6 +368,35 @@
       renderAdminPanel();
       
       syncRepoHtmlFiles(false);
+    }
+
+    // 🌟 [신설] 매체별 탭 렌더링
+    function renderCommentTabs() {
+      const tabs = ['ALL', 'Naver', 'Meta', 'Google'];
+      const labels = { ALL: '통합(전체)', Naver: '네이버 검색', Meta: '메타 (DA/SA)', Google: '구글 애즈' };
+      const container = document.getElementById('comment-media-tabs');
+      if (!container) return;
+      
+      container.innerHTML = tabs.map(t => {
+        const isActive = t === currentCommentMedia;
+        const btnClass = isActive 
+          ? "px-3 py-1.5 text-xs font-bold bg-slate-900 text-white rounded-md shadow-sm transition"
+          : "px-3 py-1.5 text-xs font-bold bg-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-200 rounded-md transition";
+        return `<button onclick="changeCommentMedia('${t}')" class="${btnClass}">${labels[t]}</button>`;
+      }).join('');
+    }
+
+    // 🌟 [신설] 매체 코멘트 탭 스위칭 로직
+    function changeCommentMedia(media) {
+      saveCommentsFromAdmin(); // 전환 전 현재 에디터 내용 저장
+      currentCommentMedia = media;
+      renderCommentTabs();
+      
+      // 해당 매체 코멘트 로드
+      const activeData = db[currentClient].months[currentPeriod].comments[currentCommentMedia] || { strategy: '', anomaly: '' };
+      document.getElementById('edit-strategy-comment').value = activeData.strategy || '';
+      document.getElementById('edit-anomaly-comment').value = activeData.anomaly || '';
+      updateLiveCommentPreview();
     }
 
     function getActiveColumns() {
@@ -405,7 +451,6 @@
       }
     }
 
-    // 🌟 [수정됨] 상세 확인 경고창 탑재 (실수 클릭 방지)
     function resetColumnsToDefault() {
       const warningMessage = "⚠️ [경고] 정말 지표 열을 기본값으로 복원하시겠습니까?\n\n현재 고객사에서 삭제한 열(비용 등)이나 새로 추가한 커스텀 지표 열 설정이 모두 사라지고, 기본 5대 지표(노출수, 도달수, 클릭수, 비용, 전환수)로 초기화됩니다.\n\n계속 진행하시려면 [확인]을 누르세요.";
       if (confirm(warningMessage)) {
@@ -445,8 +490,12 @@
                 htmlFilename: file,
                 months: {
                   "신규 집행 기간": {
-                    strategyComment: "<p>전략 총평을 입력하세요.</p>",
-                    anomalyComment: "특이사항을 입력하세요.",
+                    comments: {
+                      ALL: { strategy: "<p>전략 총평을 입력하세요.</p>", anomaly: "특이사항을 입력하세요." },
+                      Naver: { strategy: "", anomaly: "" },
+                      Meta: { strategy: "", anomaly: "" },
+                      Google: { strategy: "", anomaly: "" }
+                    },
                     rawDataset: [],
                     creatives: [],
                     columns: standardColumns.map(c => ({ ...c }))
@@ -512,6 +561,7 @@
       }
     }
 
+    // 🌟 [수정됨] 과거 데이터 스키마 무손실 마이그레이션 (comments 구조 삽입)
     function loadDatabase() {
       const saved = localStorage.getItem('MEDIA_REPORT_DB');
       if (saved) {
@@ -527,11 +577,18 @@
               };
             }
             Object.keys(db[client].months).forEach(periodKey => {
-              if (!db[client].months[periodKey].creatives) {
-                db[client].months[periodKey].creatives = [];
-              }
-              if (!db[client].months[periodKey].columns) {
-                db[client].months[periodKey].columns = standardColumns.map(c => ({ ...c }));
+              let month = db[client].months[periodKey];
+              if (!month.creatives) month.creatives = [];
+              if (!month.columns) month.columns = standardColumns.map(c => ({ ...c }));
+              
+              // 매체별 코멘트 구조가 없으면 레거시 데이터 기반 생성
+              if (!month.comments) {
+                month.comments = {
+                  ALL: { strategy: month.strategyComment || '', anomaly: month.anomalyComment || '' },
+                  Naver: { strategy: '', anomaly: '' },
+                  Meta: { strategy: '', anomaly: '' },
+                  Google: { strategy: '', anomaly: '' }
+                };
               }
             });
           });
@@ -682,6 +739,7 @@
 
     function changeClient(clientName) {
       currentClient = clientName;
+      currentCommentMedia = 'ALL'; // 고객 변경 시 통합 탭으로 초기화
       updateClientHtmlLinkDisplay();
       renderPeriodNav();
       renderAdminPanel();
@@ -697,8 +755,12 @@
             htmlFilename: defaultFilename,
             months: {
               "신규 집행 기간": {
-                strategyComment: "<p>신규 고객사 전략 총평 코멘트를 입력하세요.</p>",
-                anomalyComment: "특이사항을 입력하세요.",
+                comments: {
+                  ALL: { strategy: "<p>신규 고객사 전략 총평 코멘트를 입력하세요.</p>", anomaly: "특이사항을 입력하세요." },
+                  Naver: { strategy: "", anomaly: "" },
+                  Meta: { strategy: "", anomaly: "" },
+                  Google: { strategy: "", anomaly: "" }
+                },
                 rawDataset: [],
                 creatives: [],
                 columns: standardColumns.map(c => ({ ...c }))
@@ -721,7 +783,15 @@
 
       let periods = Object.keys(db[currentClient].months);
       if (periods.length === 0) {
-        db[currentClient].months["신규 집행 기간"] = { strategyComment: '', anomalyComment: '', rawDataset: [], creatives: [], columns: standardColumns.map(c => ({ ...c })) };
+        db[currentClient].months["신규 집행 기간"] = { 
+          comments: {
+            ALL: { strategy: '', anomaly: '' },
+            Naver: { strategy: '', anomaly: '' },
+            Meta: { strategy: '', anomaly: '' },
+            Google: { strategy: '', anomaly: '' }
+          },
+          rawDataset: [], creatives: [], columns: standardColumns.map(c => ({ ...c })) 
+        };
         periods.push("신규 집행 기간");
         saveDatabase();
       }
@@ -751,7 +821,15 @@
       if (periodName && periodName.trim()) {
         const trimmed = periodName.trim();
         if (!db[currentClient].months[trimmed]) {
-          db[currentClient].months[trimmed] = { strategyComment: '', anomalyComment: '', rawDataset: [], creatives: [], columns: standardColumns.map(c => ({ ...c })) };
+          db[currentClient].months[trimmed] = { 
+            comments: {
+              ALL: { strategy: '', anomaly: '' },
+              Naver: { strategy: '', anomaly: '' },
+              Meta: { strategy: '', anomaly: '' },
+              Google: { strategy: '', anomaly: '' }
+            },
+            rawDataset: [], creatives: [], columns: standardColumns.map(c => ({ ...c })) 
+          };
           saveDatabase();
           currentPeriod = trimmed;
           renderPeriodNav();
@@ -793,12 +871,18 @@
 
     function renderAdminPanel() {
       document.getElementById('active-period-label').innerText = currentPeriod;
-      const activeData = db[currentClient].months[currentPeriod] || { strategyComment: '', anomalyComment: '', rawDataset: [], creatives: [] };
-      document.getElementById('edit-strategy-comment').value = activeData.strategyComment || '';
-      document.getElementById('edit-anomaly-comment').value = activeData.anomalyComment || '';
+      renderCommentTabs();
+
+      const periodData = db[currentClient].months[currentPeriod] || {};
+      const activeComments = periodData.comments && periodData.comments[currentCommentMedia] 
+                             ? periodData.comments[currentCommentMedia] 
+                             : { strategy: '', anomaly: '' };
+
+      document.getElementById('edit-strategy-comment').value = activeComments.strategy || '';
+      document.getElementById('edit-anomaly-comment').value = activeComments.anomaly || '';
 
       updateLiveCommentPreview();
-      renderAdminDataTable(activeData.rawDataset || []);
+      renderAdminDataTable(periodData.rawDataset || []);
       renderCreativesList();
     }
 
@@ -829,12 +913,32 @@
       handleCommentInput();
     }
 
+    // 🌟 [수정됨] 매체별 코멘트를 올바른 경로(comments[media])에 저장하도록 연동
     function saveCommentsFromAdmin() {
       if (!db[currentClient].months[currentPeriod]) {
-        db[currentClient].months[currentPeriod] = { strategyComment: '', anomalyComment: '', rawDataset: [], creatives: [] };
+        db[currentClient].months[currentPeriod] = { rawDataset: [], creatives: [] };
       }
-      db[currentClient].months[currentPeriod].strategyComment = document.getElementById('edit-strategy-comment').value;
-      db[currentClient].months[currentPeriod].anomalyComment = document.getElementById('edit-anomaly-comment').value;
+      if (!db[currentClient].months[currentPeriod].comments) {
+        db[currentClient].months[currentPeriod].comments = {
+          ALL: { strategy: '', anomaly: '' },
+          Naver: { strategy: '', anomaly: '' },
+          Meta: { strategy: '', anomaly: '' },
+          Google: { strategy: '', anomaly: '' }
+        };
+      }
+      
+      const stratVal = document.getElementById('edit-strategy-comment').value;
+      const anomVal = document.getElementById('edit-anomaly-comment').value;
+
+      db[currentClient].months[currentPeriod].comments[currentCommentMedia].strategy = stratVal;
+      db[currentClient].months[currentPeriod].comments[currentCommentMedia].anomaly = anomVal;
+
+      // 이전 HTML 뷰어 구버전과 하위 호환성을 맞추기 위해 ALL은 기존 키에도 동시 저장
+      if (currentCommentMedia === 'ALL') {
+        db[currentClient].months[currentPeriod].strategyComment = stratVal;
+        db[currentClient].months[currentPeriod].anomalyComment = anomVal;
+      }
+
       saveDatabase();
     }
 

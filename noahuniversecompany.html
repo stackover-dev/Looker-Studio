@@ -275,22 +275,6 @@
         document.getElementById('report-period-title').innerText = currentSelectedPeriod;
         document.getElementById('strategy-date-display').innerText = `기준: ${currentSelectedPeriod} 결산`;
 
-        const strategyBox = document.getElementById('strategy-comment-box');
-        if (strategyBox && periodData.strategyComment) {
-          strategyBox.innerHTML = periodData.strategyComment;
-        }
-
-        const anomalyBox = document.getElementById('anomaly-comment-box');
-        if (anomalyBox && periodData.anomalyComment) {
-          const anomalies = periodData.anomalyComment.split('\n').filter(t => t.trim() !== '');
-          if (anomalies.length > 0) {
-             let html = '<ul class="text-xs leading-relaxed text-slate-300 space-y-2 list-disc list-inside">';
-             anomalies.forEach(a => { html += `<li><strong class="text-slate-100">${a}</strong></li>`; });
-             html += '</ul>';
-             anomalyBox.innerHTML = html;
-          }
-        }
-
         const creativeSec = document.getElementById('creative-feedback-section');
         const creativeCon = document.getElementById('creative-container');
         
@@ -332,7 +316,42 @@
       renderDashboard();
     }
 
+    // 🌟 [수정됨] 매체 필터에 따라 코멘트까지 동적으로 변경되는 핵심 로직 추가
     function renderDashboard() {
+      // 1. 매체별 코멘트 바인딩
+      if (dbReportData && dbReportData.months && dbReportData.months[currentSelectedPeriod]) {
+        const periodData = dbReportData.months[currentSelectedPeriod];
+        
+        // 레거시 데이터가 있을 경우를 대비한 매핑 처리
+        const commentsObj = periodData.comments || {
+          ALL: { strategy: periodData.strategyComment || '', anomaly: periodData.anomalyComment || '' },
+          Naver: { strategy: '', anomaly: '' },
+          Meta: { strategy: '', anomaly: '' },
+          Google: { strategy: '', anomaly: '' }
+        };
+        
+        const activeComments = commentsObj[currentMedia] || commentsObj.ALL;
+        
+        const strategyBox = document.getElementById('strategy-comment-box');
+        if (strategyBox) {
+          strategyBox.innerHTML = activeComments.strategy || '<p class="text-slate-500 font-sans text-xs flex items-center h-full">해당 매체의 전략 코멘트가 아직 등록되지 않았습니다.</p>';
+        }
+
+        const anomalyBox = document.getElementById('anomaly-comment-box');
+        if (anomalyBox) {
+          const anomalies = (activeComments.anomaly || '').split('\n').filter(t => t.trim() !== '');
+          if (anomalies.length > 0) {
+             let html = '<ul class="text-xs leading-relaxed text-slate-300 space-y-2 list-disc list-inside">';
+             anomalies.forEach(a => { html += `<li><strong class="text-slate-100">${a}</strong></li>`; });
+             html += '</ul>';
+             anomalyBox.innerHTML = html;
+          } else {
+             anomalyBox.innerHTML = '<p class="text-slate-500 font-sans text-xs flex items-center h-full">해당 매체의 운영 이슈 내역이 아직 등록되지 않았습니다.</p>';
+          }
+        }
+      }
+
+      // 2. 테이블 데이터 산출 및 렌더링
       const filtered = currentMedia === 'ALL' ? rawDataset : rawDataset.filter(item => item.media === currentMedia);
 
       const kpiContainer = document.getElementById('kpi-cards-container');
@@ -478,7 +497,6 @@
       }
       document.getElementById('table-row-count').innerText = `집계 일수: ${dailyAggregated.length}일`;
 
-      // 비용(cost)을 완전히 배제하고 노출수/클릭수 전용 차트 호출
       updateCharts(dailyAggregated, hasClicks, hasImpressions);
     }
 
