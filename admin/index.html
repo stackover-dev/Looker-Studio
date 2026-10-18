@@ -137,7 +137,6 @@
             </div>
           </div>
 
-          <!-- 1차, 2차, 3차 또는 날짜 버튼이 원클릭 탭으로 나열되는 컨테이너 -->
           <div id="admin-period-buttons" class="flex flex-wrap items-center gap-2 pt-1">
           </div>
         </div>
@@ -232,7 +231,7 @@
             <h3 class="text-sm font-bold text-blue-700 flex items-center gap-1.5">
               <span class="text-lg">📁</span> CSV / Excel 매체 보고서 자동 업로드 (기간 자동인식 AI)
             </h3>
-            <p class="text-[11px] text-slate-500 mt-0.5">메타(페이스북), 네이버, 구글 관리자 원본 CSV/엑셀을 올리면 집행 기간과 지표를 오차 없이 자동 매핑합니다.</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">메타(페이스북), 네이버 검색광고(다차원), 구글 관리자 원본 CSV/엑셀을 올리면 1행 메타데이터 및 다차원 키워드 데이터를 일별로 자동 통합 정제합니다.</p>
           </div>
           
           <div class="relative w-full sm:w-auto flex-shrink-0">
@@ -350,7 +349,7 @@
       }
     });
 
-    // 🌟 [핵심] 원격 GitHub 데이터 우선 로드 후 렌더링
+    // 🌟 원격 GitHub database.json 우선 로드
     async function showAdminPanel() {
       document.getElementById('login-modal').classList.add('hidden');
       document.getElementById('admin-main-content').classList.remove('hidden');
@@ -369,7 +368,6 @@
       syncRepoHtmlFiles(false);
     }
 
-    // 🌟 [핵심] GitHub 원격 database.json을 fetch하여 로컬 캐시 유실 문제 완전 차단
     async function loadDatabase() {
       let remoteDb = null;
       try {
@@ -394,7 +392,6 @@
         }
       }
 
-      // 무손실 스키마 보존 및 마이그레이션
       Object.keys(db).forEach(client => {
         if (!db[client].months) {
           const oldMonths = { ...db[client] };
@@ -421,7 +418,6 @@
       });
     }
 
-    // 🌟 [핵심] 1차, 2차, 3차 등 지속 누적 회차 탭 원클릭 렌더링
     function renderPeriodNav() {
       const container = document.getElementById('admin-period-buttons');
       container.innerHTML = '';
@@ -453,7 +449,6 @@
 
       periods.forEach(p => {
         const btn = document.createElement('button');
-        // 클릭 한 번으로 회차 즉각 전환
         btn.onclick = () => { 
           saveCommentsFromAdmin(); 
           currentPeriod = p; 
@@ -472,7 +467,6 @@
       });
     }
 
-    // 신규 회차/기간 추가 (기존 회차는 그대로 보존됨)
     function addNewPeriodPrompt() {
       const periodName = prompt('추가할 회차명 또는 집행 기간을 입력하세요:\n(예: 1차, 2차, 3차 또는 2026.09.17 ~ 2026.10.16)');
       if (periodName && periodName.trim()) {
@@ -528,7 +522,6 @@
       }
     }
 
-    // 매체별 코멘트 탭 렌더링
     function renderCommentTabs() {
       const tabs = ['ALL', 'Naver', 'Meta', 'Google'];
       const labels = { ALL: '통합(전체)', Naver: '네이버 검색', Meta: '메타 (DA/SA)', Google: '구글 애즈' };
@@ -625,7 +618,6 @@
       saveDatabase();
     }
 
-    // 🌟 [핵심] 사용자가 지정한 1차, 2차 등 맞춤 회차명이 강제로 삭제되지 않도록 보존
     function saveDatabase() {
       localStorage.setItem('MEDIA_REPORT_DB', JSON.stringify(db));
     }
@@ -1135,6 +1127,15 @@
       const lines = text.split(/\r?\n/).filter(line => line.trim().length > 0);
       if (lines.length < 2) return [];
 
+      let headerIdx = 0;
+      for (let i = 0; i < Math.min(5, lines.length); i++) {
+        const lineContent = lines[i];
+        if (lineContent.includes('노출수') || lineContent.includes('클릭수') || lineContent.includes('일별') || lineContent.includes('키워드') || lineContent.includes('보고 시작') || lineContent.includes('Date')) {
+          headerIdx = i;
+          break;
+        }
+      }
+
       function parseLine(line) {
         const res = [];
         let cur = '';
@@ -1159,9 +1160,9 @@
         return res;
       }
 
-      const headers = parseLine(lines[0]).map(h => h.replace(/^["']|["']$/g, '').trim());
+      const headers = parseLine(lines[headerIdx]).map(h => h.replace(/^["']|["']$/g, '').trim());
       const rows = [];
-      for (let i = 1; i < lines.length; i++) {
+      for (let i = headerIdx + 1; i < lines.length; i++) {
         const cols = parseLine(lines[i]);
         if (!cols || cols.length === 0 || (cols.length === 1 && !cols[0])) continue;
         const obj = {};
@@ -1173,6 +1174,7 @@
       return rows;
     }
 
+    // 🌟 네이버 1행 메타데이터 스킵 및 다차원 키워드 일별 자동 합산 파서
     function handleFileUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1189,7 +1191,17 @@
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
             const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            rowsData = XLSX.utils.sheet_to_json(sheet, { raw: false });
+
+            let rawMatrix = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false });
+            let headerRowIndex = 0;
+            for (let i = 0; i < Math.min(5, rawMatrix.length); i++) {
+              const rowStr = (rawMatrix[i] || []).map(c => String(c).trim()).join(' ');
+              if (rowStr.includes('노출수') || rowStr.includes('클릭수') || rowStr.includes('일별') || rowStr.includes('키워드')) {
+                headerRowIndex = i;
+                break;
+              }
+            }
+            rowsData = XLSX.utils.sheet_to_json(sheet, { range: headerRowIndex, raw: false });
           }
 
           if (rowsData.length === 0) {
@@ -1197,14 +1209,20 @@
             return;
           }
 
-          const newRows = [];
           const parseNum = (val) => {
             const num = Number(String(val || 0).replace(/[^0-9.-]+/g, ''));
             return isNaN(num) ? 0 : num;
           };
 
+          const headerStr = Object.keys(rowsData[0] || {}).join(' ');
+          const isNaverReport = headerStr.includes('일별') || headerStr.includes('키워드') || headerStr.includes('총비용') || headerStr.includes('평균노출순위');
+
+          // 다차원(키워드별 등) 데이터를 [날짜_매체] 기준으로 일별 합산 집계
+          const dailyAggMap = {};
+
           rowsData.forEach(row => {
-            let dateVal = '', mediaVal = 'Meta';
+            let dateVal = '';
+            let mediaVal = isNaverReport ? 'Naver' : 'Meta';
             let imp = 0, reach = 0, clicks = 0, cost = 0, conv = 0;
 
             Object.keys(row).forEach(key => {
@@ -1217,7 +1235,7 @@
                 else if (sv.includes('google') || sv.includes('구글')) mediaVal = 'Google';
               }
 
-              if (lk === '보고 시작' || lk === '시작일' || lk === 'date' || lk === '날짜' || lk === '일자' || lk === 'reporting starts') {
+              if (lk === '보고 시작' || lk === '시작일' || lk === 'date' || lk === '날짜' || lk === '일자' || lk === '일별' || lk === 'reporting starts') {
                 if (!dateVal && val) {
                   dateVal = String(val).trim();
                 }
@@ -1226,9 +1244,9 @@
               if (lk === '노출' || lk === '노출수' || lk === 'impressions') imp = parseNum(val);
               else if (lk === '도달' || lk === '도달수' || lk === 'reach') reach = parseNum(val);
               else if (lk === '클릭(전체)' || lk === '링크 클릭' || lk === '클릭수' || lk === 'clicks') {
-                if (clicks === 0 || lk === '클릭(전체)') clicks = parseNum(val);
+                if (clicks === 0 || lk === '클릭수' || lk === '클릭(전체)') clicks = parseNum(val);
               }
-              else if (lk.startsWith('지출 금액') || lk === '총 비용' || lk === 'amount spent' || (lk.includes('비용') && !lk.includes('당') && !lk.includes('cpc'))) {
+              else if (lk === '총비용' || lk === '총 비용' || lk.startsWith('지출 금액') || lk === 'amount spent' || (lk.includes('비용') && !lk.includes('당') && !lk.includes('cpc'))) {
                 cost = parseNum(val);
               }
               else if (lk === '결과' || lk === '전환' || lk === '전환수' || lk === 'results' || lk === 'conversions') {
@@ -1237,28 +1255,58 @@
             });
 
             if (dateVal && (imp > 0 || clicks > 0 || cost > 0)) {
-              let formattedDate = dateVal.substring(0, 10).replace(/[\./]/g, '-');
-              newRows.push({
-                date: formattedDate,
-                media: mediaVal,
-                impressions: imp,
-                reach: reach,
-                clicks: clicks,
-                cost: cost,
-                conv: conv
-              });
+              let cleanDate = dateVal.trim();
+              if (cleanDate.length === 8 && !cleanDate.includes('-') && !cleanDate.includes('.')) {
+                cleanDate = cleanDate.substring(0, 4) + '-' + cleanDate.substring(4, 6) + '-' + cleanDate.substring(6, 8);
+              } else {
+                cleanDate = cleanDate.substring(0, 10).replace(/[\./]/g, '-');
+              }
+
+              const aggKey = cleanDate + '_' + mediaVal;
+              if (!dailyAggMap[aggKey]) {
+                dailyAggMap[aggKey] = {
+                  date: cleanDate,
+                  media: mediaVal,
+                  impressions: 0,
+                  reach: 0,
+                  clicks: 0,
+                  cost: 0,
+                  conv: 0
+                };
+              }
+              dailyAggMap[aggKey].impressions += imp;
+              dailyAggMap[aggKey].reach += reach;
+              dailyAggMap[aggKey].clicks += clicks;
+              dailyAggMap[aggKey].cost += cost;
+              dailyAggMap[aggKey].conv += conv;
             }
           });
+
+          const newRows = Object.values(dailyAggMap);
 
           if (newRows.length > 0) {
             if (!db[currentClient].months[currentPeriod].rawDataset) {
               db[currentClient].months[currentPeriod].rawDataset = [];
             }
-            db[currentClient].months[currentPeriod].rawDataset.push(...newRows);
+            
+            // 기존 데이터셋에 일치하는 [날짜+매체] 행이 있으면 덮어쓰고, 없으면 추가 병합
+            let targetDataset = db[currentClient].months[currentPeriod].rawDataset;
+            newRows.forEach(nr => {
+              const existIdx = targetDataset.findIndex(r => r.date === nr.date && r.media === nr.media);
+              if (existIdx >= 0) {
+                targetDataset[existIdx] = nr;
+              } else {
+                targetDataset.push(nr);
+              }
+            });
+
+            targetDataset.sort((a, b) => a.date.localeCompare(b.date) || a.media.localeCompare(b.media));
+            db[currentClient].months[currentPeriod].rawDataset = targetDataset;
+
             saveDatabase();
             renderPeriodNav();
             renderAdminPanel();
-            alert(`🎉 데이터 ${newRows.length}건이 [${currentPeriod}] 회차에 정상 누적되었습니다!`);
+            alert(`🎉 [${newRows[0].media}] 데이터 ${newRows.length}일치가 [${currentPeriod}] 회차에 정상 통합 적재되었습니다!`);
           } else {
             alert('유효한 데이터(날짜 및 노출/클릭/비용 지표)를 찾지 못했습니다. 매체사 보고서 양식이 맞는지 확인해주세요.');
           }
