@@ -693,7 +693,6 @@
       }
     }
 
-    // 🗑️ 데이터 전체 삭제 로직 (격리형 안전 삭제)
     function clearCurrentPeriodData() {
       const warningMessage = `⚠️ [안내] 현재 선택된 [${currentClient}] - [${currentPeriod}] 회차의 엑셀 데이터표만 삭제합니다.\n\n(참고: 타 회차나 코멘트, 소재 이미지는 보존됩니다. 잘못 올린 파일을 초기화할 때 유용합니다.)\n\n계속 진행하시려면 [확인]을 누르세요.`;
       if (confirm(warningMessage)) {
@@ -1029,6 +1028,7 @@
       `).join('');
     }
 
+    // ★ 기능 2 추가: 매체 행 옆에 '↓ 일괄' 변경 버튼 추가
     function renderAdminDataTable(dataset) {
       const cols = getActiveColumns();
       const headerRow = document.getElementById('admin-table-header-row');
@@ -1072,11 +1072,14 @@
         tr.innerHTML = `
           <td class="py-2 px-3"><input type="date" value="${row.date}" onchange="updateRowData(${idx}, 'date', this.value)" class="border border-slate-300 px-2 py-1.5 rounded-lg text-xs font-sans focus:ring-1 focus:ring-blue-500 w-full outline-none"></td>
           <td class="py-2 px-3">
-            <select onchange="updateRowData(${idx}, 'media', this.value)" class="border border-slate-300 px-2 py-1.5 rounded-lg text-xs font-sans focus:ring-1 focus:ring-blue-500 outline-none">
-              <option value="Naver" ${row.media==='Naver'?'selected':''}>Naver</option>
-              <option value="Meta" ${row.media==='Meta'?'selected':''}>Meta</option>
-              <option value="Google" ${row.media==='Google'?'selected':''}>Google</option>
-            </select>
+            <div class="flex items-center space-x-1.5">
+              <select onchange="updateRowData(${idx}, 'media', this.value)" class="border border-slate-300 px-2 py-1.5 rounded-lg text-xs font-sans focus:ring-1 focus:ring-blue-500 outline-none bg-white">
+                <option value="Naver" ${row.media==='Naver'?'selected':''}>Naver</option>
+                <option value="Meta" ${row.media==='Meta'?'selected':''}>Meta</option>
+                <option value="Google" ${row.media==='Google'?'selected':''}>Google</option>
+              </select>
+              <button onclick="applyMediaToBelow(${idx})" class="px-1.5 py-1 text-[10px] font-bold bg-slate-200 text-slate-600 hover:bg-slate-300 hover:text-slate-900 rounded transition whitespace-nowrap shadow-sm" title="이 행부터 아래 모든 데이터의 매체를 동일하게 일괄 변경">↓ 일괄</button>
+            </div>
           </td>
           ${dynamicCells}
           <td class="py-2 px-3 text-center">
@@ -1096,6 +1099,20 @@
       }
       saveDatabase();
       renderPeriodNav();
+    }
+
+    // ★ 기능 2 로직: 하위 매체 일괄 변경
+    function applyMediaToBelow(startIdx) {
+      const dataset = db[currentClient].months[currentPeriod].rawDataset;
+      const targetMedia = dataset[startIdx].media; 
+      
+      if(confirm(`해당 행을 포함하여 아래쪽에 있는 모든 행의 매체를 [${targetMedia}](으)로 일괄 변경하시겠습니까?`)) {
+        for(let i = startIdx; i < dataset.length; i++) {
+          dataset[i].media = targetMedia;
+        }
+        saveDatabase();
+        renderAdminPanel();
+      }
     }
 
     function deleteRowData(idx) {
@@ -1119,7 +1136,6 @@
       renderAdminPanel();
     }
 
-    // ★ 파일 파서 매체 유추 및 행단위 확정 할당 로직 완벽 격리/수정
     function handleFileUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1135,7 +1151,6 @@
           let rawMatrix = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false });
           let headerRowIndex = -1;
           
-          // 1. 파일명 기반 매체 추출
           const fileNameLower = file.name.toLowerCase();
           let detectedMediaByFile = null;
           if (fileNameLower.includes('naver') || fileNameLower.includes('네이버') || fileNameLower.includes('다차원')) {
@@ -1146,7 +1161,6 @@
             detectedMediaByFile = 'Meta';
           }
           
-          // 2. 헤더 찾기
           const headerKeywords = ['노출', '클릭', '비용', '지출', '결과', '전환', '일별', '시작일', '보고 시작', '캠페인', 'date', 'day', 'impressions', 'clicks', 'cost', 'amount', 'campaign'];
 
           let maxScore = 0;
@@ -1184,26 +1198,29 @@
             return isNaN(num) ? 0 : num;
           };
 
-          // 3. 헤더 특성을 통한 매체 교차 검증
           const headerStr = Object.keys(rowsData[0] || {}).join(' ').toLowerCase();
           const isNaverReport = headerStr.includes('일별') || headerStr.includes('검색어') || headerStr.includes('평균노출순위') || headerStr.includes('확장소재') || headerStr.includes('그룹');
           const isGoogleReport = headerStr.includes('통화') || headerStr.includes('상호작용') || headerStr.includes('동영상');
 
-          // 기본 매체 결정 (파일명 우선 -> 헤더 특성 우선 -> 기본 Meta)
+          // ★ 기능 1 수정: 현재 활성화된 탭(Naver, Meta 등)을 가장 강력한 기본값으로 강제 배정 (ALL 탭일 경우에만 스마트 추론)
           let defaultMediaForFile = 'Meta'; 
-          if (detectedMediaByFile) {
-            defaultMediaForFile = detectedMediaByFile;
-          } else if (isNaverReport) {
-            defaultMediaForFile = 'Naver';
-          } else if (isGoogleReport) {
-            defaultMediaForFile = 'Google';
+          if (currentCommentMedia === 'Naver' || currentCommentMedia === 'Meta' || currentCommentMedia === 'Google') {
+            defaultMediaForFile = currentCommentMedia;
+          } else {
+            if (detectedMediaByFile) {
+              defaultMediaForFile = detectedMediaByFile;
+            } else if (isNaverReport) {
+              defaultMediaForFile = 'Naver';
+            } else if (isGoogleReport) {
+              defaultMediaForFile = 'Google';
+            }
           }
 
           const dailyAggMap = {};
 
           rowsData.forEach(row => {
             let dateVal = '';
-            // ★ AI가 1차, 2차로 판별한 확실한 매체를 해당 행의 기본값으로 무조건 배정 (네이버가 Meta로 탈선하는 것 방지)
+            // ★ 모든 행은 위에서 결정된 가장 확실한 매체(현재 탭 기준)를 무조건 초기 상속받음
             let mediaVal = defaultMediaForFile; 
             let imp = 0, reach = 0, clicks = 0, cost = 0, conv = 0;
 
@@ -1211,7 +1228,7 @@
               const lk = key.toLowerCase().trim();
               const val = row[key];
 
-              // 4. 셀 내용(캠페인 이름 등)에 특정 매체 이름이 명시적으로 적혀있을 때만 예외적으로 오버라이드
+              // 예외 상황: 네이버 탭에 실수로 메타 파일을 올렸을 경우 등을 방어하기 위한 내부 데이터 재검증
               if (lk.includes('캠페인') || lk.includes('매체') || lk.includes('광고 세트') || lk.includes('광고 이름') || lk.includes('campaign')) {
                 const sv = String(val).toLowerCase();
                 if (sv.includes('naver') || sv.includes('네이버')) mediaVal = 'Naver';
