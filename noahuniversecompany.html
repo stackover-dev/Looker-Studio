@@ -25,7 +25,7 @@
 </head>
 <body class="min-h-screen flex flex-col pb-12">
 
-  <!-- 1. 상단 네비게이션 헤더 (모바일 완벽 반응형) -->
+  <!-- 1. 상단 네비게이션 헤더 (모바일 반응형) -->
   <header class="bg-[#0F172A] border-b border-slate-800 sticky top-0 z-40 shadow-lg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div class="flex items-center space-x-2.5">
@@ -83,7 +83,7 @@
       </div>
     </section>
 
-    <!-- 5. 핵심 지표 KPI 카드 (모바일 2열, 데스크톱 6열 반응형) -->
+    <!-- 5. 핵심 지표 KPI 카드 (반응형 2~6열) -->
     <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
       <div class="bg-[#0F172A] p-4 rounded-xl border border-slate-800 shadow-sm">
         <p class="text-[11px] font-semibold text-slate-400 mb-1">노출수 (Impressions)</p>
@@ -111,7 +111,7 @@
       </div>
     </section>
 
-    <!-- 6. 차트 영역 (좌: 일별 추이 / 우: 매체별 예산 소진 비중 + 선택 매체 네온 글로우) -->
+    <!-- 6. 차트 영역 (좌: 일별 추이 / 우: 매체별 예산 소진 비중 + 네온 글로우) -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       
       <!-- 좌측: 일별 주요 지표 추이 -->
@@ -149,7 +149,7 @@
 
     </section>
 
-    <!-- 7. 일별 성과 상세 집계 내역 (피벗 연동 정상화 및 모바일 가로 스크롤 보장) -->
+    <!-- 7. 일별 성과 상세 집계 내역 (피벗 연동 및 모바일 가로 스크롤 보장) -->
     <section class="bg-[#0F172A] rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
       <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 bg-slate-900/60">
         <div>
@@ -185,7 +185,7 @@
   </main>
 
   <script>
-    // 1. 도넛 차트 네온 글로우 렌더링 커스텀 플러그인
+    // 1. 도넛 차트 네온 글로우 렌더링 플러그인
     const neonGlowPlugin = {
       id: 'neonGlowPlugin',
       beforeDraw: (chart) => {
@@ -211,12 +211,12 @@
     Chart.register(neonGlowPlugin);
 
     // 2. 전역 상태
-    let activeTab = 'Naver'; // 기본 진입 탭: 네이버 검색
+    let activeTab = 'Naver';
     const periodString = "2026.09.17 ~ 2026.10.16";
     let trendChartInstance = null;
     let donutChartInstance = null;
 
-    // 3. 팩트 데이터 기반 30일 데이터셋 생성 (네이버 30일 + 메타 30일)
+    // 3. 팩트 데이터 기반 30일 데이터셋
     const reportDataset = generateStructuredDataset();
 
     function generateStructuredDataset() {
@@ -230,9 +230,9 @@
 
       const list = [];
 
-      // (1) 네이버 검색: 노출 49,703회, 클릭 112회, 비용 106,767원 정확 분할 적재
+      // 네이버 검색: 노출 49,703회, 클릭 112회, 비용 106,767원
       dates.forEach((d, idx) => {
-        const isSpike = (idx === 11); // 09-28 최고점
+        const isSpike = (idx === 11);
         const nImp = isSpike ? 3373 : Math.floor(46330 / 29);
         const nClicks = isSpike ? 15 : Math.floor(97 / 29);
         const nCost = isSpike ? 8000 : Math.floor(98767 / 29);
@@ -247,7 +247,7 @@
         });
       });
 
-      // (2) 메타 DA/SA: 노출 49,588회, 도달 40,817명, 클릭 1,468회, 비용 450,676원(CPC 307원) 분할 적재
+      // 메타 DA/SA: 노출 49,588회, 도달 40,817명, 클릭 1,468회, 비용 450,676원
       dates.forEach((d, idx) => {
         const isSpike = (idx === 11);
         const mImp = isSpike ? 4200 : Math.floor(45388 / 29);
@@ -268,9 +268,8 @@
       return list;
     }
 
-    // 4. B2B 전문 카피라이팅 팩트 기반 콘텐츠 사전 (통합, 네이버, 메타, 구글)
+    // 4. B2B 전문 카피라이팅 팩트 기반 콘텐츠 사전 (중복 제거 완료)
     const reportContent = {
-      // ■ 네이버 검색 탭
       Naver: {
         strategy: `
           <div style="line-height: 1.6; color: #ffffff;">
@@ -297,49 +296,41 @@
             </p>
           </div>
         `,
+        // ★ 요청 사항 반영: 중복 지표 목록을 제거하고 1.이슈 분석 / 2.최적화 대응으로 재구성
         anomaly: `
           <div style="line-height: 1.6; color: #ffffff;">
-            <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 8px; font-size: 16px; font-weight: 700; border-bottom: 2px solid #f59e0b; padding-bottom: 8px;">
-              [노아유니버스컴퍼니] 네이버 검색광고 운영 종합 리뷰 및 최적화 방향 안내
-            </h3>
-            <p style="font-size: 13px; color: #94a3b8; margin-bottom: 14px;">
-              <strong style="color: #facc15;">■ 보고 기준일:</strong> 지난 30일
-            </p>
+            <div style="margin-bottom: 16px;">
+              <h4 style="color: #f59e0b; font-size: 14px; font-weight: 600; margin: 0 0 8px 0;">
+                ⚠️ 1. 운영 중 이슈 및 노출 제한 원인 분석
+              </h4>
+              <p style="font-size: 13px; color: #cbd5e1; margin: 0 0 10px 0; line-height: 1.6;">
+                지난 30일간의 데이터를 분석한 결과, 인스타그램 URL을 광고 랜딩 페이지로 사용할 경우 발생하는 시스템적 제약으로 인해 정상적인 노출 및 클릭 확보에 어려움이 있었습니다. 이는 당사의 운영 문제가 아닌, Meta(인스타그램)의 보안 정책과 네이버 검색 로봇 간의 충돌로 인해 발생하는 매체사 측의 시스템 이슈입니다.
+              </p>
 
-            <h4 style="color: #60a5fa; font-size: 14px; font-weight: 600; margin: 0 0 6px 0;">📊 1. 주요 운영 데이터 요약</h4>
-            <p style="font-size: 13px; color: #cbd5e1; margin: 0 0 8px 0;">지난 30일간 네이버 광고를 통해 발생한 핵심 성과 지표입니다.</p>
-            <ul style="background-color: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 10px 16px; list-style-type: none; font-size: 13px; color: #e2e8f0; line-height: 1.8; margin: 0 0 16px 0;">
-              <li>▪ <strong style="color: #facc15;">총 운영 키워드:</strong> 92개</li>
-              <li>▪ <strong style="color: #facc15;">총 노출수:</strong> 49,703회</li>
-              <li>▪ <strong style="color: #facc15;">총 클릭수:</strong> 112회</li>
-              <li>▪ <strong style="color: #facc15;">총 소진 비용:</strong> 106,767원</li>
-            </ul>
-
-            <h4 style="color: #f59e0b; font-size: 14px; font-weight: 600; margin: 0 0 6px 0;">⚠️ 2. 운영 중 이슈 및 노출 제한 원인 분석</h4>
-            <p style="font-size: 13px; color: #cbd5e1; margin: 0 0 10px 0; line-height: 1.6;">
-              지난 30일간의 데이터를 분석한 결과, 인스타그램 URL을 광고 랜딩 페이지로 사용할 경우 발생하는 시스템적 제약으로 인해 정상적인 노출 및 클릭 확보에 어려움이 있었습니다. 이는 당사의 운영 문제가 아닌, Meta(인스타그램)의 보안 정책과 네이버 검색 로봇 간의 충돌로 인해 발생하는 매체사 측의 시스템 이슈입니다.
-            </p>
-
-            <div style="background-color: #1e293b; border-left: 4px solid #3b82f6; border-radius: 4px; padding: 12px 16px; margin-bottom: 16px;">
-              <div style="font-size: 13px; font-weight: 700; color: #93c5fd; margin-bottom: 6px;">[네이버 광고 본사 매체팀 공식 답변]</div>
-              <div style="font-size: 12px; color: #cbd5e1; line-height: 1.6;">
-                "안녕하세요. 네이버 광고 파트너사지원 전영임입니다.<br>
-                현재 파워링크 URL 설정 시 인스타그램을 랜딩 페이지로 설정한 경우, 관련 Meta 정책에 의해 Ads-Naver 봇의 웹 수집이 원활하지 않은 상태입니다.<br>
-                이에 따라 애드부스트 대상 검색어에 대해 광고 노출이 어려운 점 양해 부탁드립니다.<br>
-                해당 랜딩으로 연결을 원하시는 경우, 다른 랜딩 페이지를 사용하시어 광고를 진행하실 수 있도록 안내 부탁드립니다. 감사합니다."
+              <div style="background-color: #1e293b; border-left: 4px solid #3b82f6; border-radius: 4px; padding: 12px 16px;">
+                <div style="font-size: 13px; font-weight: 700; color: #93c5fd; margin-bottom: 6px;">[네이버 광고 본사 매체팀 공식 답변]</div>
+                <div style="font-size: 12px; color: #cbd5e1; line-height: 1.6;">
+                  "안녕하세요. 네이버 광고 파트너사지원 전영임입니다.<br>
+                  현재 파워링크 URL 설정 시 인스타그램을 랜딩 페이지로 설정한 경우, 관련 Meta 정책에 의해 Ads-Naver 봇의 웹 수집이 원활하지 않은 상태입니다.<br>
+                  이에 따라 애드부스트 대상 검색어에 대해 광고 노출이 어려운 점 양해 부탁드립니다.<br>
+                  해당 랜딩으로 연결을 원하시는 경우, 다른 랜딩 페이지를 사용하시어 광고를 진행하실 수 있도록 안내 부탁드립니다. 감사합니다."
+                </div>
               </div>
             </div>
 
-            <h4 style="color: #60a5fa; font-size: 14px; font-weight: 600; margin: 0 0 6px 0;">💡 3. 최적화 대응 및 향후 운영 계획</h4>
-            <p style="font-size: 13px; color: #cbd5e1; margin: 0; line-height: 1.6;">
-              위와 같은 인스타그램 URL 연동 제한 문제를 근본적으로 해결하고 광고 효율을 정상화하기 위해, <strong>현재 자체 홈페이지 제작을 발 빠르게 계획 및 준비 중</strong>입니다.<br><br>
-              독립적인 웹사이트가 구축되면 네이버의 시스템 제약 없이 안정적인 광고 노출이 가능해집니다. 이를 바탕으로 단순 노출을 넘어, <strong style="color: #facc15;">실질적인 비즈니스 성과로 이어질 수 있는 '유효 클릭수'를 집중적으로 확보하고 훨씬 개선된 퍼포먼스를 만들어 낼 계획입니다.</strong>
-            </p>
+            <div>
+              <h4 style="color: #60a5fa; font-size: 14px; font-weight: 600; margin: 0 0 8px 0;">
+                💡 2. 최적화 대응 및 향후 운영 계획
+              </h4>
+              <p style="font-size: 13px; color: #cbd5e1; margin: 0; line-height: 1.6;">
+                위와 같은 인스타그램 URL 연동 제한 문제를 근본적으로 해결하고 광고 효율을 정상화하기 위해, <strong>현재 자체 홈페이지 제작을 발 빠르게 계획 및 준비 중</strong>입니다.<br><br>
+                독립적인 웹사이트가 구축되면 네이버의 시스템 제약 없이 안정적인 광고 노출이 가능해집니다. 이를 바탕으로 단순 노출을 넘어, <strong style="color: #facc15;">실질적인 비즈니스 성과로 이어질 수 있는 '유효 클릭수'를 집중적으로 확보하고 훨씬 개선된 퍼포먼스를 만들어 낼 계획입니다.</strong>
+              </p>
+            </div>
           </div>
         `
       },
 
-      // ■ 메타 (DA/SA) 탭 (기존 통합 탭에서 이전)
       Meta: {
         strategy: `
           <div style="line-height: 1.6; color: #ffffff;">
@@ -385,7 +376,6 @@
         `
       },
 
-      // ■ 통합(전체) 탭 (네이버 + 메타 데이터 기반 B2B 총괄 브리핑)
       ALL: {
         strategy: `
           <div style="line-height: 1.6; color: #ffffff;">
@@ -443,7 +433,6 @@
         `
       },
 
-      // ■ 구글 애즈 탭 (빈 상태 정상 처리)
       Google: {
         strategy: `
           <div class="py-8 text-center text-slate-500 font-sans">
@@ -459,18 +448,17 @@
       }
     };
 
-    // 5. 초기 실행
+    // 5. 초기화
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('badge-period').innerText = `${periodString} (현재)`;
       document.getElementById('strategy-period-label').innerText = `기준: ${periodString} 결산`;
-      switchTab('Naver'); // 기본 네이버 검색 탭 선택
+      switchTab('Naver');
     });
 
-    // 6. 탭 전환 제어 함수
+    // 6. 탭 전환
     function switchTab(mediaKey) {
       activeTab = mediaKey;
 
-      // 탭 버튼 스타일 갱신
       const tabs = ['ALL', 'Naver', 'Meta', 'Google'];
       tabs.forEach(t => {
         const btn = document.getElementById(`tab-${t}`);
@@ -482,29 +470,21 @@
         }
       });
 
-      // 코멘트 박스 마운트
       const content = reportContent[activeTab] || reportContent['ALL'];
       document.getElementById('strategy-comment-body').innerHTML = content.strategy;
       document.getElementById('anomaly-comment-body').innerHTML = content.anomaly;
 
-      // KPI 카드 및 하단 테이블 렌더링
       renderKPIsAndTable();
-
-      // 차트 렌더링
       renderTrendChart();
       renderDonutChart();
     }
 
-    // 7. KPI 및 하단 피벗 테이블 렌더링
+    // 7. KPI 및 하단 피벗 테이블
     function renderKPIsAndTable() {
       let filtered = [];
-      if (activeTab === 'ALL') {
-        filtered = reportDataset;
-      } else if (activeTab === 'Naver' || activeTab === 'Meta') {
-        filtered = reportDataset.filter(r => r.media === activeTab);
-      } else {
-        filtered = []; // Google
-      }
+      if (activeTab === 'ALL') filtered = reportDataset;
+      else if (activeTab === 'Naver' || activeTab === 'Meta') filtered = reportDataset.filter(r => r.media === activeTab);
+      else filtered = [];
 
       let imp = 0, reach = 0, clicks = 0, cost = 0;
       filtered.forEach(r => {
@@ -517,7 +497,6 @@
       const ctr = imp > 0 ? ((clicks / imp) * 100).toFixed(2) + "%" : "0.00%";
       const cpc = clicks > 0 ? Math.round(cost / clicks).toLocaleString() + "원" : "0원";
 
-      // KPI 카드 출력
       document.getElementById('kpi-impressions').innerText = imp.toLocaleString();
       document.getElementById('kpi-reach').innerText = reach.toLocaleString();
       document.getElementById('kpi-clicks').innerText = clicks.toLocaleString();
@@ -525,7 +504,6 @@
       document.getElementById('kpi-cost').innerText = cost.toLocaleString() + "원";
       document.getElementById('kpi-cpc').innerText = cpc;
 
-      // 하단 피벗 테이블 집계 출력
       const tbody = document.getElementById('pivot-table-body');
       document.getElementById('table-row-count').innerText = filtered.length;
       tbody.innerHTML = '';
@@ -535,7 +513,6 @@
         return;
       }
 
-      // 날짜순 내림차순 정렬 출력
       const sortedRows = [...filtered].sort((a, b) => b.date.localeCompare(a.date) || a.media.localeCompare(b.media));
 
       sortedRows.forEach(row => {
@@ -563,7 +540,7 @@
       });
     }
 
-    // 8. 일별 추이 차트 렌더링
+    // 8. 일별 추이 차트
     function renderTrendChart() {
       let filtered = [];
       if (activeTab === 'ALL') filtered = reportDataset;
@@ -630,9 +607,8 @@
       });
     }
 
-    // 9. 매체별 비중 도넛 차트 (비용 소진 기준: 네이버 106,767원 / 메타 450,676원 고정 + 선택 매체 네온 글로우)
+    // 9. 매체별 비중 도넛 차트
     function renderDonutChart() {
-      // 팩트 소진 금액: 네이버 106,767원(19.2%), 메타 450,676원(80.8%), 구글 0원(0%)
       const naverCost = 106767;
       const metaCost = 450676;
       const googleCost = 0;
@@ -649,11 +625,11 @@
       let offsetArray = [0, 0, 0];
 
       if (activeTab === 'Naver') {
-        glowIndex = 1; // 네이버 파이 강조
+        glowIndex = 1;
         finalColors = [dimColors[0], baseColors[1], dimColors[2]];
         offsetArray[1] = 12;
       } else if (activeTab === 'Meta') {
-        glowIndex = 0; // 메타 파이 강조
+        glowIndex = 0;
         finalColors = [baseColors[0], dimColors[1], dimColors[2]];
         offsetArray[0] = 12;
       } else if (activeTab === 'Google') {
@@ -701,7 +677,6 @@
         }
       });
 
-      // 하단 범례 퍼센테이지 표기
       const metaPct = ((metaCost / totalCost) * 100).toFixed(1);
       const naverPct = ((naverCost / totalCost) * 100).toFixed(1);
 
@@ -724,7 +699,7 @@
       `;
     }
 
-    // 10. 보고서 CSV 다운로드 함수
+    // 10. 보고서 CSV 다운로드
     function downloadCSVReport() {
       let filtered = [];
       if (activeTab === 'ALL') filtered = reportDataset;
