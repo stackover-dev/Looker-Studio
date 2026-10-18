@@ -333,7 +333,6 @@
       }
     });
 
-    // 🌟 원격 GitHub database.json 우선 로드 및 고객사/기간 자동 매핑
     async function showAdminPanel() {
       document.getElementById('login-modal').classList.add('hidden');
       document.getElementById('admin-main-content').classList.remove('hidden');
@@ -343,7 +342,6 @@
 
       const clientKeys = Object.keys(db);
       if (clientKeys.length > 0) {
-        // noahuniversecompany.html과 연결된 고객사 또는 한글 '노아'가 포함된 키 우선 선택
         const matchedKey = clientKeys.find(k => (db[k].htmlFilename || '').toLowerCase() === 'noahuniversecompany.html')
                         || clientKeys.find(k => k.includes('노아'))
                         || clientKeys[0];
@@ -357,7 +355,6 @@
       syncRepoHtmlFiles(false);
     }
 
-    // 🌟 admin 폴더 기준 상위(../database.json) 경로 우선 조회
     async function loadDatabase() {
       let remoteDb = null;
       try {
@@ -397,7 +394,6 @@
         Object.keys(db[client].months).forEach(periodKey => {
           let month = db[client].months[periodKey];
           
-          // ★ 매체별 독립 소재 저장 구조 마이그레이션 적용
           if (!month.creatives || Array.isArray(month.creatives)) {
             const oldCreatives = Array.isArray(month.creatives) ? month.creatives : [];
             month.creatives = {
@@ -427,7 +423,6 @@
       });
     }
 
-    // 🌟 실제 배포된 기간 탭 우선 매핑 및 1차, 2차, 3차 원클릭 전환
     function renderPeriodNav() {
       const container = document.getElementById('admin-period-buttons');
       container.innerHTML = '';
@@ -457,7 +452,6 @@
         saveDatabase();
       }
 
-      // 실제 데이터가 있는 기간을 우선 활성화 (신규 집행 기간 덮어쓰기 방지)
       if (!currentPeriod || !periods.includes(currentPeriod)) {
         currentPeriod = periods.find(p => p !== "신규 집행 기간") || periods[0];
       }
@@ -570,7 +564,7 @@
       document.getElementById('edit-anomaly-comment').value = activeData.anomaly || '';
       updateLiveCommentPreview();
       
-      renderCreativesList(); // 매체 탭 전환 시 소재도 함께 변경 렌더링
+      renderCreativesList();
     }
 
     function renderAdminPanel() {
@@ -1124,7 +1118,7 @@
       renderAdminPanel();
     }
 
-    // 🌟 네이버 다차원 보고서 오류 해결 및 자동 탭 이동 파서 반영
+    // 🌟 AI 스코어링 알고리즘이 적용된 헤더 자동 인식 업로드 파서
     function handleFileUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1134,19 +1128,32 @@
       reader.onload = function(e) {
         try {
           const data = new Uint8Array(e.target.result);
-          // CSV, XLSX 무관하게 SheetJS를 사용하여 바이너리로 읽음 (인코딩 자동 보정)
+          // CSV, XLSX 무관하게 SheetJS로 바이너리 파싱 (인코딩 자동 보정)
           const workbook = XLSX.read(data, { type: 'array' });
           const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
           let rawMatrix = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false });
           let headerRowIndex = -1;
           
-          // 상위 10줄을 스캔하여 '노출수', '클릭수', '일별' 등이 포함된 줄을 헤더로 식별 (네이버 메타데이터 스킵)
-          for (let i = 0; i < Math.min(10, rawMatrix.length); i++) {
-            const rowStr = (rawMatrix[i] || []).map(c => String(c).trim()).join(' ');
-            if (rowStr.includes('노출수') || rowStr.includes('클릭수') || rowStr.includes('일별') || rowStr.includes('키워드')) {
+          // ★ AI 헤더 판별 스코어링 로직 (메타, 네이버, 구글 모든 양식 대응)
+          const headerKeywords = ['노출', '클릭', '비용', '지출', '결과', '전환', '일별', '시작일', '보고 시작', '캠페인', 'date', 'day', 'impressions', 'clicks', 'cost', 'amount', 'campaign'];
+
+          let maxScore = 0;
+          for (let i = 0; i < Math.min(15, rawMatrix.length); i++) {
+            const rowArr = (rawMatrix[i] || []).map(c => String(c).toLowerCase().trim());
+            
+            let score = 0;
+            rowArr.forEach(cell => {
+              if (!cell) return;
+              headerKeywords.forEach(kw => {
+                if (cell.includes(kw)) score++;
+              });
+            });
+
+            // 핵심 키워드가 최소 2개 이상 포함된 줄 중 가장 스코어가 높은 줄을 데이터의 진짜 헤더로 설정
+            if (score > maxScore && score >= 2) { 
+              maxScore = score;
               headerRowIndex = i;
-              break;
             }
           }
           
@@ -1181,29 +1188,30 @@
               const lk = key.toLowerCase().trim();
               const val = row[key];
 
-              if (lk.includes('캠페인') || lk.includes('매체') || lk.includes('광고 세트') || lk.includes('광고 이름')) {
+              // 매체 판단
+              if (lk.includes('캠페인') || lk.includes('매체') || lk.includes('광고 세트') || lk.includes('광고 이름') || lk.includes('campaign')) {
                 const sv = String(val).toLowerCase();
                 if (sv.includes('naver') || sv.includes('네이버')) mediaVal = 'Naver';
-                else if (sv.includes('google') || sv.includes('구글')) mediaVal = 'Google';
+                else if (sv.includes('google') || sv.includes('구글') || sv.includes('youtube')) mediaVal = 'Google';
               }
 
-              // 네이버 '일별' 등 날짜 컬럼명 매칭 강화
-              if (lk === '보고 시작' || lk === '시작일' || lk === 'date' || lk === '날짜' || lk === '일자' || lk === '일별' || lk === 'reporting starts') {
+              // ★ 더욱 확장된 날짜 컬럼명 매칭 로직
+              if (lk === '보고 시작' || lk === '시작일' || lk === 'date' || lk === 'day' || lk === '날짜' || lk === '일자' || lk === '일별' || lk === '일' || lk === 'reporting starts') {
                 if (!dateVal && val) {
                   dateVal = String(val).trim();
                 }
               }
 
-              if (lk === '노출' || lk === '노출수' || lk === 'impressions') imp = parseNum(val);
+              // ★ 더욱 확장된 수치 데이터 추출 로직
+              if (lk === '노출' || lk === '노출수' || lk === 'impressions' || lk === 'impr.') imp = parseNum(val);
               else if (lk === '도달' || lk === '도달수' || lk === 'reach') reach = parseNum(val);
-              else if (lk === '클릭(전체)' || lk === '링크 클릭' || lk === '클릭수' || lk === 'clicks') {
-                if (clicks === 0 || lk === '클릭수' || lk === '클릭(전체)') clicks = parseNum(val);
+              else if (lk === '클릭(전체)' || lk === '링크 클릭' || lk === '클릭수' || lk === '클릭' || lk === 'clicks') {
+                if (clicks === 0 || lk === '클릭수' || lk === '클릭(전체)' || lk === '링크 클릭') clicks = parseNum(val);
               }
-              // 네이버 '총비용' 포함한 금액 데이터 매칭
-              else if (lk === '총비용' || lk === '총 비용' || lk.startsWith('지출 금액') || lk === 'amount spent' || (lk.includes('비용') && !lk.includes('당') && !lk.includes('cpc'))) {
+              else if (lk === '총비용' || lk === '총 비용' || lk.startsWith('지출 금액') || lk === '지출액' || lk === 'amount spent' || lk === '비용' || lk === 'cost' || (lk.includes('비용') && !lk.includes('당') && !lk.includes('cpc'))) {
                 cost = parseNum(val);
               }
-              else if (lk === '결과' || lk === '전환' || lk === '전환수' || lk === 'results' || lk === 'conversions') {
+              else if (lk === '결과' || lk === '전환' || lk === '전환수' || lk === 'results' || lk === 'conversions' || lk.includes('전환수')) {
                 conv = parseNum(val);
               }
             });
@@ -1258,7 +1266,7 @@
 
             saveDatabase();
             
-            // 업로드 성공 시 인식된 매체명으로 탭 자동 전환
+            // 데이터 업로드 성공 시 인식된 매체로 탭 자동 전환
             const uploadedMedia = newRows[0].media;
             if (uploadedMedia === 'Meta' || uploadedMedia === 'Naver' || uploadedMedia === 'Google') {
               changeCommentMedia(uploadedMedia);
@@ -1278,7 +1286,7 @@
         event.target.value = '';
       };
 
-      // 모든 파일을 ArrayBuffer로 읽어 인코딩 문제를 원천 차단
+      // 바이너리로 읽어 인코딩 문제를 원천 차단
       reader.readAsArrayBuffer(file);
     }
 
@@ -1310,7 +1318,7 @@
         saveDatabase();
         document.getElementById('bulk-paste-area').value = '';
         
-        // 붙여넣기 1행 매체 기준으로 탭 전환 기능 추가
+        // 수동 붙여넣기 시 첫 행 매체명 인식하여 탭 자동 전환
         const pastedMedia = parsedRows[0].media;
         if (pastedMedia === 'Meta' || pastedMedia === 'Naver' || pastedMedia === 'Google') {
           changeCommentMedia(pastedMedia);
