@@ -85,7 +85,7 @@
       </div>
     </section>
 
-    <!-- 5. 핵심 지표 KPI 카드 (비용 및 CPC 배제 / 4대 핵심 반응 지표 모바일 2열 배치) -->
+    <!-- 5. 핵심 지표 KPI 카드 (비용/CPC 제외 / 4대 핵심 지표) -->
     <section class="grid grid-cols-2 sm:grid-cols-4 gap-3">
       <div class="bg-[#0F172A] p-4 rounded-xl border border-slate-800 shadow-sm">
         <p class="text-[11px] font-semibold text-slate-400 mb-1">총 노출수 (Impressions)</p>
@@ -105,7 +105,7 @@
       </div>
     </section>
 
-    <!-- 6. 차트 영역 (좌: 일별 추이 / 우: 매체별 노출 비중 + 선택 매체 네온 글로우) -->
+    <!-- 6. 차트 영역 (좌: 일별 추이 / 우: 매체별 클릭수 비중 + 선택 매체 네온 글로우 + 주의 안내문) -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       
       <!-- 좌측: 일별 주요 지표 추이 -->
@@ -121,23 +121,28 @@
         </div>
       </div>
 
-      <!-- 우측: 매체별 핵심 지표 비중 (노출수 기준 도넛 차트) -->
+      <!-- 우측: 매체별 핵심 지표 비중 (클릭수 기준 도넛 차트) -->
       <div class="bg-[#0F172A] p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-xl flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between mb-2">
             <h3 class="text-xs sm:text-sm font-bold text-white">매체별 핵심 지표 비중</h3>
-            <span class="text-[11px] text-slate-400">노출수 기준</span>
+            <span class="text-[11px] text-emerald-400 font-semibold" id="donut-criteria-badge">클릭수 기준</span>
           </div>
-          <p class="text-[11px] text-slate-400 mb-4" id="donut-guide-text">
+          <p class="text-[11px] text-slate-400 mb-3" id="donut-guide-text">
             선택된 매체의 파이가 네온 글로우로 두각되어 표시됩니다.
           </p>
         </div>
 
-        <div class="relative w-full h-52 sm:h-56 flex items-center justify-center my-auto">
+        <div class="relative w-full h-48 sm:h-52 flex items-center justify-center my-auto">
           <canvas id="donutChart"></canvas>
         </div>
 
-        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-around text-xs font-semibold" id="donut-legend-info">
+        <!-- 그래프 바로 아래 첨부 안내글 (빨간색 조그만 글씨) -->
+        <p class="text-[10.5px] text-rose-400/90 text-center my-2 leading-relaxed px-1">
+          ※ 본 지표는 단순 수치 비교이며, 매체별 광고 특성과 그에 따른 고객 의도(Intent) 반영 수준 등의 차이가 존재합니다.
+        </p>
+
+        <div class="pt-2.5 border-t border-slate-800/80 flex items-center justify-around text-xs font-semibold" id="donut-legend-info">
         </div>
       </div>
 
@@ -222,7 +227,7 @@
 
       const list = [];
 
-      // 네이버 검색: 노출 49,703회, 클릭 112회
+      // 네이버 검색: 총 노출 49,703회, 클릭 112회
       dates.forEach((d, idx) => {
         const isSpike = (idx === 11);
         const nImp = isSpike ? 3373 : Math.floor(46330 / 29);
@@ -237,7 +242,7 @@
         });
       });
 
-      // 메타 DA/SA: 노출 49,588회, 도달 40,817명, 클릭 1,468회
+      // 메타 DA/SA: 총 노출 49,588회, 도달 40,817명, 클릭 1,468회
       dates.forEach((d, idx) => {
         const isSpike = (idx === 11);
         const mImp = isSpike ? 4200 : Math.floor(45388 / 29);
@@ -256,9 +261,8 @@
       return list;
     }
 
-    // 4. B2B 전문 카피라이팅 팩트 기반 콘텐츠 사전 (비용/예산/CPC 언급 완전 제거 및 모바일 최적화)
+    // 4. B2B 전문 카피라이팅 팩트 기반 콘텐츠 사전 (비용/예산/CPC 언급 완전 배제)
     const reportContent = {
-      // ■ 네이버 검색 탭
       Naver: {
         strategy: `
           <div style="line-height: 1.6; color: #ffffff;">
@@ -319,7 +323,6 @@
         `
       },
 
-      // ■ 메타 (DA/SA) 탭 (비용 언급 배제)
       Meta: {
         strategy: `
           <div style="line-height: 1.6; color: #ffffff;">
@@ -360,7 +363,6 @@
         `
       },
 
-      // ■ 통합(전체) 탭 (비용 언급 완전 배제 및 모바일 반응형 최적화)
       ALL: {
         strategy: `
           <div style="line-height: 1.6; color: #ffffff;">
@@ -376,7 +378,6 @@
               메타를 통한 대규모 오디언스 유입과 네이버 검색을 통한 92개 핵심 키워드 타겟팅이 상호 보완적으로 운용되었습니다.
             </p>
 
-            <!-- 모바일 반응형 지표 카드 -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               <div class="bg-[#1e293b] p-3 rounded-lg border border-slate-700">
                 <span class="text-slate-400 block text-[11px]">합산 노출수</span>
@@ -412,7 +413,6 @@
         `
       },
 
-      // ■ 구글 애즈 탭 (빈 상태 정상 처리)
       Google: {
         strategy: `
           <div class="py-8 text-center text-slate-500 font-sans">
@@ -459,7 +459,7 @@
       renderDonutChart();
     }
 
-    // 7. KPI 카드 및 하단 피벗 테이블 (비용 및 CPC 필드 전면 배제)
+    // 7. KPI 카드 및 하단 피벗 테이블
     function renderKPIsAndTable() {
       let filtered = [];
       if (activeTab === 'ALL') filtered = reportDataset;
@@ -475,13 +475,11 @@
 
       const ctr = imp > 0 ? ((clicks / imp) * 100).toFixed(2) + "%" : "0.00%";
 
-      // 4대 핵심 반응 지표 출력
       document.getElementById('kpi-impressions').innerText = imp.toLocaleString();
       document.getElementById('kpi-reach').innerText = reach.toLocaleString();
       document.getElementById('kpi-clicks').innerText = clicks.toLocaleString();
       document.getElementById('kpi-ctr').innerText = ctr;
 
-      // 하단 피벗 테이블 출력
       const tbody = document.getElementById('pivot-table-body');
       document.getElementById('table-row-count').innerText = filtered.length;
       tbody.innerHTML = '';
@@ -515,7 +513,7 @@
       });
     }
 
-    // 8. 일별 추이 차트 (노출수 & 클릭수)
+    // 8. 일별 추이 차트
     function renderTrendChart() {
       let filtered = [];
       if (activeTab === 'ALL') filtered = reportDataset;
@@ -582,15 +580,16 @@
       });
     }
 
-    // 9. 매체별 비중 도넛 차트 (노출수 기준 전환: 네이버 49,703회 / 메타 49,588회)
+    // 9. 매체별 비중 도넛 차트 (★ 클릭수 기준 전환 + 선택 매체 네온 글로우)
     function renderDonutChart() {
-      const naverImp = 49703;
-      const metaImp = 49588;
-      const googleImp = 0;
-      const totalImp = naverImp + metaImp + googleImp;
+      // 팩트 클릭수: 네이버 112회(7.1%), 메타 1,468회(92.9%), 구글 0회(0%)
+      const naverClicks = 112;
+      const metaClicks = 1468;
+      const googleClicks = 0;
+      const totalClicks = naverClicks + metaClicks + googleClicks; // 1,580회
 
       const mediaLabels = ['메타 (Meta)', '네이버 (Naver)', '구글 (Google)'];
-      const rawImpData = [metaImp, naverImp, googleImp];
+      const rawClicksData = [metaClicks, naverClicks, googleClicks];
 
       const baseColors = ['#1877F2', '#03C75A', '#EA4335'];
       const dimColors = ['rgba(24, 119, 242, 0.25)', 'rgba(3, 199, 90, 0.25)', 'rgba(234, 67, 53, 0.25)'];
@@ -622,7 +621,7 @@
           labels: mediaLabels,
           activeGlowIndex: glowIndex,
           datasets: [{
-            data: rawImpData,
+            data: rawClicksData,
             backgroundColor: finalColors,
             borderColor: '#0F172A',
             borderWidth: 2,
@@ -643,7 +642,7 @@
               callbacks: {
                 label: (c) => {
                   const val = c.raw || 0;
-                  const pct = totalImp > 0 ? ((val / totalImp) * 100).toFixed(1) : 0;
+                  const pct = totalClicks > 0 ? ((val / totalClicks) * 100).toFixed(1) : 0;
                   return ` ${c.label}: ${val.toLocaleString()}회 (${pct}%)`;
                 }
               }
@@ -652,8 +651,9 @@
         }
       });
 
-      const metaPct = ((metaImp / totalImp) * 100).toFixed(1);
-      const naverPct = ((naverImp / totalImp) * 100).toFixed(1);
+      // 하단 클릭수 기준 범례 퍼센테이지 갱신 (메타 92.9%, 네이버 7.1%)
+      const metaPct = ((metaClicks / totalClicks) * 100).toFixed(1);
+      const naverPct = ((naverClicks / totalClicks) * 100).toFixed(1);
 
       document.getElementById('donut-legend-info').innerHTML = `
         <div class="flex items-center space-x-1.5 ${activeTab === 'Meta' ? 'scale-105 font-bold' : 'opacity-70'}">
