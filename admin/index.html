@@ -7,6 +7,7 @@
   
   <link rel="icon" type="image/png" href="favicon.png">
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- SheetJS 라이브러리 (XLSX, CSV 통합 파싱 지원) -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
   <style>
@@ -396,7 +397,7 @@
         Object.keys(db[client].months).forEach(periodKey => {
           let month = db[client].months[periodKey];
           
-          // ★ 매체별 독립 저장 구조로 수정 (기존 배열 데이터를 ALL로 이관하여 마이그레이션)
+          // ★ 매체별 독립 소재 저장 구조 마이그레이션 적용
           if (!month.creatives || Array.isArray(month.creatives)) {
             const oldCreatives = Array.isArray(month.creatives) ? month.creatives : [];
             month.creatives = {
@@ -406,7 +407,6 @@
               Google: []
             };
           } else {
-            // 이미 객체 형태라면 누락된 탭 배열 보완
             if (!month.creatives.ALL) month.creatives.ALL = [];
             if (!month.creatives.Naver) month.creatives.Naver = [];
             if (!month.creatives.Meta) month.creatives.Meta = [];
@@ -445,7 +445,6 @@
             Meta: { strategy: '', anomaly: '' },
             Google: { strategy: '', anomaly: '' }
           },
-          // ★ 신규 회차 시 소재 객체도 매체별로 분리 초기화
           creatives: {
             ALL: [],
             Naver: [],
@@ -498,7 +497,6 @@
               Meta: { strategy: '', anomaly: '' },
               Google: { strategy: '', anomaly: '' }
             },
-            // ★ 신규 추가 회차 시 소재 객체도 매체별로 분리 초기화
             creatives: {
               ALL: [],
               Naver: [],
@@ -572,8 +570,7 @@
       document.getElementById('edit-anomaly-comment').value = activeData.anomaly || '';
       updateLiveCommentPreview();
       
-      // ★ 탭 전환 시 소재 리스트도 해당 매체의 데이터로 다시 렌더링
-      renderCreativesList();
+      renderCreativesList(); // 매체 탭 전환 시 소재도 함께 변경 렌더링
     }
 
     function renderAdminPanel() {
@@ -992,7 +989,6 @@
         db[currentClient].months[currentPeriod].creatives = { ALL: [], Naver: [], Meta: [], Google: [] };
       }
       
-      // ★ 현재 활성화된 매체 탭에 독립적으로 소재 저장
       db[currentClient].months[currentPeriod].creatives[currentCommentMedia].push({
         image: base64Str,
         title: title,
@@ -1012,7 +1008,6 @@
     }
 
     function deleteCreative(index) {
-      // ★ 현재 활성화된 매체 탭에서만 해당 소재 삭제
       db[currentClient].months[currentPeriod].creatives[currentCommentMedia].splice(index, 1);
       saveDatabase();
       renderCreativesList();
@@ -1020,11 +1015,7 @@
 
     function renderCreativesList() {
       const listContainer = document.getElementById('admin-creatives-list');
-      
-      // ★ 현재 매체 탭에 등록된 소재만 호출하여 렌더링
-      const periodData = db[currentClient].months[currentPeriod];
-      const creativesObj = periodData.creatives || { ALL: [], Naver: [], Meta: [], Google: [] };
-      const creatives = creativesObj[currentCommentMedia] || [];
+      const creatives = db[currentClient].months[currentPeriod].creatives[currentCommentMedia] || [];
       
       if (creatives.length === 0) {
         listContainer.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">등록된 소재가 없습니다.</p>';
@@ -1133,86 +1124,38 @@
       renderAdminPanel();
     }
 
-    function parseCSVText(text) {
-      const lines = text.split(/\r?\n/).filter(line => line.trim().length > 0);
-      if (lines.length < 2) return [];
-
-      let headerIdx = 0;
-      for (let i = 0; i < Math.min(5, lines.length); i++) {
-        const lineContent = lines[i];
-        if (lineContent.includes('노출수') || lineContent.includes('클릭수') || lineContent.includes('일별') || lineContent.includes('키워드') || lineContent.includes('보고 시작') || lineContent.includes('Date')) {
-          headerIdx = i;
-          break;
-        }
-      }
-
-      function parseLine(line) {
-        const res = [];
-        let cur = '';
-        let inQuotes = false;
-        for (let i = 0; i < line.length; i++) {
-          const c = line[i];
-          if (c === '"') {
-            if (inQuotes && line[i + 1] === '"') {
-              cur += '"';
-              i++;
-            } else {
-              inQuotes = !inQuotes;
-            }
-          } else if (c === ',' && !inQuotes) {
-            res.push(cur.trim());
-            cur = '';
-          } else {
-            cur += c;
-          }
-        }
-        res.push(cur.trim());
-        return res;
-      }
-
-      const headers = parseLine(lines[headerIdx]).map(h => h.replace(/^["']|["']$/g, '').trim());
-      const rows = [];
-      for (let i = headerIdx + 1; i < lines.length; i++) {
-        const cols = parseLine(lines[i]);
-        if (!cols || cols.length === 0 || (cols.length === 1 && !cols[0])) continue;
-        const obj = {};
-        headers.forEach((h, idx) => {
-          obj[h] = cols[idx] !== undefined ? cols[idx].replace(/^["']|["']$/g, '').trim() : '';
-        });
-        rows.push(obj);
-      }
-      return rows;
-    }
-
-    // 🌟 네이버 1행 메타데이터 자동 스킵 및 키워드별 수치 일별 집계 파서
+    // 🌟 네이버 다차원 보고서 오류 해결 및 자동 탭 이동 파서 반영
     function handleFileUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
 
-      const isCsv = file.name.toLowerCase().endsWith('.csv');
       const reader = new FileReader();
 
       reader.onload = function(e) {
         try {
-          let rowsData = [];
-          if (isCsv) {
-            rowsData = parseCSVText(e.target.result);
-          } else {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const data = new Uint8Array(e.target.result);
+          // CSV, XLSX 무관하게 SheetJS를 사용하여 바이너리로 읽음 (인코딩 자동 보정)
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
-            let rawMatrix = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false });
-            let headerRowIndex = 0;
-            for (let i = 0; i < Math.min(5, rawMatrix.length); i++) {
-              const rowStr = (rawMatrix[i] || []).map(c => String(c).trim()).join(' ');
-              if (rowStr.includes('노출수') || rowStr.includes('클릭수') || rowStr.includes('일별') || rowStr.includes('키워드')) {
-                headerRowIndex = i;
-                break;
-              }
+          let rawMatrix = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false });
+          let headerRowIndex = -1;
+          
+          // 상위 10줄을 스캔하여 '노출수', '클릭수', '일별' 등이 포함된 줄을 헤더로 식별 (네이버 메타데이터 스킵)
+          for (let i = 0; i < Math.min(10, rawMatrix.length); i++) {
+            const rowStr = (rawMatrix[i] || []).map(c => String(c).trim()).join(' ');
+            if (rowStr.includes('노출수') || rowStr.includes('클릭수') || rowStr.includes('일별') || rowStr.includes('키워드')) {
+              headerRowIndex = i;
+              break;
             }
-            rowsData = XLSX.utils.sheet_to_json(sheet, { range: headerRowIndex, raw: false });
           }
+          
+          if(headerRowIndex === -1) {
+            alert('데이터 헤더(노출수, 클릭수, 일별 등)를 찾을 수 없습니다. 양식을 확인해주세요.');
+            return;
+          }
+          
+          const rowsData = XLSX.utils.sheet_to_json(sheet, { range: headerRowIndex, raw: false });
 
           if (rowsData.length === 0) {
             alert('데이터가 비어있는 파일입니다.');
@@ -1244,6 +1187,7 @@
                 else if (sv.includes('google') || sv.includes('구글')) mediaVal = 'Google';
               }
 
+              // 네이버 '일별' 등 날짜 컬럼명 매칭 강화
               if (lk === '보고 시작' || lk === '시작일' || lk === 'date' || lk === '날짜' || lk === '일자' || lk === '일별' || lk === 'reporting starts') {
                 if (!dateVal && val) {
                   dateVal = String(val).trim();
@@ -1255,6 +1199,7 @@
               else if (lk === '클릭(전체)' || lk === '링크 클릭' || lk === '클릭수' || lk === 'clicks') {
                 if (clicks === 0 || lk === '클릭수' || lk === '클릭(전체)') clicks = parseNum(val);
               }
+              // 네이버 '총비용' 포함한 금액 데이터 매칭
               else if (lk === '총비용' || lk === '총 비용' || lk.startsWith('지출 금액') || lk === 'amount spent' || (lk.includes('비용') && !lk.includes('당') && !lk.includes('cpc'))) {
                 cost = parseNum(val);
               }
@@ -1313,7 +1258,7 @@
 
             saveDatabase();
             
-            // ★ 업로드 성공 시 파싱된 매체 데이터를 기준으로 매체 탭 자동 전환
+            // 업로드 성공 시 인식된 매체명으로 탭 자동 전환
             const uploadedMedia = newRows[0].media;
             if (uploadedMedia === 'Meta' || uploadedMedia === 'Naver' || uploadedMedia === 'Google') {
               changeCommentMedia(uploadedMedia);
@@ -1322,7 +1267,7 @@
               renderAdminPanel();
             }
 
-            alert(`🎉 [${uploadedMedia}] 데이터 ${newRows.length}일치가 [${currentPeriod}] 회차에 정상 통합 적재되었으며, 해당 매체 탭으로 자동 이동했습니다!`);
+            alert(`🎉 [${uploadedMedia}] 데이터 ${newRows.length}일치가 [${currentPeriod}] 회차에 정상 통합 적재되었으며, 해당 탭으로 이동했습니다!`);
           } else {
             alert('유효한 데이터(날짜 및 노출/클릭/비용 지표)를 찾지 못했습니다. 매체사 보고서 양식이 맞는지 확인해주세요.');
           }
@@ -1333,11 +1278,8 @@
         event.target.value = '';
       };
 
-      if (isCsv) {
-        reader.readAsText(file, 'utf-8');
-      } else {
-        reader.readAsArrayBuffer(file);
-      }
+      // 모든 파일을 ArrayBuffer로 읽어 인코딩 문제를 원천 차단
+      reader.readAsArrayBuffer(file);
     }
 
     function parseBulkPasteData() {
@@ -1368,7 +1310,7 @@
         saveDatabase();
         document.getElementById('bulk-paste-area').value = '';
         
-        // 붙여넣기한 데이터의 첫 행을 기준으로 탭 전환 지원
+        // 붙여넣기 1행 매체 기준으로 탭 전환 기능 추가
         const pastedMedia = parsedRows[0].media;
         if (pastedMedia === 'Meta' || pastedMedia === 'Naver' || pastedMedia === 'Google') {
           changeCommentMedia(pastedMedia);
