@@ -277,7 +277,6 @@
             
             <span class="text-slate-300">|</span>
 
-            <!-- ★ 사용자 요청 반영: 쓸모없는 '기본값 복원'을 유용한 '현재 데이터 전체 삭제'로 교체 -->
             <button onclick="clearCurrentPeriodData()" class="px-2.5 py-1.5 text-[11px] font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition" title="현재 회차의 등록된 모든 데이터를 삭제합니다">
               🗑️ 데이터 전체 삭제
             </button>
@@ -694,14 +693,14 @@
       }
     }
 
-    // ★ 기능 업데이트: '열 기본값 복원' -> '현재 데이터 전체 삭제'로 교체
+    // 🗑️ 데이터 전체 삭제 로직 (격리형 안전 삭제)
     function clearCurrentPeriodData() {
-      const warningMessage = `⚠️ [경고] 정말 [${currentPeriod}] 회차에 등록된 '모든 엑셀 데이터'를 삭제하시겠습니까?\n\n(참고: 지표 열 설정은 유지되며, 아래 테이블의 데이터 행만 싹 비워집니다. 잘못 올린 파일을 초기화하고 다시 올릴 때 유용합니다.)\n\n계속 진행하시려면 [확인]을 누르세요.`;
+      const warningMessage = `⚠️ [안내] 현재 선택된 [${currentClient}] - [${currentPeriod}] 회차의 엑셀 데이터표만 삭제합니다.\n\n(참고: 타 회차나 코멘트, 소재 이미지는 보존됩니다. 잘못 올린 파일을 초기화할 때 유용합니다.)\n\n계속 진행하시려면 [확인]을 누르세요.`;
       if (confirm(warningMessage)) {
         db[currentClient].months[currentPeriod].rawDataset = [];
         saveDatabase();
         renderAdminPanel();
-        alert("✅ 현재 회차의 데이터가 모두 깔끔하게 삭제되었습니다.");
+        alert(`✅ [${currentPeriod}] 회차의 데이터 표가 모두 초기화되었습니다.`);
       }
     }
 
@@ -1120,7 +1119,7 @@
       renderAdminPanel();
     }
 
-    // ★ AI 스코어링 알고리즘 및 파일명 교차 검증 로직이 반영된 최신 파서
+    // ★ 파일 파서 매체 유추 및 행단위 확정 할당 로직 완벽 격리/수정
     function handleFileUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1136,7 +1135,7 @@
           let rawMatrix = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false });
           let headerRowIndex = -1;
           
-          // 1. 파일명을 통한 1차 매체 자동 유추
+          // 1. 파일명 기반 매체 추출
           const fileNameLower = file.name.toLowerCase();
           let detectedMediaByFile = null;
           if (fileNameLower.includes('naver') || fileNameLower.includes('네이버') || fileNameLower.includes('다차원')) {
@@ -1147,7 +1146,7 @@
             detectedMediaByFile = 'Meta';
           }
           
-          // 2. AI 스코어링 기반 실제 데이터 헤더 위치 탐색
+          // 2. 헤더 찾기
           const headerKeywords = ['노출', '클릭', '비용', '지출', '결과', '전환', '일별', '시작일', '보고 시작', '캠페인', 'date', 'day', 'impressions', 'clicks', 'cost', 'amount', 'campaign'];
 
           let maxScore = 0;
@@ -1185,13 +1184,13 @@
             return isNaN(num) ? 0 : num;
           };
 
-          // 3. 헤더 컬럼 특성을 통한 2차 매체 자동 유추 (교차 검증)
+          // 3. 헤더 특성을 통한 매체 교차 검증
           const headerStr = Object.keys(rowsData[0] || {}).join(' ').toLowerCase();
           const isNaverReport = headerStr.includes('일별') || headerStr.includes('검색어') || headerStr.includes('평균노출순위') || headerStr.includes('확장소재') || headerStr.includes('그룹');
           const isGoogleReport = headerStr.includes('통화') || headerStr.includes('상호작용') || headerStr.includes('동영상');
 
-          let defaultMediaForFile = 'Meta'; // 최종 기본값
-          
+          // 기본 매체 결정 (파일명 우선 -> 헤더 특성 우선 -> 기본 Meta)
+          let defaultMediaForFile = 'Meta'; 
           if (detectedMediaByFile) {
             defaultMediaForFile = detectedMediaByFile;
           } else if (isNaverReport) {
@@ -1204,7 +1203,7 @@
 
           rowsData.forEach(row => {
             let dateVal = '';
-            // ★ AI가 판별한 기본 매체를 초기값으로 할당
+            // ★ AI가 1차, 2차로 판별한 확실한 매체를 해당 행의 기본값으로 무조건 배정 (네이버가 Meta로 탈선하는 것 방지)
             let mediaVal = defaultMediaForFile; 
             let imp = 0, reach = 0, clicks = 0, cost = 0, conv = 0;
 
@@ -1212,7 +1211,7 @@
               const lk = key.toLowerCase().trim();
               const val = row[key];
 
-              // 4. 행 내부 데이터 특징으로 3차 매체 유추 (가장 확실함)
+              // 4. 셀 내용(캠페인 이름 등)에 특정 매체 이름이 명시적으로 적혀있을 때만 예외적으로 오버라이드
               if (lk.includes('캠페인') || lk.includes('매체') || lk.includes('광고 세트') || lk.includes('광고 이름') || lk.includes('campaign')) {
                 const sv = String(val).toLowerCase();
                 if (sv.includes('naver') || sv.includes('네이버')) mediaVal = 'Naver';
