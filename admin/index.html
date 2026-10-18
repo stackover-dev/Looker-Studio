@@ -118,35 +118,36 @@
           </div>
         </div>
 
+        <!-- 기간별 지속 관리 및 원클릭 회차 버튼 영역 -->
         <div>
           <div class="flex items-center justify-between mb-2">
             <label class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
-              <span>📅</span> <span>광고 집행 기간 선택 (데이터 기반 자동 동기화 탭)</span>
+              <span>📅</span> <span>광고 집행 기간 / 회차 선택 (원클릭 전환 및 데이터 지속 누적)</span>
             </label>
             <div class="flex items-center space-x-1.5">
               <button onclick="addNewPeriodPrompt()" class="px-2.5 py-1 text-[11px] font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-md transition">
-                + 맞춤 기간 추가
+                + 신규 회차/기간 추가
               </button>
               <button onclick="editCurrentPeriodPrompt()" class="px-2.5 py-1 text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-md transition">
-                기간명 수정
+                회차명 수정
               </button>
               <button onclick="deleteCurrentPeriod()" class="px-2.5 py-1 text-[11px] font-bold bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-md transition">
-                현재 기간 삭제
+                현재 회차 삭제
               </button>
             </div>
           </div>
 
+          <!-- 1차, 2차, 3차 또는 날짜 버튼이 원클릭 탭으로 나열되는 컨테이너 -->
           <div id="admin-period-buttons" class="flex flex-wrap items-center gap-2 pt-1">
           </div>
         </div>
 
       </div>
 
-      <!-- 🌟 매체별 탭 신설 -->
+      <!-- 매체별 독립 코멘트 분리 탭 바 -->
       <div class="flex items-center space-x-3 mb-2">
         <span class="text-sm font-bold text-slate-800">✍️ 매체별 코멘트 분리 작성:</span>
         <div id="comment-media-tabs" class="flex space-x-1 border border-slate-300 bg-white p-1 rounded-lg shadow-sm">
-          <!-- 탭 버튼이 동적으로 렌더링 됩니다 -->
         </div>
       </div>
 
@@ -158,7 +159,7 @@
               <span>📝</span>
               <span>최상단 전략 HTML 코멘트 박스 (HTML Comment Box)</span>
             </h2>
-            <p class="text-[11px] text-slate-500 mt-0.5">클라이언트 보고서 상단 탭 클릭 시 연동되는 해당 매체 전용 전략 코멘트입니다.</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">선택된 회차 및 매체 탭에 독립적으로 연동되는 서식 태그(HTML) 적용 가능 총평 영역입니다.</p>
           </div>
 
           <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1.5 rounded-xl border border-slate-200">
@@ -188,7 +189,7 @@
         
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
           <label class="block text-xs font-bold text-amber-800 mb-1.5">
-            ⚡ 운영 이슈 및 최적화 대응 내역 (선택 매체 연동 / 줄바꿈으로 리스트화)
+            ⚡ 운영 이슈 및 최적화 대응 내역 (선택 회차 및 매체 연동 / 줄바꿈으로 리스트화)
           </label>
           <textarea id="edit-anomaly-comment" rows="4" oninput="handleCommentInput()" class="w-full flex-grow text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="CPC 급등 대응, 소재 교체 등 운영 이슈를 줄바꿈(Enter)으로 구분해 입력하세요."></textarea>
         </div>
@@ -313,12 +314,11 @@
       { key: 'conv', label: '전환수(CV)', width: 'w-20', isConv: true }
     ];
 
-    // 기본 데이터 구조 확장 (comments 객체로 매체별 분리)
     const defaultDatabase = {
       "코웨이 퍼펙트몰": {
         htmlFilename: "coway-perfectmall.html",
         months: {
-          "2026.09.22 ~ 2026.10.13": {
+          "1차 (2026.09.22 ~ 2026.10.13)": {
             comments: {
               ALL: {
                 strategy: "<h4 class='text-sm font-bold text-slate-900 mb-1.5'>퍼포먼스 마케팅 종합 성과 평가</h4>\n<p>총 집행비용은 <b class='text-slate-900'>44.3만 원 (VAT포함)</b>으로 숏폼 동영상 크리에이티브 중심 집중 집행되었습니다.</p>\n<p class='mt-1'><mark class='bg-yellow-200 px-1 rounded font-semibold'>인스타그램 프로필 방문 및 링크 클릭률 3.79%</mark>의 높은 반응도를 유지했습니다.</p>",
@@ -328,17 +328,11 @@
               Meta: { strategy: "", anomaly: "" },
               Google: { strategy: "", anomaly: "" }
             },
-            strategyComment: "", // 하위 호환성 유지용 빈값
-            anomalyComment: "", 
+            strategyComment: "",
+            anomalyComment: "",
             rawDataset: [],
             creatives: [],
-            columns: [
-              { key: 'impressions', label: '노출수', width: 'w-24', isConv: false },
-              { key: 'reach', label: '도달수', width: 'w-24', isConv: false },
-              { key: 'clicks', label: '클릭수', width: 'w-20', isConv: false },
-              { key: 'cost', label: '비용 (VAT포함)', width: 'w-28', isConv: false },
-              { key: 'conv', label: '전환수(CV)', width: 'w-20', isConv: true }
-            ]
+            columns: standardColumns.map(c => ({ ...c }))
           }
         }
       }
@@ -346,8 +340,8 @@
 
     let db = {};
     let currentClient = "코웨이 퍼펙트몰";
-    let currentPeriod = "2026.09.22 ~ 2026.10.13";
-    let currentCommentMedia = 'ALL'; // 매체별 탭 제어용 전역 변수
+    let currentPeriod = "";
+    let currentCommentMedia = 'ALL';
     let repoHtmlFiles = [];
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -356,13 +350,18 @@
       }
     });
 
-    function showAdminPanel() {
+    // 🌟 [핵심] 원격 GitHub 데이터 우선 로드 후 렌더링
+    async function showAdminPanel() {
       document.getElementById('login-modal').classList.add('hidden');
       document.getElementById('admin-main-content').classList.remove('hidden');
       document.getElementById('admin-main-content').classList.add('flex');
       
-      loadDatabase();
-      currentClient = Object.keys(db)[0]; 
+      await loadDatabase();
+
+      if (!currentClient || !db[currentClient]) {
+        currentClient = Object.keys(db).find(k => db[k].htmlFilename === 'noahuniversecompany.html') || Object.keys(db)[0];
+      }
+      
       renderClientSelect();
       renderPeriodNav();
       renderAdminPanel();
@@ -370,7 +369,166 @@
       syncRepoHtmlFiles(false);
     }
 
-    // 🌟 [신설] 매체별 탭 렌더링
+    // 🌟 [핵심] GitHub 원격 database.json을 fetch하여 로컬 캐시 유실 문제 완전 차단
+    async function loadDatabase() {
+      let remoteDb = null;
+      try {
+        const response = await fetch('./database.json?t=' + new Date().getTime());
+        if (response.ok) {
+          remoteDb = await response.json();
+        }
+      } catch (e) {
+        console.warn("⚠️ 원격 database.json 로드 실패, 로컬 캐시를 조회합니다.");
+      }
+
+      if (remoteDb) {
+        db = remoteDb;
+        localStorage.setItem('MEDIA_REPORT_DB', JSON.stringify(db));
+      } else {
+        const saved = localStorage.getItem('MEDIA_REPORT_DB');
+        if (saved) {
+          try { db = JSON.parse(saved); } catch(e) { db = defaultDatabase; }
+        } else {
+          db = defaultDatabase;
+          saveDatabase();
+        }
+      }
+
+      // 무손실 스키마 보존 및 마이그레이션
+      Object.keys(db).forEach(client => {
+        if (!db[client].months) {
+          const oldMonths = { ...db[client] };
+          delete oldMonths.htmlFilename;
+          db[client] = {
+            htmlFilename: `${client.toLowerCase()}.html`,
+            months: oldMonths
+          };
+        }
+        Object.keys(db[client].months).forEach(periodKey => {
+          let month = db[client].months[periodKey];
+          if (!month.creatives) month.creatives = [];
+          if (!month.columns) month.columns = standardColumns.map(c => ({ ...c }));
+          
+          if (!month.comments) {
+            month.comments = {
+              ALL: { strategy: month.strategyComment || '', anomaly: month.anomalyComment || '' },
+              Naver: { strategy: '', anomaly: '' },
+              Meta: { strategy: '', anomaly: '' },
+              Google: { strategy: '', anomaly: '' }
+            };
+          }
+        });
+      });
+    }
+
+    // 🌟 [핵심] 1차, 2차, 3차 등 지속 누적 회차 탭 원클릭 렌더링
+    function renderPeriodNav() {
+      const container = document.getElementById('admin-period-buttons');
+      container.innerHTML = '';
+
+      if (!db[currentClient]) db[currentClient] = { htmlFilename: `${currentClient}.html`, months: {} };
+      if (!db[currentClient].months) db[currentClient].months = {};
+
+      let periods = Object.keys(db[currentClient].months);
+      if (periods.length === 0) {
+        const initialPeriod = "1차 집행 기간";
+        db[currentClient].months[initialPeriod] = { 
+          comments: {
+            ALL: { strategy: '', anomaly: '' },
+            Naver: { strategy: '', anomaly: '' },
+            Meta: { strategy: '', anomaly: '' },
+            Google: { strategy: '', anomaly: '' }
+          },
+          rawDataset: [], creatives: [], columns: standardColumns.map(c => ({ ...c })) 
+        };
+        periods.push(initialPeriod);
+        saveDatabase();
+      }
+
+      if (!currentPeriod || !periods.includes(currentPeriod)) {
+        currentPeriod = periods[0];
+      }
+
+      document.getElementById('active-period-label').innerText = currentPeriod;
+
+      periods.forEach(p => {
+        const btn = document.createElement('button');
+        // 클릭 한 번으로 회차 즉각 전환
+        btn.onclick = () => { 
+          saveCommentsFromAdmin(); 
+          currentPeriod = p; 
+          renderPeriodNav(); 
+          renderAdminPanel(); 
+        };
+        
+        if (p === currentPeriod) {
+          btn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg bg-slate-900 text-white shadow-sm shrink-0 transition-colors border border-slate-900";
+          btn.innerHTML = `<span>✓</span> <span>${p}</span>`;
+        } else {
+          btn.className = "px-3.5 py-1.5 text-xs font-medium rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shrink-0 border border-slate-200";
+          btn.innerText = p;
+        }
+        container.appendChild(btn);
+      });
+    }
+
+    // 신규 회차/기간 추가 (기존 회차는 그대로 보존됨)
+    function addNewPeriodPrompt() {
+      const periodName = prompt('추가할 회차명 또는 집행 기간을 입력하세요:\n(예: 1차, 2차, 3차 또는 2026.09.17 ~ 2026.10.16)');
+      if (periodName && periodName.trim()) {
+        const trimmed = periodName.trim();
+        if (!db[currentClient].months[trimmed]) {
+          saveCommentsFromAdmin();
+          db[currentClient].months[trimmed] = { 
+            comments: {
+              ALL: { strategy: '', anomaly: '' },
+              Naver: { strategy: '', anomaly: '' },
+              Meta: { strategy: '', anomaly: '' },
+              Google: { strategy: '', anomaly: '' }
+            },
+            rawDataset: [], creatives: [], columns: standardColumns.map(c => ({ ...c })) 
+          };
+          saveDatabase();
+          currentPeriod = trimmed;
+          renderPeriodNav();
+          renderAdminPanel();
+          alert(`✅ [${trimmed}] 회차가 성공적으로 생성되었습니다.`);
+        } else {
+          alert('이미 존재하는 회차/기간명입니다.');
+        }
+      }
+    }
+
+    function editCurrentPeriodPrompt() {
+      const newName = prompt('현재 회차/기간명을 수정하세요:', currentPeriod);
+      if (newName && newName.trim() && newName.trim() !== currentPeriod) {
+        const trimmed = newName.trim();
+        const data = db[currentClient].months[currentPeriod];
+        delete db[currentClient].months[currentPeriod];
+        db[currentClient].months[trimmed] = data;
+        currentPeriod = trimmed;
+        saveDatabase();
+        renderPeriodNav();
+        renderAdminPanel();
+      }
+    }
+
+    function deleteCurrentPeriod() {
+      const periods = Object.keys(db[currentClient].months);
+      if (periods.length <= 1) {
+        alert('최소 1개의 회차/기간은 유지되어야 합니다.');
+        return;
+      }
+      if (confirm(`정말 [${currentPeriod}] 회차와 해당 기간의 모든 데이터를 삭제하시겠습니까?`)) {
+        delete db[currentClient].months[currentPeriod];
+        currentPeriod = Object.keys(db[currentClient].months)[0];
+        saveDatabase();
+        renderPeriodNav();
+        renderAdminPanel();
+      }
+    }
+
+    // 매체별 코멘트 탭 렌더링
     function renderCommentTabs() {
       const tabs = ['ALL', 'Naver', 'Meta', 'Google'];
       const labels = { ALL: '통합(전체)', Naver: '네이버 검색', Meta: '메타 (DA/SA)', Google: '구글 애즈' };
@@ -386,17 +544,90 @@
       }).join('');
     }
 
-    // 🌟 [신설] 매체 코멘트 탭 스위칭 로직
     function changeCommentMedia(media) {
-      saveCommentsFromAdmin(); // 전환 전 현재 에디터 내용 저장
+      saveCommentsFromAdmin();
       currentCommentMedia = media;
       renderCommentTabs();
       
-      // 해당 매체 코멘트 로드
       const activeData = db[currentClient].months[currentPeriod].comments[currentCommentMedia] || { strategy: '', anomaly: '' };
       document.getElementById('edit-strategy-comment').value = activeData.strategy || '';
       document.getElementById('edit-anomaly-comment').value = activeData.anomaly || '';
       updateLiveCommentPreview();
+    }
+
+    function renderAdminPanel() {
+      document.getElementById('active-period-label').innerText = currentPeriod;
+      renderCommentTabs();
+
+      const periodData = db[currentClient].months[currentPeriod] || {};
+      const activeComments = periodData.comments && periodData.comments[currentCommentMedia] 
+                             ? periodData.comments[currentCommentMedia] 
+                             : { strategy: '', anomaly: '' };
+
+      document.getElementById('edit-strategy-comment').value = activeComments.strategy || '';
+      document.getElementById('edit-anomaly-comment').value = activeComments.anomaly || '';
+
+      updateLiveCommentPreview();
+      renderAdminDataTable(periodData.rawDataset || []);
+      renderCreativesList();
+    }
+
+    function handleCommentInput() {
+      updateLiveCommentPreview();
+      saveCommentsFromAdmin();
+    }
+
+    function updateLiveCommentPreview() {
+      const htmlVal = document.getElementById('edit-strategy-comment').value;
+      const previewBox = document.getElementById('comment-live-preview');
+      previewBox.innerHTML = htmlVal || '<span class="text-slate-400 font-sans">실시간 프리뷰 영역입니다. 상단에 코멘트를 입력하세요.</span>';
+    }
+
+    function insertHtmlTag(startTag, endTag) {
+      const textarea = document.getElementById('edit-strategy-comment');
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+      const selectedText = text.substring(start, end) || '강조 문구';
+      const replacement = startTag + selectedText + endTag;
+
+      textarea.value = text.substring(0, start) + replacement + text.substring(end);
+      textarea.focus();
+      textarea.selectionStart = start + startTag.length;
+      textarea.selectionEnd = start + startTag.length + selectedText.length;
+
+      handleCommentInput();
+    }
+
+    function saveCommentsFromAdmin() {
+      if (!db[currentClient] || !db[currentClient].months[currentPeriod]) return;
+      
+      if (!db[currentClient].months[currentPeriod].comments) {
+        db[currentClient].months[currentPeriod].comments = {
+          ALL: { strategy: '', anomaly: '' },
+          Naver: { strategy: '', anomaly: '' },
+          Meta: { strategy: '', anomaly: '' },
+          Google: { strategy: '', anomaly: '' }
+        };
+      }
+      
+      const stratVal = document.getElementById('edit-strategy-comment').value;
+      const anomVal = document.getElementById('edit-anomaly-comment').value;
+
+      db[currentClient].months[currentPeriod].comments[currentCommentMedia].strategy = stratVal;
+      db[currentClient].months[currentPeriod].comments[currentCommentMedia].anomaly = anomVal;
+
+      if (currentCommentMedia === 'ALL') {
+        db[currentClient].months[currentPeriod].strategyComment = stratVal;
+        db[currentClient].months[currentPeriod].anomalyComment = anomVal;
+      }
+
+      saveDatabase();
+    }
+
+    // 🌟 [핵심] 사용자가 지정한 1차, 2차 등 맞춤 회차명이 강제로 삭제되지 않도록 보존
+    function saveDatabase() {
+      localStorage.setItem('MEDIA_REPORT_DB', JSON.stringify(db));
     }
 
     function getActiveColumns() {
@@ -489,7 +720,7 @@
               db[finalName] = {
                 htmlFilename: file,
                 months: {
-                  "신규 집행 기간": {
+                  "1차 집행 기간": {
                     comments: {
                       ALL: { strategy: "<p>전략 총평을 입력하세요.</p>", anomaly: "특이사항을 입력하세요." },
                       Naver: { strategy: "", anomaly: "" },
@@ -559,63 +790,6 @@
       } else {
         document.getElementById('login-error').classList.remove('hidden');
       }
-    }
-
-    // 🌟 [수정됨] 과거 데이터 스키마 무손실 마이그레이션 (comments 구조 삽입)
-    function loadDatabase() {
-      const saved = localStorage.getItem('MEDIA_REPORT_DB');
-      if (saved) {
-        try { 
-          db = JSON.parse(saved); 
-          Object.keys(db).forEach(client => {
-            if (!db[client].months) {
-              const oldMonths = { ...db[client] };
-              delete oldMonths.htmlFilename;
-              db[client] = {
-                htmlFilename: `${client.toLowerCase()}.html`,
-                months: oldMonths
-              };
-            }
-            Object.keys(db[client].months).forEach(periodKey => {
-              let month = db[client].months[periodKey];
-              if (!month.creatives) month.creatives = [];
-              if (!month.columns) month.columns = standardColumns.map(c => ({ ...c }));
-              
-              // 매체별 코멘트 구조가 없으면 레거시 데이터 기반 생성
-              if (!month.comments) {
-                month.comments = {
-                  ALL: { strategy: month.strategyComment || '', anomaly: month.anomalyComment || '' },
-                  Naver: { strategy: '', anomaly: '' },
-                  Meta: { strategy: '', anomaly: '' },
-                  Google: { strategy: '', anomaly: '' }
-                };
-              }
-            });
-          });
-        } catch(e) { db = defaultDatabase; }
-      } else {
-        db = defaultDatabase;
-        saveDatabase();
-      }
-    }
-
-    function saveDatabase() {
-      if (db[currentClient] && db[currentClient].months[currentPeriod]) {
-        const dataset = db[currentClient].months[currentPeriod].rawDataset || [];
-        if (dataset.length > 0) {
-          const dates = dataset.map(d => d.date).sort();
-          const firstDate = dates[0].replace(/-/g, '.');
-          const lastDate = dates[dates.length - 1].replace(/-/g, '.');
-          const autoPeriodName = `${firstDate} ~ ${lastDate}`;
-          
-          if (autoPeriodName !== currentPeriod) {
-            db[currentClient].months[autoPeriodName] = db[currentClient].months[currentPeriod];
-            delete db[currentClient].months[currentPeriod];
-            currentPeriod = autoPeriodName;
-          }
-        }
-      }
-      localStorage.setItem('MEDIA_REPORT_DB', JSON.stringify(db));
     }
 
     function setGitHubTokenPrompt() {
@@ -739,7 +913,8 @@
 
     function changeClient(clientName) {
       currentClient = clientName;
-      currentCommentMedia = 'ALL'; // 고객 변경 시 통합 탭으로 초기화
+      currentPeriod = "";
+      currentCommentMedia = 'ALL';
       updateClientHtmlLinkDisplay();
       renderPeriodNav();
       renderAdminPanel();
@@ -754,7 +929,7 @@
           db[trimmed] = {
             htmlFilename: defaultFilename,
             months: {
-              "신규 집행 기간": {
+              "1차 집행 기간": {
                 comments: {
                   ALL: { strategy: "<p>신규 고객사 전략 총평 코멘트를 입력하세요.</p>", anomaly: "특이사항을 입력하세요." },
                   Naver: { strategy: "", anomaly: "" },
@@ -772,174 +947,6 @@
           changeClient(trimmed);
         }
       }
-    }
-
-    function renderPeriodNav() {
-      const container = document.getElementById('admin-period-buttons');
-      container.innerHTML = '';
-
-      if (!db[currentClient]) db[currentClient] = { htmlFilename: `${currentClient}.html`, months: {} };
-      if (!db[currentClient].months) db[currentClient].months = {};
-
-      let periods = Object.keys(db[currentClient].months);
-      if (periods.length === 0) {
-        db[currentClient].months["신규 집행 기간"] = { 
-          comments: {
-            ALL: { strategy: '', anomaly: '' },
-            Naver: { strategy: '', anomaly: '' },
-            Meta: { strategy: '', anomaly: '' },
-            Google: { strategy: '', anomaly: '' }
-          },
-          rawDataset: [], creatives: [], columns: standardColumns.map(c => ({ ...c })) 
-        };
-        periods.push("신규 집행 기간");
-        saveDatabase();
-      }
-
-      if (!periods.includes(currentPeriod)) {
-        currentPeriod = periods[0];
-      }
-
-      document.getElementById('active-period-label').innerText = currentPeriod;
-
-      periods.forEach(p => {
-        const btn = document.createElement('button');
-        btn.onclick = () => { currentPeriod = p; renderPeriodNav(); renderAdminPanel(); };
-        if (p === currentPeriod) {
-          btn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg bg-slate-900 text-white shadow-sm shrink-0 transition-colors border border-slate-900";
-          btn.innerHTML = `<span>✓</span> <span>${p}</span>`;
-        } else {
-          btn.className = "px-3.5 py-1.5 text-xs font-medium rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shrink-0 border border-slate-200";
-          btn.innerText = p;
-        }
-        container.appendChild(btn);
-      });
-    }
-
-    function addNewPeriodPrompt() {
-      const periodName = prompt('추가할 집행 기간 또는 회차명을 입력하세요:\n(예: 2026.09.14 ~ 2026.10.13)');
-      if (periodName && periodName.trim()) {
-        const trimmed = periodName.trim();
-        if (!db[currentClient].months[trimmed]) {
-          db[currentClient].months[trimmed] = { 
-            comments: {
-              ALL: { strategy: '', anomaly: '' },
-              Naver: { strategy: '', anomaly: '' },
-              Meta: { strategy: '', anomaly: '' },
-              Google: { strategy: '', anomaly: '' }
-            },
-            rawDataset: [], creatives: [], columns: standardColumns.map(c => ({ ...c })) 
-          };
-          saveDatabase();
-          currentPeriod = trimmed;
-          renderPeriodNav();
-          renderAdminPanel();
-        } else {
-          alert('이미 존재하는 집행 기간입니다.');
-        }
-      }
-    }
-
-    function editCurrentPeriodPrompt() {
-      const newName = prompt('현재 집행 기간명을 수정하세요:', currentPeriod);
-      if (newName && newName.trim() && newName.trim() !== currentPeriod) {
-        const trimmed = newName.trim();
-        const data = db[currentClient].months[currentPeriod];
-        delete db[currentClient].months[currentPeriod];
-        db[currentClient].months[trimmed] = data;
-        currentPeriod = trimmed;
-        saveDatabase();
-        renderPeriodNav();
-        renderAdminPanel();
-      }
-    }
-
-    function deleteCurrentPeriod() {
-      const periods = Object.keys(db[currentClient].months);
-      if (periods.length <= 1) {
-        alert('최소 1개의 집행 기간은 유지되어야 합니다.');
-        return;
-      }
-      if (confirm(`정말 [${currentPeriod}] 기간과 모든 데이터를 삭제하시겠습니까?`)) {
-        delete db[currentClient].months[currentPeriod];
-        currentPeriod = Object.keys(db[currentClient].months)[0];
-        saveDatabase();
-        renderPeriodNav();
-        renderAdminPanel();
-      }
-    }
-
-    function renderAdminPanel() {
-      document.getElementById('active-period-label').innerText = currentPeriod;
-      renderCommentTabs();
-
-      const periodData = db[currentClient].months[currentPeriod] || {};
-      const activeComments = periodData.comments && periodData.comments[currentCommentMedia] 
-                             ? periodData.comments[currentCommentMedia] 
-                             : { strategy: '', anomaly: '' };
-
-      document.getElementById('edit-strategy-comment').value = activeComments.strategy || '';
-      document.getElementById('edit-anomaly-comment').value = activeComments.anomaly || '';
-
-      updateLiveCommentPreview();
-      renderAdminDataTable(periodData.rawDataset || []);
-      renderCreativesList();
-    }
-
-    function handleCommentInput() {
-      updateLiveCommentPreview();
-      saveCommentsFromAdmin();
-    }
-
-    function updateLiveCommentPreview() {
-      const htmlVal = document.getElementById('edit-strategy-comment').value;
-      const previewBox = document.getElementById('comment-live-preview');
-      previewBox.innerHTML = htmlVal || '<span class="text-slate-400 font-sans">실시간 프리뷰 영역입니다. 상단에 코멘트를 입력하세요.</span>';
-    }
-
-    function insertHtmlTag(startTag, endTag) {
-      const textarea = document.getElementById('edit-strategy-comment');
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const text = textarea.value;
-      const selectedText = text.substring(start, end) || '강조 문구';
-      const replacement = startTag + selectedText + endTag;
-
-      textarea.value = text.substring(0, start) + replacement + text.substring(end);
-      textarea.focus();
-      textarea.selectionStart = start + startTag.length;
-      textarea.selectionEnd = start + startTag.length + selectedText.length;
-
-      handleCommentInput();
-    }
-
-    // 🌟 [수정됨] 매체별 코멘트를 올바른 경로(comments[media])에 저장하도록 연동
-    function saveCommentsFromAdmin() {
-      if (!db[currentClient].months[currentPeriod]) {
-        db[currentClient].months[currentPeriod] = { rawDataset: [], creatives: [] };
-      }
-      if (!db[currentClient].months[currentPeriod].comments) {
-        db[currentClient].months[currentPeriod].comments = {
-          ALL: { strategy: '', anomaly: '' },
-          Naver: { strategy: '', anomaly: '' },
-          Meta: { strategy: '', anomaly: '' },
-          Google: { strategy: '', anomaly: '' }
-        };
-      }
-      
-      const stratVal = document.getElementById('edit-strategy-comment').value;
-      const anomVal = document.getElementById('edit-anomaly-comment').value;
-
-      db[currentClient].months[currentPeriod].comments[currentCommentMedia].strategy = stratVal;
-      db[currentClient].months[currentPeriod].comments[currentCommentMedia].anomaly = anomVal;
-
-      // 이전 HTML 뷰어 구버전과 하위 호환성을 맞추기 위해 ALL은 기존 키에도 동시 저장
-      if (currentCommentMedia === 'ALL') {
-        db[currentClient].months[currentPeriod].strategyComment = stratVal;
-        db[currentClient].months[currentPeriod].anomalyComment = anomVal;
-      }
-
-      saveDatabase();
     }
 
     function processCreativeImage(event) {
@@ -1251,7 +1258,7 @@
             saveDatabase();
             renderPeriodNav();
             renderAdminPanel();
-            alert(`🎉 데이터 ${newRows.length}건이 성공적으로 등록되었습니다!`);
+            alert(`🎉 데이터 ${newRows.length}건이 [${currentPeriod}] 회차에 정상 누적되었습니다!`);
           } else {
             alert('유효한 데이터(날짜 및 노출/클릭/비용 지표)를 찾지 못했습니다. 매체사 보고서 양식이 맞는지 확인해주세요.');
           }
@@ -1298,7 +1305,7 @@
         document.getElementById('bulk-paste-area').value = '';
         renderPeriodNav();
         renderAdminPanel();
-        alert(`${parsedRows.length}건의 데이터가 수동으로 파싱 및 자동 동기화되었습니다.`);
+        alert(`${parsedRows.length}건의 데이터가 [${currentPeriod}] 회차에 정상 반영되었습니다.`);
       } else {
         alert('올바른 데이터 형식이 아닙니다. 탭으로 구분된 형식을 확인하세요.');
       }
