@@ -187,11 +187,12 @@
       <!-- 3. 운영 이슈 & 4. 광고 소재 피드백 관리 -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
+        <!-- ▼ 수정된 운영 이슈 및 최적화 대응 내역 박스 (HTML 지원) -->
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
           <label class="block text-xs font-bold text-amber-800 mb-1.5">
-            ⚡ 운영 이슈 및 최적화 대응 내역 (선택 회차 및 매체 연동 / 줄바꿈으로 리스트화)
+            ⚡ 운영 이슈 및 최적화 대응 내역 (선택 회차 및 매체 연동 / HTML 코드 적용 가능)
           </label>
-          <textarea id="edit-anomaly-comment" rows="4" oninput="handleCommentInput()" class="w-full flex-grow text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="CPC 급등 대응, 소재 교체 등 운영 이슈를 줄바꿈(Enter)으로 구분해 입력하세요."></textarea>
+          <textarea id="edit-anomaly-comment" rows="4" oninput="handleCommentInput()" class="w-full flex-grow font-mono text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none bg-slate-50 focus:bg-white" placeholder="HTML 태그를 활용하여 운영 이슈 및 최적화 내역을 작성하세요."></textarea>
         </div>
 
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
