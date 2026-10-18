@@ -395,7 +395,24 @@
         }
         Object.keys(db[client].months).forEach(periodKey => {
           let month = db[client].months[periodKey];
-          if (!month.creatives) month.creatives = [];
+          
+          // ★ 매체별 독립 저장 구조로 수정 (기존 배열 데이터를 ALL로 이관하여 마이그레이션)
+          if (!month.creatives || Array.isArray(month.creatives)) {
+            const oldCreatives = Array.isArray(month.creatives) ? month.creatives : [];
+            month.creatives = {
+              ALL: oldCreatives,
+              Naver: [],
+              Meta: [],
+              Google: []
+            };
+          } else {
+            // 이미 객체 형태라면 누락된 탭 배열 보완
+            if (!month.creatives.ALL) month.creatives.ALL = [];
+            if (!month.creatives.Naver) month.creatives.Naver = [];
+            if (!month.creatives.Meta) month.creatives.Meta = [];
+            if (!month.creatives.Google) month.creatives.Google = [];
+          }
+
           if (!month.columns) month.columns = standardColumns.map(c => ({ ...c }));
           
           if (!month.comments) {
@@ -428,7 +445,14 @@
             Meta: { strategy: '', anomaly: '' },
             Google: { strategy: '', anomaly: '' }
           },
-          rawDataset: [], creatives: [], columns: standardColumns.map(c => ({ ...c })) 
+          // ★ 신규 회차 시 소재 객체도 매체별로 분리 초기화
+          creatives: {
+            ALL: [],
+            Naver: [],
+            Meta: [],
+            Google: []
+          },
+          rawDataset: [], columns: standardColumns.map(c => ({ ...c })) 
         };
         periods.push(initialPeriod);
         saveDatabase();
@@ -474,7 +498,14 @@
               Meta: { strategy: '', anomaly: '' },
               Google: { strategy: '', anomaly: '' }
             },
-            rawDataset: [], creatives: [], columns: standardColumns.map(c => ({ ...c })) 
+            // ★ 신규 추가 회차 시 소재 객체도 매체별로 분리 초기화
+            creatives: {
+              ALL: [],
+              Naver: [],
+              Meta: [],
+              Google: []
+            },
+            rawDataset: [], columns: standardColumns.map(c => ({ ...c })) 
           };
           saveDatabase();
           currentPeriod = trimmed;
@@ -540,6 +571,9 @@
       document.getElementById('edit-strategy-comment').value = activeData.strategy || '';
       document.getElementById('edit-anomaly-comment').value = activeData.anomaly || '';
       updateLiveCommentPreview();
+      
+      // ★ 탭 전환 시 소재 리스트도 해당 매체의 데이터로 다시 렌더링
+      renderCreativesList();
     }
 
     function renderAdminPanel() {
@@ -955,10 +989,11 @@
       if (!title) return alert('소재명을 입력해주세요.');
       
       if (!db[currentClient].months[currentPeriod].creatives) {
-        db[currentClient].months[currentPeriod].creatives = [];
+        db[currentClient].months[currentPeriod].creatives = { ALL: [], Naver: [], Meta: [], Google: [] };
       }
       
-      db[currentClient].months[currentPeriod].creatives.push({
+      // ★ 현재 활성화된 매체 탭에 독립적으로 소재 저장
+      db[currentClient].months[currentPeriod].creatives[currentCommentMedia].push({
         image: base64Str,
         title: title,
         feedback: feedback
@@ -977,14 +1012,19 @@
     }
 
     function deleteCreative(index) {
-      db[currentClient].months[currentPeriod].creatives.splice(index, 1);
+      // ★ 현재 활성화된 매체 탭에서만 해당 소재 삭제
+      db[currentClient].months[currentPeriod].creatives[currentCommentMedia].splice(index, 1);
       saveDatabase();
       renderCreativesList();
     }
 
     function renderCreativesList() {
       const listContainer = document.getElementById('admin-creatives-list');
-      const creatives = db[currentClient].months[currentPeriod].creatives || [];
+      
+      // ★ 현재 매체 탭에 등록된 소재만 호출하여 렌더링
+      const periodData = db[currentClient].months[currentPeriod];
+      const creativesObj = periodData.creatives || { ALL: [], Naver: [], Meta: [], Google: [] };
+      const creatives = creativesObj[currentCommentMedia] || [];
       
       if (creatives.length === 0) {
         listContainer.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">등록된 소재가 없습니다.</p>';
@@ -1272,9 +1312,17 @@
             db[currentClient].months[currentPeriod].rawDataset = targetDataset;
 
             saveDatabase();
-            renderPeriodNav();
-            renderAdminPanel();
-            alert(`🎉 [${newRows[0].media}] 데이터 ${newRows.length}일치가 [${currentPeriod}] 회차에 정상 통합 적재되었습니다!`);
+            
+            // ★ 업로드 성공 시 파싱된 매체 데이터를 기준으로 매체 탭 자동 전환
+            const uploadedMedia = newRows[0].media;
+            if (uploadedMedia === 'Meta' || uploadedMedia === 'Naver' || uploadedMedia === 'Google') {
+              changeCommentMedia(uploadedMedia);
+            } else {
+              renderPeriodNav();
+              renderAdminPanel();
+            }
+
+            alert(`🎉 [${uploadedMedia}] 데이터 ${newRows.length}일치가 [${currentPeriod}] 회차에 정상 통합 적재되었으며, 해당 매체 탭으로 자동 이동했습니다!`);
           } else {
             alert('유효한 데이터(날짜 및 노출/클릭/비용 지표)를 찾지 못했습니다. 매체사 보고서 양식이 맞는지 확인해주세요.');
           }
@@ -1319,8 +1367,16 @@
         db[currentClient].months[currentPeriod].rawDataset.push(...parsedRows);
         saveDatabase();
         document.getElementById('bulk-paste-area').value = '';
-        renderPeriodNav();
-        renderAdminPanel();
+        
+        // 붙여넣기한 데이터의 첫 행을 기준으로 탭 전환 지원
+        const pastedMedia = parsedRows[0].media;
+        if (pastedMedia === 'Meta' || pastedMedia === 'Naver' || pastedMedia === 'Google') {
+          changeCommentMedia(pastedMedia);
+        } else {
+          renderPeriodNav();
+          renderAdminPanel();
+        }
+        
         alert(`${parsedRows.length}건의 데이터가 [${currentPeriod}] 회차에 정상 반영되었습니다.`);
       } else {
         alert('올바른 데이터 형식이 아닙니다. 탭으로 구분된 형식을 확인하세요.');
