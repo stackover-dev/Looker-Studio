@@ -244,7 +244,6 @@
 
       if (clientDb) {
         const keys = Object.keys(clientDb);
-        // 등록된 사명 중 루미 관련 키워드 자동 탐색 매칭
         const foundKey = keys.find(k => TARGET_CLIENT_KEYWORDS.some(kw => k.toLowerCase().includes(kw.toLowerCase()))) || keys[0];
         if (foundKey && clientDb[foundKey]) {
           matchedClientKey = foundKey;
@@ -289,7 +288,7 @@
       renderDonutChart();
     }
 
-    // 5. 코멘트 박스 렌더링 (루미-밀리언파이 전용 규격화)
+    // 5. 코멘트 박스 렌더링 (★ 사실 검증 로직: 미집행 매체는 허위 문구 자동 생성 차단)
     function renderComments() {
       let stratText = "";
       let anomText = "";
@@ -297,74 +296,54 @@
       const clientObj = clientDb ? (clientDb[matchedClientKey] || Object.values(clientDb)[0]) : null;
       const monthData = (clientObj && clientObj.months) ? clientObj.months[currentPeriod] : null;
 
+      // 관리자가 관제탑에서 직접 작성하여 DB에 저장한 코멘트가 있는 경우에만 로드
       if (monthData && monthData.comments && monthData.comments[activeTab]) {
-        stratText = monthData.comments[activeTab].strategy || "";
-        anomText = monthData.comments[activeTab].anomaly || "";
+        stratText = (monthData.comments[activeTab].strategy || "").trim();
+        anomText = (monthData.comments[activeTab].anomaly || "").trim();
       }
 
-      // 구형 좁은 너비 서식 방어
+      // 구형 고정폭 서식 방어
       if (stratText && stratText.includes('max-width: 650px')) {
         stratText = "";
       }
 
-      // 데이터가 비어있을 경우의 팩트 기반 정중한 기본 브리핑
+      // 해당 탭에 실제 집행된 데이터 행이 존재하는지 팩트 체크
+      const currentTabRows = getFilteredRows();
+      const hasActualData = currentTabRows.length > 0;
+      const mediaLabelMap = { ALL: '통합 매체', Naver: '네이버 검색', Meta: '메타 (Meta)', Google: '구글 애즈' };
+      const currentTabLabel = mediaLabelMap[activeTab] || activeTab;
+
+      // [핵심 교정]: 관리자가 작성한 코멘트가 없을 때의 동작
       if (!stratText) {
-        if (activeTab === 'ALL') {
+        if (!hasActualData) {
+          // 1) 실제 광고 집행 내역이 전혀 없는 경우: 가짜 분석 문구를 일체 만들지 않고 사실 그대로 표기
           stratText = `
-            <div style="line-height: 1.6; color: #ffffff; width: 100%;">
-              <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 8px; font-size: 16px; font-weight: 700; border-bottom: 2px solid #3b82f6; padding-bottom: 8px;">
-                [루미-밀리언파이] 통합 퍼포먼스 마케팅 운영 결산
-              </h3>
-              <p style="font-size: 13px; color: #94a3b8; margin-bottom: 14px;">
-                <strong style="color: #facc15;">집행 회차:</strong> ${currentPeriod}
-              </p>
-              <div style="background-color: #1e293b; border-left: 4px solid #38bdf8; border-radius: 4px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #e2e8f0; line-height: 1.6;">
-                <strong>운영 요약:</strong> 당월 디지털 매체 통합 집행 데이터를 기반으로 채널별 효율을 분석 중입니다. 디스플레이를 통한 유효 타겟 유입 확보와 검색광고를 통한 고관여 잠재 고객 흡수가 상호 보완적으로 운용되었습니다.
-              </div>
-              <h4 style="color: #60a5fa; font-size: 14px; font-weight: 600; margin: 0 0 6px 0;">
-                1. 주요 운영 방향 및 성과 분석
-              </h4>
-              <p style="font-size: 13px; color: #cbd5e1; margin: 0; line-height: 1.6;">
-                수집된 실측 유입 반응도를 면밀히 모니터링하여 이탈을 최소화하고 실질적인 비즈니스 성과로 이어질 수 있는 유효 클릭수 위주로 운영을 최적화해 나갈 계획입니다.
-              </p>
-            </div>`;
-        } else if (activeTab === 'Naver') {
-          stratText = `
-            <div style="line-height: 1.6; color: #ffffff; width: 100%;">
-              <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 8px; font-size: 16px; font-weight: 700; border-bottom: 2px solid #03C75A; padding-bottom: 8px;">
-                [루미-밀리언파이] 네이버 검색광고 운영 종합 분석
-              </h3>
-              <p style="font-size: 13px; color: #94a3b8; margin-bottom: 14px;"><strong style="color: #facc15;">기준:</strong> ${currentPeriod}</p>
-              <p style="font-size: 13px; color: #e2e8f0; margin-bottom: 14px; line-height: 1.6;">
-                네이버 검색 매체를 통해 유입되는 핵심 검색어별 반응 데이터를 바탕으로 정밀 최적화를 진행 중입니다. 목적성 검색 수요를 선점하여 실질적인 전환 효율을 극대화해 나갈 예정입니다.
-              </p>
-            </div>`;
-        } else if (activeTab === 'Meta') {
-          stratText = `
-            <div style="line-height: 1.6; color: #ffffff; width: 100%;">
-              <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 8px; font-size: 16px; font-weight: 700; border-bottom: 2px solid #1877F2; padding-bottom: 8px;">
-                [루미-밀리언파이] 메타(Meta DA/SA) 성과 종합 분석
-              </h3>
-              <p style="font-size: 13px; color: #94a3b8; margin-bottom: 14px;"><strong style="color: #facc15;">기준:</strong> ${currentPeriod}</p>
-              <p style="font-size: 13px; color: #e2e8f0; margin-bottom: 14px; line-height: 1.6;">
-                타겟 오디언스 분석을 기반으로 최적화된 게재 지면을 테스트하고 있으며, 반응률이 높은 크리에이티브 소재군을 집중 편성하여 안정적인 트래픽을 견인하고 있습니다.
-              </p>
+            <div class="py-8 text-center text-slate-400 font-sans">
+              <span class="text-base font-bold text-slate-300 block mb-1">집행 내역 없음</span>
+              해당 기간 내 집행된 <strong class="text-emerald-400">[${currentTabLabel}]</strong> 광고 데이터 및 등록된 전략 코멘트가 없습니다.
             </div>`;
         } else {
-          stratText = `<div class="py-6 text-center text-slate-500 font-sans">등록된 [구글 애즈] 전략 코멘트가 없습니다.</div>`;
+          // 2) 실제 데이터는 있으나 코멘트를 아직 작성하지 않은 경우: 정중한 등록 대기 안내문만 표시
+          stratText = `
+            <div class="py-8 text-center text-slate-400 font-sans">
+              해당 기간의 <strong class="text-blue-400">[${currentTabLabel}]</strong> 전략 코멘트가 아직 등록되지 않았습니다.
+            </div>`;
         }
       }
 
+      // 운영 이슈 박스 처리
       if (!anomText) {
-        anomText = `
-          <div style="line-height: 1.6; color: #ffffff; width: 100%;">
-            <div style="background-color: #1e293b; border-left: 4px solid #f59e0b; border-radius: 4px; padding: 12px 16px;">
-              <h4 style="color: #f59e0b; font-size: 13px; font-weight: 700; margin: 0 0 4px 0;">⚡ 운영 이슈 및 최적화 점검</h4>
-              <p style="font-size: 12px; color: #cbd5e1; margin: 0; line-height: 1.6;">
-                캠페인의 중단 없는 송출과 안정적인 머신러닝 최적화 상태를 실시간 모니터링하고 있으며, 이상 징후 발생 시 사후 대응 내역이 기록됩니다.
-              </p>
-            </div>
-          </div>`;
+        if (!hasActualData) {
+          anomText = `
+            <div class="py-6 text-center text-slate-400 font-sans text-xs">
+              해당 기간 내 집행된 <strong class="text-amber-400">[${currentTabLabel}]</strong> 운영 이슈 내역이 없습니다.
+            </div>`;
+        } else {
+          anomText = `
+            <div class="py-6 text-center text-slate-400 font-sans text-xs">
+              등록된 특이사항 및 이슈가 없습니다. 정상 송출 및 최적화가 유지되고 있습니다.
+            </div>`;
+        }
       }
 
       document.getElementById('strategy-comment-body').innerHTML = stratText;
@@ -385,7 +364,7 @@
       });
     }
 
-    // 7. KPI 카드 및 하단 피벗 테이블 렌더링 (순수 고유 일수 정확 집계)
+    // 7. KPI 카드 및 하단 피벗 테이블 렌더링 (순수 고유 일수 집계)
     function renderKPIsAndTable() {
       const filtered = getFilteredRows();
 
@@ -403,7 +382,7 @@
       document.getElementById('kpi-clicks').innerText = clicks.toLocaleString();
       document.getElementById('kpi-ctr').innerText = ctr;
 
-      // 중복 일자 제거된 고유 날짜(Unique Date) 기준 집계
+      // 중복 일자 제거된 순수 고유 일수(Unique Date) 카운트
       const uniqueDaysCount = new Set(filtered.map(r => r.date)).size;
       document.getElementById('table-row-count').innerText = uniqueDaysCount;
 
