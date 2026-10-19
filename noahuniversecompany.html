@@ -148,13 +148,14 @@
 
     </section>
 
-    <!-- 7. 일별 성과 상세 집계 내역 (실제 엑셀 원본 일자별 데이터 1:1 출력) -->
+    <!-- 7. 일별 성과 상세 집계 내역 (고유 집계 일수 산출 로직 적용) -->
     <section class="bg-[#0F172A] rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
       <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 bg-slate-900/60">
         <div>
           <h3 class="text-xs sm:text-sm font-bold text-white">일별 성과 상세 집계 내역</h3>
           <p class="text-[11px] text-slate-400 mt-0.5">상단 선택 매체 기준 자동 피벗 연산 테이블</p>
         </div>
+        <!-- 중복 제거된 순수 집계 일수가 표기되는 배지 -->
         <div class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-slate-800 text-blue-400 border border-slate-700">
           집계 일수: <span id="table-row-count">0</span>일
         </div>
@@ -209,7 +210,7 @@
 
     // 2. 전역 상태
     const TARGET_CLIENT = "노아유니버스컴퍼니";
-    let activeTab = 'Naver';
+    let activeTab = 'ALL';
     let currentPeriod = "";
     let clientDb = null;
     let actualRawDataset = [];
@@ -265,7 +266,6 @@
     }
 
     function renderDashboard() {
-      // (1) 탭 스타일 갱신
       const tabs = ['ALL', 'Naver', 'Meta', 'Google'];
       tabs.forEach(t => {
         const btn = document.getElementById(`tab-${t}`);
@@ -277,18 +277,13 @@
         }
       });
 
-      // (2) 코멘트 박스 렌더링
       renderComments();
-
-      // (3) 실제 데이터 기반 KPI 카드 및 피벗 테이블 렌더링
       renderKPIsAndTable();
-
-      // (4) 실제 데이터 기반 차트 렌더링
       renderTrendChart();
       renderDonutChart();
     }
 
-    // 5. 코멘트 박스 렌더링 (메타 탭과 100% 동일한 반응형 레이아웃 일원화)
+    // 5. 코멘트 박스 렌더링 (메타 탭과 동일한 100% 가로 확장 규격)
     function renderComments() {
       let stratText = "";
       let anomText = "";
@@ -301,7 +296,6 @@
         anomText = monthData.comments[activeTab].anomaly || "";
       }
 
-      // 이전의 좁은 고정폭(650px) 및 구 서식 강제 교정
       if (activeTab === 'Naver' && stratText && stratText.includes('max-width: 650px')) {
         stratText = "";
       }
@@ -309,10 +303,8 @@
         stratText = "";
       }
 
-      // 팩트 기반 반응형 코멘트
       if (!stratText) {
         if (activeTab === 'Naver') {
-          // ★ 메타 탭(image_221f7a.png)과 100% 동일한 가로 전체 반응형 레이아웃 탑재
           stratText = `
             <div style="line-height: 1.6; color: #ffffff; width: 100%;">
               <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 8px; font-size: 16px; font-weight: 700; border-bottom: 2px solid #03C75A; padding-bottom: 8px;">
@@ -474,7 +466,7 @@
       });
     }
 
-    // 7. KPI 카드 및 하단 피벗 테이블 렌더링
+    // 7. KPI 카드 및 하단 피벗 테이블 렌더링 (★ 고유 일자 기준 집계일수 산출 로직 적용)
     function renderKPIsAndTable() {
       const filtered = getFilteredRows();
 
@@ -492,8 +484,11 @@
       document.getElementById('kpi-clicks').innerText = clicks.toLocaleString();
       document.getElementById('kpi-ctr').innerText = ctr;
 
+      // ★ [수정 핵심] 단순 행 개수(filtered.length)가 아닌, 중복을 제거한 고유 날짜(Unique Date) 수를 산출하여 바인딩
+      const uniqueDaysCount = new Set(filtered.map(r => r.date)).size;
+      document.getElementById('table-row-count').innerText = uniqueDaysCount;
+
       const tbody = document.getElementById('pivot-table-body');
-      document.getElementById('table-row-count').innerText = filtered.length;
       tbody.innerHTML = '';
 
       if (filtered.length === 0) {
