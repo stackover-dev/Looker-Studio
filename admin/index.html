@@ -187,7 +187,6 @@
       <!-- 3. 운영 이슈 & 4. 광고 소재 피드백 관리 -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- ▼ 수정된 운영 이슈 및 최적화 대응 내역 박스 (HTML 지원) -->
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
           <label class="block text-xs font-bold text-amber-800 mb-1.5">
             ⚡ 운영 이슈 및 최적화 대응 내역 (선택 회차 및 매체 연동 / HTML 코드 적용 가능)
@@ -560,12 +559,19 @@
       currentCommentMedia = media;
       renderCommentTabs();
       
-      const activeData = db[currentClient].months[currentPeriod].comments[currentCommentMedia] || { strategy: '', anomaly: '' };
+      const periodData = db[currentClient].months[currentPeriod] || {};
+      const activeData = periodData.comments && periodData.comments[currentCommentMedia] 
+                       ? periodData.comments[currentCommentMedia] 
+                       : { strategy: '', anomaly: '' };
+                       
       document.getElementById('edit-strategy-comment').value = activeData.strategy || '';
       document.getElementById('edit-anomaly-comment').value = activeData.anomaly || '';
       updateLiveCommentPreview();
       
       renderCreativesList();
+
+      // [수정 1] 상단 탭 전환 시 하단 테이블 데이터도 해당 매체만 필터링하여 다시 렌더링
+      renderAdminDataTable(periodData.rawDataset || []);
     }
 
     function renderAdminPanel() {
@@ -1051,12 +1057,19 @@
       const tbody = document.getElementById('admin-table-body');
       tbody.innerHTML = '';
 
-      if (dataset.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="${cols.length + 3}" class="py-6 text-center text-slate-400 font-sans">등록된 데이터가 없습니다. 보고서 파일 업로드를 이용하세요.</td></tr>`;
+      // [수정 2] 상단 탭 상태에 맞춰 하단 테이블 렌더링 필터링
+      const filteredDataset = (currentCommentMedia === 'ALL') 
+        ? dataset 
+        : dataset.filter(row => row.media === currentCommentMedia);
+
+      if (filteredDataset.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="${cols.length + 3}" class="py-6 text-center text-slate-400 font-sans">[${currentCommentMedia === 'ALL' ? '전체' : currentCommentMedia}] 탭에 등록된 데이터가 없습니다. 보고서 파일 업로드를 이용하세요.</td></tr>`;
         return;
       }
 
-      dataset.forEach((row, idx) => {
+      filteredDataset.forEach((row) => {
+        // 실제 수정, 삭제를 위해 원본 데이터셋에서의 인덱스를 추적
+        const originalIdx = dataset.indexOf(row);
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50 transition-colors';
 
@@ -1065,26 +1078,26 @@
           const isBlue = c.isConv;
           return `
             <td class="py-2 px-3">
-              <input type="number" value="${val}" onchange="updateRowData(${idx}, '${c.key}', this.value)" class="border ${isBlue ? 'border-blue-300 bg-blue-50 text-blue-700 font-bold' : 'border-slate-300 bg-white'} px-2 py-1.5 rounded-lg text-xs ${c.width || 'w-24'} text-right focus:ring-1 focus:ring-blue-500 outline-none">
+              <input type="number" value="${val}" onchange="updateRowData(${originalIdx}, '${c.key}', this.value)" class="border ${isBlue ? 'border-blue-300 bg-blue-50 text-blue-700 font-bold' : 'border-slate-300 bg-white'} px-2 py-1.5 rounded-lg text-xs ${c.width || 'w-24'} text-right focus:ring-1 focus:ring-blue-500 outline-none">
             </td>
           `;
         }).join('');
         
         tr.innerHTML = `
-          <td class="py-2 px-3"><input type="date" value="${row.date}" onchange="updateRowData(${idx}, 'date', this.value)" class="border border-slate-300 px-2 py-1.5 rounded-lg text-xs font-sans focus:ring-1 focus:ring-blue-500 w-full outline-none"></td>
+          <td class="py-2 px-3"><input type="date" value="${row.date}" onchange="updateRowData(${originalIdx}, 'date', this.value)" class="border border-slate-300 px-2 py-1.5 rounded-lg text-xs font-sans focus:ring-1 focus:ring-blue-500 w-full outline-none"></td>
           <td class="py-2 px-3">
             <div class="flex items-center space-x-1.5">
-              <select onchange="updateRowData(${idx}, 'media', this.value)" class="border border-slate-300 px-2 py-1.5 rounded-lg text-xs font-sans focus:ring-1 focus:ring-blue-500 outline-none bg-white">
+              <select onchange="updateRowData(${originalIdx}, 'media', this.value)" class="border border-slate-300 px-2 py-1.5 rounded-lg text-xs font-sans focus:ring-1 focus:ring-blue-500 outline-none bg-white font-bold ${row.media==='Naver'?'text-emerald-600': row.media==='Meta'?'text-blue-600':'text-slate-600'}">
                 <option value="Naver" ${row.media==='Naver'?'selected':''}>Naver</option>
                 <option value="Meta" ${row.media==='Meta'?'selected':''}>Meta</option>
                 <option value="Google" ${row.media==='Google'?'selected':''}>Google</option>
               </select>
-              <button onclick="applyMediaToBelow(${idx})" class="px-1.5 py-1 text-[10px] font-bold bg-slate-200 text-slate-600 hover:bg-slate-300 hover:text-slate-900 rounded transition whitespace-nowrap shadow-sm" title="이 행부터 아래 모든 데이터의 매체를 동일하게 일괄 변경">↓ 일괄</button>
+              <button onclick="applyMediaToBelow(${originalIdx})" class="px-1.5 py-1 text-[10px] font-bold bg-slate-200 text-slate-600 hover:bg-slate-300 hover:text-slate-900 rounded transition whitespace-nowrap shadow-sm" title="이 행부터 아래 모든 데이터의 매체를 동일하게 일괄 변경">↓ 일괄</button>
             </div>
           </td>
           ${dynamicCells}
           <td class="py-2 px-3 text-center">
-            <button onclick="deleteRowData(${idx})" class="text-slate-400 hover:text-red-600 font-bold text-xs bg-slate-100 hover:bg-red-50 px-2 py-1.5 rounded-lg transition-colors">삭제</button>
+            <button onclick="deleteRowData(${originalIdx})" class="text-slate-400 hover:text-red-600 font-bold text-xs bg-slate-100 hover:bg-red-50 px-2 py-1.5 rounded-lg transition-colors">삭제</button>
           </td>
         `;
         tbody.appendChild(tr);
@@ -1100,6 +1113,8 @@
       }
       saveDatabase();
       renderPeriodNav();
+      // 수정 후 UI 갱신 반영
+      renderAdminPanel();
     }
 
     // ★ 기능 2 로직: 하위 매체 일괄 변경
@@ -1126,7 +1141,7 @@
     function addEmptyDataRow() {
       if (!db[currentClient].months[currentPeriod].rawDataset) db[currentClient].months[currentPeriod].rawDataset = [];
       const today = new Date().toISOString().split('T')[0];
-      const newRow = { date: today, media: 'Meta' };
+      const newRow = { date: today, media: currentCommentMedia !== 'ALL' ? currentCommentMedia : 'Meta' };
       
       const cols = getActiveColumns();
       cols.forEach(c => { newRow[c.key] = 0; });
@@ -1203,7 +1218,6 @@
           const isNaverReport = headerStr.includes('일별') || headerStr.includes('검색어') || headerStr.includes('평균노출순위') || headerStr.includes('확장소재') || headerStr.includes('그룹');
           const isGoogleReport = headerStr.includes('통화') || headerStr.includes('상호작용') || headerStr.includes('동영상');
 
-          // ★ 기능 1 수정: 현재 활성화된 탭(Naver, Meta 등)을 가장 강력한 기본값으로 강제 배정 (ALL 탭일 경우에만 스마트 추론)
           let defaultMediaForFile = 'Meta'; 
           if (currentCommentMedia === 'Naver' || currentCommentMedia === 'Meta' || currentCommentMedia === 'Google') {
             defaultMediaForFile = currentCommentMedia;
@@ -1221,7 +1235,6 @@
 
           rowsData.forEach(row => {
             let dateVal = '';
-            // ★ 모든 행은 위에서 결정된 가장 확실한 매체(현재 탭 기준)를 무조건 초기 상속받음
             let mediaVal = defaultMediaForFile; 
             let imp = 0, reach = 0, clicks = 0, cost = 0, conv = 0;
 
@@ -1229,12 +1242,14 @@
               const lk = key.toLowerCase().trim();
               const val = row[key];
 
-              // 예외 상황: 네이버 탭에 실수로 메타 파일을 올렸을 경우 등을 방어하기 위한 내부 데이터 재검증
-              if (lk.includes('캠페인') || lk.includes('매체') || lk.includes('광고 세트') || lk.includes('광고 이름') || lk.includes('campaign')) {
-                const sv = String(val).toLowerCase();
-                if (sv.includes('naver') || sv.includes('네이버')) mediaVal = 'Naver';
-                else if (sv.includes('google') || sv.includes('구글') || sv.includes('youtube')) mediaVal = 'Google';
-                else if (sv.includes('meta') || sv.includes('페이스북') || sv.includes('인스타그램')) mediaVal = 'Meta';
+              // [수정 3] 통합(ALL) 탭일 때만 텍스트를 기반으로 매체를 자동 추론. 특정 매체 탭이면 해당 매체 강제 유지.
+              if (currentCommentMedia === 'ALL') {
+                if (lk.includes('캠페인') || lk.includes('매체') || lk.includes('광고 세트') || lk.includes('광고 이름') || lk.includes('campaign')) {
+                  const sv = String(val).toLowerCase();
+                  if (sv.includes('naver') || sv.includes('네이버')) mediaVal = 'Naver';
+                  else if (sv.includes('google') || sv.includes('구글') || sv.includes('youtube')) mediaVal = 'Google';
+                  else if (sv.includes('meta') || sv.includes('페이스북') || sv.includes('인스타그램')) mediaVal = 'Meta';
+                }
               }
 
               if (lk === '보고 시작' || lk === '시작일' || lk === 'date' || lk === 'day' || lk === '날짜' || lk === '일자' || lk === '일별' || lk === '일' || lk === 'reporting starts') {
