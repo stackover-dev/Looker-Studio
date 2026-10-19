@@ -148,12 +148,12 @@
 
     </section>
 
-    <!-- 7. 일별 성과 상세 집계 내역 (고유 일수 산출 로직 적용) -->
+    <!-- 7. 일별 성과 상세 집계 내역 (최신순 내림차순 정렬 고정) -->
     <section class="bg-[#0F172A] rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
       <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 bg-slate-900/60">
         <div>
           <h3 class="text-xs sm:text-sm font-bold text-white">일별 성과 상세 집계 내역</h3>
-          <p class="text-[11px] text-slate-400 mt-0.5">상단 선택 매체 기준 자동 피벗 연산 테이블</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">상단 선택 매체 기준 자동 피벗 연산 테이블 (최신순 내림차순)</p>
         </div>
         <div class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-slate-800 text-blue-400 border border-slate-700">
           집계 일수: <span id="table-row-count">0</span>일
@@ -288,7 +288,7 @@
       renderDonutChart();
     }
 
-    // 5. 코멘트 박스 렌더링 (★ 사실 검증 로직: 미집행 매체는 허위 문구 자동 생성 차단)
+    // 5. 코멘트 박스 렌더링 (임의 생성 완전 차단 및 사실 기반 검증)
     function renderComments() {
       let stratText = "";
       let anomText = "";
@@ -296,34 +296,29 @@
       const clientObj = clientDb ? (clientDb[matchedClientKey] || Object.values(clientDb)[0]) : null;
       const monthData = (clientObj && clientObj.months) ? clientObj.months[currentPeriod] : null;
 
-      // 관리자가 관제탑에서 직접 작성하여 DB에 저장한 코멘트가 있는 경우에만 로드
       if (monthData && monthData.comments && monthData.comments[activeTab]) {
         stratText = (monthData.comments[activeTab].strategy || "").trim();
         anomText = (monthData.comments[activeTab].anomaly || "").trim();
       }
 
-      // 구형 고정폭 서식 방어
       if (stratText && stratText.includes('max-width: 650px')) {
         stratText = "";
       }
 
-      // 해당 탭에 실제 집행된 데이터 행이 존재하는지 팩트 체크
       const currentTabRows = getFilteredRows();
       const hasActualData = currentTabRows.length > 0;
       const mediaLabelMap = { ALL: '통합 매체', Naver: '네이버 검색', Meta: '메타 (Meta)', Google: '구글 애즈' };
       const currentTabLabel = mediaLabelMap[activeTab] || activeTab;
 
-      // [핵심 교정]: 관리자가 작성한 코멘트가 없을 때의 동작
+      // 관리자가 작성하지 않았을 경우, 허위 사실을 조합하지 않고 시스템 상태만 정직하게 출력
       if (!stratText) {
         if (!hasActualData) {
-          // 1) 실제 광고 집행 내역이 전혀 없는 경우: 가짜 분석 문구를 일체 만들지 않고 사실 그대로 표기
           stratText = `
             <div class="py-8 text-center text-slate-400 font-sans">
               <span class="text-base font-bold text-slate-300 block mb-1">집행 내역 없음</span>
               해당 기간 내 집행된 <strong class="text-emerald-400">[${currentTabLabel}]</strong> 광고 데이터 및 등록된 전략 코멘트가 없습니다.
             </div>`;
         } else {
-          // 2) 실제 데이터는 있으나 코멘트를 아직 작성하지 않은 경우: 정중한 등록 대기 안내문만 표시
           stratText = `
             <div class="py-8 text-center text-slate-400 font-sans">
               해당 기간의 <strong class="text-blue-400">[${currentTabLabel}]</strong> 전략 코멘트가 아직 등록되지 않았습니다.
@@ -331,7 +326,6 @@
         }
       }
 
-      // 운영 이슈 박스 처리
       if (!anomText) {
         if (!hasActualData) {
           anomText = `
@@ -364,7 +358,7 @@
       });
     }
 
-    // 7. KPI 카드 및 하단 피벗 테이블 렌더링 (순수 고유 일수 집계)
+    // 7. KPI 카드 및 하단 피벗 테이블 렌더링 (최신순 내림차순 정렬 영구 고정)
     function renderKPIsAndTable() {
       const filtered = getFilteredRows();
 
@@ -382,7 +376,7 @@
       document.getElementById('kpi-clicks').innerText = clicks.toLocaleString();
       document.getElementById('kpi-ctr').innerText = ctr;
 
-      // 중복 일자 제거된 순수 고유 일수(Unique Date) 카운트
+      // 순수 고유 송출 일수(Unique Date) 카운트
       const uniqueDaysCount = new Set(filtered.map(r => r.date)).size;
       document.getElementById('table-row-count').innerText = uniqueDaysCount;
 
@@ -394,7 +388,14 @@
         return;
       }
 
-      const sorted = [...filtered].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      // ★ [정렬 고정] 최신 날짜가 맨 위로 오도록 내림차순(Descending) 정렬 고정
+      const sorted = [...filtered].sort((a, b) => {
+        const dateA = String(a.date || '').trim();
+        const dateB = String(b.date || '').trim();
+        const dateDiff = dateB.localeCompare(dateA); // 내림차순
+        if (dateDiff !== 0) return dateDiff;
+        return String(a.media || '').localeCompare(String(b.media || ''));
+      });
 
       sorted.forEach(row => {
         const rowImp = Number(row.impressions || 0);
@@ -424,7 +425,7 @@
       });
     }
 
-    // 8. 일별 추이 차트
+    // 8. 일별 추이 차트 (시계열 흐름은 좌->우 순방향 유지)
     function renderTrendChart() {
       const filtered = getFilteredRows();
 
@@ -436,7 +437,7 @@
         dateMap[d].clicks += Number(r.clicks || 0);
       });
 
-      const dates = Object.keys(dateMap).sort();
+      const dates = Object.keys(dateMap).sort(); // 차트는 과거->최신 흐름
       const impArr = dates.map(d => dateMap[d].imp);
       const clickArr = dates.map(d => dateMap[d].clicks);
 
@@ -589,7 +590,7 @@
       `;
     }
 
-    // 10. 보고서 CSV 다운로드
+    // 10. 보고서 CSV 다운로드 (최신순 내림차순 정렬 연동)
     function downloadCSVReport() {
       const filtered = getFilteredRows();
       if (filtered.length === 0) {
@@ -597,8 +598,17 @@
         return;
       }
 
+      // 다운로드 파일도 화면과 동일하게 최신순 정렬
+      const sorted = [...filtered].sort((a, b) => {
+        const dateA = String(a.date || '').trim();
+        const dateB = String(b.date || '').trim();
+        const dateDiff = dateB.localeCompare(dateA);
+        if (dateDiff !== 0) return dateDiff;
+        return String(a.media || '').localeCompare(String(b.media || ''));
+      });
+
       let csvContent = "\uFEFF일자,매체,노출수,도달수,클릭수,전환수,클릭률(CTR)\n";
-      filtered.forEach(r => {
+      sorted.forEach(r => {
         const imp = Number(r.impressions || 0);
         const clicks = Number(r.clicks || 0);
         const ctr = imp > 0 ? ((clicks / imp) * 100).toFixed(2) + "%" : "0.00%";
