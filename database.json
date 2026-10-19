@@ -1597,8 +1597,8 @@
             "anomaly": "특이사항을 입력하세요."
           },
           "Naver": {
-            "strategy": "-",
-            "anomaly": "-"
+            "strategy": "",
+            "anomaly": ""
           },
           "Meta": {
             "strategy": "",
