@@ -11,6 +11,16 @@
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
+    
+    /* [프리미엄 인터랙션을 위한 글로벌 디자인 변수] */
+    :root {
+      --glow-cyan: rgba(6, 182, 212, 0.15);
+      --glow-cyan-hover: rgba(6, 182, 212, 0.6);
+      --glow-indigo: rgba(99, 102, 241, 0.15);
+      --glow-indigo-hover: rgba(99, 102, 241, 0.6);
+      --shimmer-spec: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
+    }
+
     body {
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
       background-color: #0B1120;
@@ -23,6 +33,89 @@
     ::-webkit-scrollbar-track { background: #0F172A; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    /* ==========================================
+       [고급 UI/UX 가이드라인 적용: 인터랙티브 카드 & 모달]
+       ========================================== */
+    .interactive-card {
+        position: relative;
+        background-color: #0F172A;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        padding: 24px;
+        cursor: pointer;
+        overflow: hidden;
+        box-shadow: 0 0 15px 0 var(--glow-cyan);
+        /* 하이엔드 큐빅 베지에 전환 효과 */
+        transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                    box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                    border-color 0.4s ease;
+    }
+    
+    .interactive-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 0 30px 4px var(--glow-cyan-hover);
+    }
+
+    /* 메인 배너 전용 우아한 쉬머 애니메이션 (첫 번째 소재에 부여) */
+    .interactive-card.featured-shimmer {
+        background: linear-gradient(135deg, #1e1b4b 0%, #0F172A 100%);
+        box-shadow: 0 0 20px 2px var(--glow-indigo);
+    }
+    .interactive-card.featured-shimmer:hover {
+        box-shadow: 0 0 35px 6px var(--glow-indigo-hover);
+    }
+    .interactive-card.featured-shimmer::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -150%; width: 150%; height: 100%;
+        background: var(--shimmer-spec);
+        transform: skewX(-20deg);
+        animation: premium-shimmer 4.0s infinite ease-in-out;
+    }
+    @keyframes premium-shimmer {
+        0% { left: -150%; }
+        25% { left: 150%; }
+        100% { left: 150%; }
+    }
+
+    /* 3단 매거진 그리드 레이아웃 */
+    .layout-magazine-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+    @media (max-width: 1024px) {
+        .layout-magazine-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+        .layout-magazine-grid { grid-template-columns: 1fr; }
+    }
+
+    /* 스케일 모달(Modal) 확대 인터랙션 */
+    .modal-blur-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(11, 17, 32, 0.85);
+        backdrop-filter: blur(12px);
+        display: flex; justify-content: center; align-items: center;
+        z-index: 1000; opacity: 0; pointer-events: none;
+        transition: opacity 0.4s ease;
+    }
+    .modal-blur-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal-scale-content {
+        background-color: #0F172A;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 32px;
+        border-radius: 24px;
+        max-width: 600px; width: 90%;
+        max-height: 90vh; overflow-y: auto;
+        transform: scale(0.75);
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+    .modal-blur-overlay.active .modal-scale-content { transform: scale(1); }
+    .modal-scale-content::-webkit-scrollbar { width: 4px; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col pb-12">
@@ -85,7 +178,20 @@
       </div>
     </section>
 
-    <!-- 5. 핵심 지표 KPI 카드 (비용 및 CPC 비공개 유지) -->
+    <!-- ★ 5. 신규 추가: 광고 소재 성과 피드백 갤러리 (프리미엄 3단 매거진 레이아웃) -->
+    <section id="creatives-section" class="bg-[#0F172A] rounded-2xl border border-slate-800 p-4 sm:p-6 shadow-xl border-l-4 border-l-purple-500 hidden">
+      <div class="border-b border-slate-800/80 pb-3 mb-6">
+        <h2 class="text-xs font-extrabold tracking-wider text-purple-400 uppercase">
+          CREATIVE PERFORMANCE FEEDBACK
+        </h2>
+        <h3 class="text-sm font-bold text-slate-100 mt-1">광고 소재 성과 분석 및 피드백</h3>
+      </div>
+      <div class="layout-magazine-grid" id="creatives-grid">
+        <!-- JS를 통해 동적 생성됨 -->
+      </div>
+    </section>
+
+    <!-- 6. 핵심 지표 KPI 카드 (비용 및 CPC 비공개 유지) -->
     <section class="grid grid-cols-2 sm:grid-cols-4 gap-3">
       <div class="bg-[#0F172A] p-4 rounded-xl border border-slate-800 shadow-sm">
         <p class="text-[11px] font-semibold text-slate-400 mb-1">총 노출수 (Impressions)</p>
@@ -105,7 +211,7 @@
       </div>
     </section>
 
-    <!-- 6. 차트 영역 (좌: 일별 추이 / 우: 매체별 클릭수 비중 + 선택 매체 네온 글로우) -->
+    <!-- 7. 차트 영역 (좌: 일별 추이 / 우: 매체별 클릭수 비중 + 선택 매체 네온 글로우) -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       
       <!-- 좌측: 일별 주요 지표 추이 -->
@@ -148,7 +254,7 @@
 
     </section>
 
-    <!-- 7. 일별 성과 상세 집계 내역 (고유 집계 일수 산출 로직 적용,최신순 내림차순 정렬) -->
+    <!-- 8. 일별 성과 상세 집계 내역 (최신순 정렬) -->
     <section class="bg-[#0F172A] rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
       <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 bg-slate-900/60">
         <div>
@@ -180,6 +286,18 @@
     </section>
 
   </main>
+
+  <!-- 시스템 모달 프레임 (스케일 업 애니메이션) -->
+  <div class="modal-blur-overlay" id="creativeModal" onclick="closeCreativeModal()">
+    <div class="modal-scale-content" onclick="event.stopPropagation()">
+      <div class="w-full bg-slate-900 rounded-xl mb-4 border border-slate-700 overflow-hidden flex justify-center items-center">
+        <img id="modal-img" src="" class="max-w-full max-h-[400px] object-contain" alt="소재 이미지">
+      </div>
+      <h2 id="modal-title" class="text-xl font-bold text-white mb-3"></h2>
+      <p id="modal-feedback" class="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap"></p>
+      <button onclick="closeCreativeModal()" class="mt-6 w-full py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white rounded-lg text-sm font-bold transition shadow-md">닫기</button>
+    </div>
+  </div>
 
   <script>
     // 1. 도넛 차트 네온 글로우 플러그인
@@ -283,12 +401,13 @@
       });
 
       renderComments();
+      renderCreatives(); // ★ 소재 렌더링 호출
       renderKPIsAndTable();
       renderTrendChart();
       renderDonutChart();
     }
 
-    // 5. 코멘트 박스 렌더링 (임의 생성 완전 차단 및 사실 기반 검증)
+    // 5. 코멘트 박스 렌더링
     function renderComments() {
       let stratText = "";
       let anomText = "";
@@ -310,7 +429,6 @@
       const mediaLabelMap = { ALL: '통합 매체', Naver: '네이버 검색', Meta: '메타 (Meta)', Google: '구글 애즈' };
       const currentTabLabel = mediaLabelMap[activeTab] || activeTab;
 
-      // 관리자가 작성하지 않았을 경우, 허위 사실을 조합하지 않고 시스템 상태만 정직하게 출력
       if (!stratText) {
         if (!hasActualData) {
           stratText = `
@@ -342,6 +460,67 @@
 
       document.getElementById('strategy-comment-body').innerHTML = stratText;
       document.getElementById('anomaly-comment-body').innerHTML = anomText;
+    }
+
+    // ★ 5-1. 광고 소재 성과 피드백 렌더링 로직
+    function renderCreatives() {
+      const section = document.getElementById('creatives-section');
+      const grid = document.getElementById('creatives-grid');
+      
+      const clientObj = clientDb ? (clientDb[matchedClientKey] || Object.values(clientDb)[0]) : null;
+      const monthData = (clientObj && clientObj.months) ? clientObj.months[currentPeriod] : null;
+      
+      let creatives = [];
+      if (monthData && monthData.creatives && monthData.creatives[activeTab]) {
+        creatives = monthData.creatives[activeTab];
+      }
+
+      // 등록된 소재가 없으면 섹션 숨김 처리
+      if (creatives.length === 0) {
+        section.classList.add('hidden');
+        return;
+      }
+
+      section.classList.remove('hidden');
+      
+      // 3단 그리드 카드로 생성 (첫 번째 카드에 핵심 배너 광택 효과 부여)
+      grid.innerHTML = creatives.map((item, index) => {
+        const isFeatured = index === 0 ? 'featured-shimmer' : '';
+        const badgeHtml = index === 0 
+            ? `<span class="inline-block px-2 py-1 mb-3 rounded text-[10px] font-bold bg-indigo-900 text-indigo-300 border border-indigo-700 w-max">🏆 BEST PERFORMING</span>` 
+            : `<span class="inline-block px-2 py-1 mb-3 rounded text-[10px] font-bold bg-slate-800 text-slate-400 border border-slate-700 w-max">CREATIVE 0${index + 1}</span>`;
+
+        return `
+          <div class="interactive-card ${isFeatured} flex flex-col h-full" onclick="openCreativeModal(${index})">
+            ${badgeHtml}
+            <div class="w-full h-40 mb-4 bg-[#0B1120] rounded-lg overflow-hidden border border-slate-700 shrink-0 flex items-center justify-center">
+              <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity">
+            </div>
+            <h3 class="text-base font-bold text-white mb-2 line-clamp-1">${item.title}</h3>
+            <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed flex-grow">${item.feedback || '등록된 피드백이 없습니다.'}</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ★ 5-2. 광고 소재 스케일 모달 핸들링
+    function openCreativeModal(index) {
+      const clientObj = clientDb ? (clientDb[matchedClientKey] || Object.values(clientDb)[0]) : null;
+      const monthData = (clientObj && clientObj.months) ? clientObj.months[currentPeriod] : null;
+      if (!monthData || !monthData.creatives || !monthData.creatives[activeTab]) return;
+
+      const item = monthData.creatives[activeTab][index];
+      if (!item) return;
+
+      document.getElementById('modal-img').src = item.image;
+      document.getElementById('modal-title').innerText = item.title;
+      document.getElementById('modal-feedback').innerText = item.feedback || '등록된 피드백이 없습니다.';
+      
+      document.getElementById('creativeModal').classList.add('active');
+    }
+
+    function closeCreativeModal() {
+      document.getElementById('creativeModal').classList.remove('active');
     }
 
     // 6. 실제 데이터 필터링 헬퍼 함수
@@ -376,7 +555,6 @@
       document.getElementById('kpi-clicks').innerText = clicks.toLocaleString();
       document.getElementById('kpi-ctr').innerText = ctr;
 
-      // 순수 고유 송출 일수(Unique Date) 카운트
       const uniqueDaysCount = new Set(filtered.map(r => r.date)).size;
       document.getElementById('table-row-count').innerText = uniqueDaysCount;
 
@@ -388,11 +566,10 @@
         return;
       }
 
-      // ★ [정렬 고정] 최신 날짜가 맨 위로 오도록 내림차순(Descending) 정렬 고정
       const sorted = [...filtered].sort((a, b) => {
         const dateA = String(a.date || '').trim();
         const dateB = String(b.date || '').trim();
-        const dateDiff = dateB.localeCompare(dateA); // 내림차순
+        const dateDiff = dateB.localeCompare(dateA); 
         if (dateDiff !== 0) return dateDiff;
         return String(a.media || '').localeCompare(String(b.media || ''));
       });
@@ -425,7 +602,7 @@
       });
     }
 
-    // 8. 일별 추이 차트 (시계열 흐름은 좌->우 순방향 유지)
+    // 8. 일별 추이 차트 
     function renderTrendChart() {
       const filtered = getFilteredRows();
 
@@ -437,7 +614,7 @@
         dateMap[d].clicks += Number(r.clicks || 0);
       });
 
-      const dates = Object.keys(dateMap).sort(); // 차트는 과거->최신 흐름
+      const dates = Object.keys(dateMap).sort(); 
       const impArr = dates.map(d => dateMap[d].imp);
       const clickArr = dates.map(d => dateMap[d].clicks);
 
@@ -590,7 +767,7 @@
       `;
     }
 
-    // 10. 보고서 CSV 다운로드 (최신순 내림차순 정렬 연동)
+    // 10. 보고서 CSV 다운로드 
     function downloadCSVReport() {
       const filtered = getFilteredRows();
       if (filtered.length === 0) {
@@ -598,7 +775,6 @@
         return;
       }
 
-      // 다운로드 파일도 화면과 동일하게 최신순 정렬
       const sorted = [...filtered].sort((a, b) => {
         const dateA = String(a.date || '').trim();
         const dateB = String(b.date || '').trim();
