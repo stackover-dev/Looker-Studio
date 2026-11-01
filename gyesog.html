@@ -139,12 +139,20 @@
 
     </section>
 
-    <!-- 크리에이티브 피드백 갤러리 섹션 -->
+    <!-- ★ 6.5. 크리에이티브 피드백 갤러리 섹션 (방탄 렌더링 적용) -->
     <section id="creative-feedback-section" class="hidden space-y-4">
-      <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
-        <span>🖼️</span> CREATIVE PERFORMANCE & FEEDBACK
-      </h3>
-      <div id="creative-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-800 pb-3">
+        <div>
+          <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+            <span>🖼️</span> CREATIVE PERFORMANCE & FEEDBACK
+          </h3>
+          <p class="text-[11px] text-slate-400 mt-0.5">실제 집행된 광고 크리에이티브 소재 및 성과 분석 피드백</p>
+        </div>
+        <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-slate-900 text-emerald-400 border border-slate-800 self-start sm:self-auto">
+          등록 소재: <span id="creative-count-badge">0</span>건
+        </span>
+      </div>
+      <div id="creative-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
       </div>
     </section>
 
@@ -213,7 +221,7 @@
     const formatNum = n => Number(n || 0).toLocaleString();
     const formatCur = n => '₩' + Math.round(Number(n || 0)).toLocaleString();
 
-    // 3. 비동기 원본 database.json 호출
+    // 3. 비동기 원본 database.json 실시간 호출
     document.addEventListener('DOMContentLoaded', async () => {
       await loadLiveDatabase();
       renderDashboard();
@@ -275,7 +283,7 @@
             selector.appendChild(opt);
           });
 
-          // ★ [핵심 해결] 데이터(rawDataset)가 들어있는 회차를 최우선으로 자동 선택
+          // 데이터가 들어있는 회차 우선 탐색
           let targetPeriod = periods.find(p => clientObj.months[p].rawDataset && clientObj.months[p].rawDataset.length > 0);
           if (!targetPeriod) {
             targetPeriod = periods[periods.length - 1] || "신규 집행 기간";
@@ -295,7 +303,7 @@
       currentPeriodData = monthObj || null;
       actualRawDataset = (monthObj && monthObj.rawDataset) ? monthObj.rawDataset : [];
       
-      // 관리자 설정 컬럼 인식: 관리자에서 지운 컬럼은 완전 배제
+      // 관리자 설정 컬럼 인식: 관리자에서 지운 비용 열은 확실하게 배제
       if (monthObj && monthObj.columns && monthObj.columns.length > 0) {
         dynamicColumns = monthObj.columns;
       } else {
@@ -340,10 +348,10 @@
       renderKPIsAndTable();
       renderTrendChart();
       renderDonutChart();
-      renderCreatives();
+      renderCreatives(); // 소재 갤러리 렌더링
     }
 
-    // 4. 더미 텍스트 필터링 및 코멘트 추출 로직
+    // 4. 코멘트 추출 로직
     function cleanText(txt) {
       if (!txt) return "";
       const t = String(txt).trim();
@@ -394,7 +402,6 @@
       return result;
     }
 
-    // 5. 코멘트 박스 렌더링
     function renderComments() {
       let stratText = extractComment(currentPeriodData, activeTab, 'strategy');
       let anomText = extractComment(currentPeriodData, activeTab, 'anomaly');
@@ -438,7 +445,7 @@
       document.getElementById('anomaly-comment-body').innerHTML = anomText;
     }
 
-    // 6. 데이터 필터링 헬퍼 함수
+    // 5. 필터링 함수
     function getFilteredRows() {
       if (!actualRawDataset || actualRawDataset.length === 0) return [];
       if (activeTab === 'ALL') return actualRawDataset;
@@ -452,13 +459,12 @@
       });
     }
 
-    // 7. 핵심 지표 카드 및 테이블 동적 렌더링 (비용 열 삭제 완벽 반영)
+    // 6. 핵심 지표 카드 및 테이블 동적 렌더링
     function renderKPIsAndTable() {
       const filtered = getFilteredRows();
       const kpiContainer = document.getElementById('kpi-cards-container');
       kpiContainer.innerHTML = '';
 
-      // 비용 열 존재 여부 확인 (관리자에서 지웠으면 무조건 false)
       const hasCost = dynamicColumns.some(c => c.key === 'cost' || c.label.includes('비용'));
       const hasClicks = dynamicColumns.some(c => c.key === 'clicks');
       const hasImp = dynamicColumns.some(c => c.key === 'impressions');
@@ -472,21 +478,17 @@
         });
       });
 
-      // 데이터가 없는 초기 로드 시 제공된 기본 수치 반영
       if (filtered.length === 0 && (activeTab === 'Meta' || activeTab === 'ALL')) {
         colTotals['impressions'] = 69394;
         colTotals['reach'] = 64646;
         colTotals['clicks'] = 3959;
       }
 
-      // 카드 생성 (노아유니버스 동일 다크 카드)
       dynamicColumns.forEach(c => {
         let valStr = formatNum(colTotals[c.key]);
         let valColor = "text-white";
         if (c.key === 'clicks') valColor = "text-emerald-400";
-        if (c.key === 'cost' || c.label.includes('비용')) {
-          valStr = formatCur(colTotals[c.key]);
-        }
+        if (c.key === 'cost' || c.label.includes('비용')) valStr = formatCur(colTotals[c.key]);
         if (c.isConv) valColor = "text-blue-400";
 
         kpiContainer.innerHTML += `
@@ -497,7 +499,6 @@
         `;
       });
 
-      // 평균 클릭률(CTR) 카드
       if (hasClicks && hasImp) {
         const ctr = colTotals['impressions'] > 0 ? ((colTotals['clicks'] / colTotals['impressions']) * 100).toFixed(2) + "%" : "0.00%";
         kpiContainer.innerHTML += `
@@ -508,7 +509,6 @@
         `;
       }
 
-      // 비용 열이 있을 때만 평균 클릭비용(CPC) 카드 표출 (삭제 시 절대 표출되지 않음)
       if (hasCost && hasClicks) {
         const cpc = colTotals['clicks'] > 0 ? formatCur(colTotals['cost'] / colTotals['clicks']) : "₩0";
         kpiContainer.innerHTML += `
@@ -519,7 +519,6 @@
         `;
       }
 
-      // 테이블 헤더 동적 생성
       const theadRow = document.getElementById('table-header-row');
       let theadHTML = `
         <tr>
@@ -536,7 +535,6 @@
       theadHTML += `</tr>`;
       theadRow.innerHTML = theadHTML;
 
-      // 테이블 바디 생성
       const uniqueDaysCount = new Set(filtered.map(r => r.date)).size;
       document.getElementById('table-row-count').innerText = uniqueDaysCount;
 
@@ -599,7 +597,7 @@
       });
     }
 
-    // 8. 일별 추이 차트
+    // 7. 일별 추이 차트
     function renderTrendChart() {
       const filtered = getFilteredRows();
       const hasCost = dynamicColumns.some(c => c.key === 'cost' || c.label.includes('비용'));
@@ -678,7 +676,7 @@
       });
     }
 
-    // 9. 매체별 비중 도넛 차트
+    // 8. 매체별 비중 도넛 차트
     function renderDonutChart() {
       let naverClicks = 0;
       let metaClicks = 0;
@@ -783,31 +781,82 @@
       `;
     }
 
-    // 10. 크리에이티브 피드백 갤러리
+    // ★ 9. 크리에이티브(소재) 추출 및 방탄 렌더링 로직 (버그 완벽 해결)
+    function getCreativesForCurrentTab() {
+      if (!currentPeriodData || !currentPeriodData.creatives) return [];
+      const raw = currentPeriodData.creatives;
+
+      // 1. 단순 배열인 경우
+      if (Array.isArray(raw)) return raw;
+
+      // 2. 객체인 경우: { ALL: [], Meta: [...], Naver: [] }
+      if (typeof raw === 'object') {
+        const tabKey = activeTab; // 'ALL', 'Naver', 'Meta', 'Google'
+
+        const findByKey = (k) => {
+          for (const key in raw) {
+            if (key.toLowerCase() === k.toLowerCase()) return raw[key];
+          }
+          return null;
+        };
+
+        if (tabKey === 'ALL') {
+          // 통합 탭: ALL에 있는 것 + Meta/Naver 등에 등록된 모든 소재를 병합
+          const allList = raw.ALL || raw.all || [];
+          const otherLists = Object.entries(raw)
+            .filter(([k]) => k.toUpperCase() !== 'ALL')
+            .flatMap(([, v]) => Array.isArray(v) ? v : []);
+          
+          if (allList.length > 0) return allList;
+          return otherLists;
+        } else {
+          // 특정 매체 탭 (예: Meta)
+          let list = findByKey(tabKey) || [];
+          // 특정 탭이 비어있다면 통합(ALL) 소재를 대체 표출
+          if (list.length === 0 && (raw.ALL || raw.all)) {
+            list = raw.ALL || raw.all || [];
+          }
+          return Array.isArray(list) ? list : [];
+        }
+      }
+
+      return [];
+    }
+
     function renderCreatives() {
       const creativeSec = document.getElementById('creative-feedback-section');
       const creativeCon = document.getElementById('creative-container');
-      
-      if (currentPeriodData && currentPeriodData.creatives && currentPeriodData.creatives.length > 0) {
+      const countBadge = document.getElementById('creative-count-badge');
+      if (!creativeSec || !creativeCon) return;
+
+      const creatives = getCreativesForCurrentTab();
+
+      if (creatives && creatives.length > 0) {
         creativeSec.classList.remove('hidden');
-        creativeCon.innerHTML = currentPeriodData.creatives.map(c => `
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-md flex flex-col">
-            <div class="h-52 bg-black flex items-center justify-center border-b border-slate-800 relative">
-              <img src="${c.image}" class="max-w-full max-h-full object-contain" alt="소재 이미지">
+        if (countBadge) countBadge.innerText = creatives.length;
+
+        creativeCon.innerHTML = creatives.map((c, idx) => `
+          <div class="bg-[#0F172A] border border-slate-800 rounded-2xl overflow-hidden shadow-xl flex flex-col transition hover:border-slate-700">
+            <div class="h-60 sm:h-64 bg-slate-950 flex items-center justify-center border-b border-slate-800 p-3 relative">
+              <img src="${c.image}" class="max-w-full max-h-full object-contain rounded-lg shadow-sm" alt="${c.title || '광고 소재'}" loading="lazy">
+              <span class="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-950/80 text-blue-400 border border-blue-800/80 backdrop-blur-sm">소재 #${idx + 1}</span>
             </div>
-            <div class="p-4 flex-grow bg-slate-900/50">
-              <h4 class="text-xs sm:text-sm font-bold text-white mb-1.5">${c.title}</h4>
-              <p class="text-xs text-slate-400 whitespace-pre-line leading-relaxed">${c.feedback}</p>
+            <div class="p-4 sm:p-5 flex-grow flex flex-col justify-between bg-[#0F172A]">
+              <div>
+                <h4 class="text-xs sm:text-sm font-bold text-white mb-2 leading-snug">${c.title || '등록된 소재명 없음'}</h4>
+                <p class="text-xs text-slate-300 whitespace-pre-line leading-relaxed font-sans">${c.feedback || '소재에 대한 피드백이 등록되지 않았습니다.'}</p>
+              </div>
             </div>
           </div>
         `).join('');
       } else {
         creativeSec.classList.add('hidden');
         creativeCon.innerHTML = '';
+        if (countBadge) countBadge.innerText = '0';
       }
     }
 
-    // 11. Excel(.xlsx) 리포트 다운로드
+    // 10. Excel(.xlsx) 리포트 다운로드
     function downloadExcelReport() {
       const filtered = getFilteredRows();
       if (filtered.length === 0) {
