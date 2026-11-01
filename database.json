@@ -419,65 +419,6 @@
             "anomaly": ""
           }
         }
-      },
-      "2026. 11.01 ~ 2026.11.30": {
-        "comments": {
-          "ALL": {
-            "strategy": "",
-            "anomaly": ""
-          },
-          "Naver": {
-            "strategy": "",
-            "anomaly": ""
-          },
-          "Meta": {
-            "strategy": "",
-            "anomaly": ""
-          },
-          "Google": {
-            "strategy": "",
-            "anomaly": ""
-          }
-        },
-        "creatives": {
-          "ALL": [],
-          "Naver": [],
-          "Meta": [],
-          "Google": []
-        },
-        "rawDataset": [],
-        "columns": [
-          {
-            "key": "impressions",
-            "label": "노출수",
-            "width": "w-24",
-            "isConv": false
-          },
-          {
-            "key": "reach",
-            "label": "도달수",
-            "width": "w-24",
-            "isConv": false
-          },
-          {
-            "key": "clicks",
-            "label": "클릭수",
-            "width": "w-20",
-            "isConv": false
-          },
-          {
-            "key": "cost",
-            "label": "비용 (VAT포함)",
-            "width": "w-28",
-            "isConv": false
-          },
-          {
-            "key": "conv",
-            "label": "전환수(CV)",
-            "width": "w-20",
-            "isConv": true
-          }
-        ]
       }
     }
   },
