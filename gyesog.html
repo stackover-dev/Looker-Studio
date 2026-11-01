@@ -35,22 +35,21 @@
 </head>
 <body class="min-h-screen flex flex-col pb-12">
 
-  <!-- 1. 상단 네비게이션 헤더 -->
+  <!-- 1. 상단 네비게이션 헤더 (노아유니버스 100% 동일 포맷) -->
   <header class="bg-[#0F172A] border-b border-slate-800 sticky top-0 z-40 shadow-lg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div class="flex items-center space-x-2.5">
         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
         <h1 class="text-xs sm:text-sm font-bold tracking-wider text-slate-100 uppercase">
-          PERFORMANCE AD REPOSITORY <span class="text-slate-400 font-normal">| 고객사: <span id="header-client-name" class="text-emerald-400 font-semibold">계속</span></span>
+          PERFORMANCE AD REPOSITORY <span class="text-slate-400 font-normal">| 고객사: <span id="header-client-name" class="text-slate-100 font-semibold">계속</span></span>
         </h1>
       </div>
 
       <div class="flex items-center space-x-2 w-full sm:w-auto">
-        <!-- 회차 선택 셀렉트 박스 -->
-        <select id="period-selector" onchange="onPeriodChange(this.value)" class="bg-slate-900 border border-emerald-500/40 text-emerald-400 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-400 cursor-pointer">
+        <select id="period-selector" onchange="onPeriodChange(this.value)" class="px-3 py-1.5 bg-slate-900 border border-emerald-500/40 text-emerald-400 rounded-lg text-xs font-semibold tracking-tight shrink-0 focus:outline-none focus:ring-1 focus:ring-emerald-400 cursor-pointer">
           <option value="">집행 기간 로드 중...</option>
         </select>
-        <button onclick="exportToExcel()" class="flex-grow sm:flex-grow-0 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1 shadow-sm">
+        <button onclick="downloadExcelReport()" class="flex-grow sm:flex-grow-0 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1 shadow-sm">
           <span>Excel 리포트 다운로드</span>
         </button>
       </div>
@@ -60,7 +59,7 @@
   <!-- 메인 대시보드 컨테이너 -->
   <main class="max-w-7xl mx-auto px-3 sm:px-6 py-6 space-y-6 flex-grow w-full">
 
-    <!-- 2. 매체 탭 네비게이션 -->
+    <!-- 2. 매체 탭 네비게이션 (노아유니버스 동일 가로 바 형태) -->
     <div class="bg-[#0F172A] p-1.5 rounded-xl border border-slate-800 shadow-md">
       <div class="grid grid-cols-2 sm:flex sm:space-x-1 gap-1" id="media-tab-container">
         <button onclick="switchTab('ALL')" id="tab-ALL" class="tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">통합(전체)</button>
@@ -70,7 +69,7 @@
       </div>
     </div>
 
-    <!-- 3. 최상단 전략 코멘트 영역 (STRATEGY COMMENT) -->
+    <!-- 3. 최상단 전략 코멘트 영역 (노아유니버스 동일 가로 100% 1단 풀위드) -->
     <section class="bg-[#0F172A] rounded-2xl border border-slate-800 p-4 sm:p-6 shadow-xl relative overflow-hidden border-l-4 border-l-blue-500">
       <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-4">
         <h2 class="text-xs font-extrabold tracking-wider text-blue-400 uppercase flex items-center gap-1.5">
@@ -82,7 +81,7 @@
       </div>
     </section>
 
-    <!-- 4. 운영 이슈 분석 및 사후 대응 내역 -->
+    <!-- 4. 운영 이슈 분석 및 사후 대응 내역 (노아유니버스 동일 가로 100% 1단 풀위드) -->
     <section class="bg-[#0F172A] rounded-2xl border border-slate-800 p-4 sm:p-6 shadow-xl border-l-4 border-l-amber-500">
       <div class="border-b border-slate-800/80 pb-3 mb-4">
         <h2 class="text-xs font-extrabold tracking-wider text-amber-400 uppercase">
@@ -94,27 +93,11 @@
       </div>
     </section>
 
-    <!-- 5. 핵심 지표 KPI 카드 (비용 및 CPC 비공개 유지) -->
-    <section class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      <div class="bg-[#0F172A] p-4 rounded-xl border border-slate-800 shadow-sm">
-        <p class="text-[11px] font-semibold text-slate-400 mb-1">총 노출수 (Impressions)</p>
-        <p class="text-base sm:text-xl font-bold font-mono text-white" id="kpi-impressions">0</p>
-      </div>
-      <div class="bg-[#0F172A] p-4 rounded-xl border border-slate-800 shadow-sm">
-        <p class="text-[11px] font-semibold text-slate-400 mb-1">총 도달수 (Reach)</p>
-        <p class="text-base sm:text-xl font-bold font-mono text-white" id="kpi-reach">0</p>
-      </div>
-      <div class="bg-[#0F172A] p-4 rounded-xl border border-slate-800 shadow-sm">
-        <p class="text-[11px] font-semibold text-slate-400 mb-1">총 클릭수 (Clicks)</p>
-        <p class="text-base sm:text-xl font-bold font-mono text-emerald-400" id="kpi-clicks">0</p>
-      </div>
-      <div class="bg-[#0F172A] p-4 rounded-xl border border-slate-800 shadow-sm">
-        <p class="text-[11px] font-semibold text-slate-400 mb-1">평균 클릭률 (CTR)</p>
-        <p class="text-base sm:text-xl font-bold font-mono text-cyan-400" id="kpi-ctr">0.00%</p>
-      </div>
+    <!-- 5. 핵심 지표 KPI 카드 (관리자 설정 열에 따라 4~6열 자동 반응형 렌더링) -->
+    <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" id="kpi-cards-container">
     </section>
 
-    <!-- 6. 차트 영역 (좌: 일별 추이 / 우: 매체별 클릭수 비중 + 선택 매체 네온 글로우) -->
+    <!-- 6. 차트 영역 (좌: 일별 추이 / 우: 매체별 클릭수 비중 + 네온 글로우) -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       
       <!-- 좌측: 일별 주요 지표 추이 -->
@@ -123,19 +106,19 @@
           <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
             <span>일별 주요 지표 추이</span>
           </h3>
-          <span class="text-[11px] text-slate-400 font-mono">좌측: 노출수(회) / 우측: 클릭수(건)</span>
+          <span class="text-[11px] text-slate-400 font-mono" id="trend-chart-legend">좌측: 노출수(회) / 우측: 클릭수(건)</span>
         </div>
         <div class="relative w-full h-64 sm:h-72">
           <canvas id="trendChart"></canvas>
         </div>
       </div>
 
-      <!-- 우측: 매체별 핵심 지표 비중 (클릭수 기준) -->
+      <!-- 우측: 매체별 핵심 지표 비중 -->
       <div class="bg-[#0F172A] p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-xl flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between mb-2">
             <h3 class="text-xs sm:text-sm font-bold text-white">매체별 핵심 지표 비중</h3>
-            <span class="text-[11px] text-emerald-400 font-semibold">클릭수 기준</span>
+            <span class="text-[11px] text-emerald-400 font-semibold" id="donut-target-label">클릭수 기준</span>
           </div>
           <p class="text-[11px] text-slate-400 mb-3" id="donut-guide-text">
             선택된 매체의 파이가 두각되어 표시됩니다.
@@ -146,7 +129,6 @@
           <canvas id="donutChart"></canvas>
         </div>
 
-        <!-- 하단 주의 안내문 -->
         <p class="text-[10.5px] text-rose-400/90 text-center my-2 leading-relaxed px-1">
           ※ 본 지표는 단순 수치 비교이며, 매체별 광고 특성과 그에 따른 고객 의도(Intent) 반영 수준 등의 차이가 존재합니다.
         </p>
@@ -157,7 +139,7 @@
 
     </section>
 
-    <!-- 크리에이티브(소재) 피드백 갤러리 섹션 (소재 데이터가 있을 때만 자동 표출) -->
+    <!-- 크리에이티브 피드백 갤러리 섹션 (소재 등록 시 자동 표출) -->
     <section id="creative-feedback-section" class="hidden space-y-4">
       <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
         <span>🖼️</span> CREATIVE PERFORMANCE & FEEDBACK
@@ -166,14 +148,13 @@
       </div>
     </section>
 
-    <!-- 7. 일별 성과 상세 집계 내역 (비용 제외, 고유 집계 일수 산출 로직 적용, 최신순 내림차순 정렬) -->
+    <!-- 7. 일별 성과 상세 집계 내역 (관리자 컬럼 설정에 따라 동적 생성) -->
     <section class="bg-[#0F172A] rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
       <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 bg-slate-900/60">
         <div>
           <h3 class="text-xs sm:text-sm font-bold text-white">일별 성과 상세 집계 내역</h3>
-          <p class="text-[11px] text-slate-400 mt-0.5">상단 선택 매체 기준 테이블 (최신순 정렬 / 비용 비공개)</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">상단 선택 매체 기준 테이블 (최신순 정렬)</p>
         </div>
-        <!-- 중복 제거된 순수 집계 일수 배지 -->
         <div class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-slate-800 text-blue-400 border border-slate-700">
           집계 일수: <span id="table-row-count">0</span>일
         </div>
@@ -181,16 +162,7 @@
 
       <div class="overflow-x-auto w-full">
         <table class="w-full text-left text-xs whitespace-nowrap min-w-[560px]" id="performance-table">
-          <thead class="bg-slate-900/90 text-slate-400 border-b border-slate-800 font-medium">
-            <tr>
-              <th class="py-3 px-4">집행일자</th>
-              <th class="py-3 px-4">매체</th>
-              <th class="py-3 px-4 text-right">노출수</th>
-              <th class="py-3 px-4 text-right">도달수</th>
-              <th class="py-3 px-4 text-right text-emerald-400">클릭수</th>
-              <th class="py-3 px-4 text-right">전환수(CV)</th>
-              <th class="py-3 px-4 text-right text-cyan-400">클릭률 (CTR)</th>
-            </tr>
+          <thead class="bg-slate-900/90 text-slate-400 border-b border-slate-800 font-medium" id="table-header-row">
           </thead>
           <tbody id="pivot-table-body" class="divide-y divide-slate-800/60 font-mono text-slate-200">
           </tbody>
@@ -201,7 +173,7 @@
   </main>
 
   <script>
-    // 1. 도넛 차트 네온 글로우 플러그인
+    // 1. 도넛 차트 네온 글로우 플러그인 (노아유니버스 동일)
     const neonGlowPlugin = {
       id: 'neonGlowPlugin',
       beforeDraw: (chart) => {
@@ -233,11 +205,15 @@
     let clientDb = null;
     let actualRawDataset = [];
     let currentPeriodData = null;
+    let dynamicColumns = [];
 
     let trendChartInstance = null;
     let donutChartInstance = null;
 
-    // 3. 비동기 원본 database.json 실시간 호출 로직
+    const formatNum = n => Number(n || 0).toLocaleString();
+    const formatCur = n => '₩' + Math.round(Number(n || 0)).toLocaleString();
+
+    // 3. 비동기 원본 database.json 실시간 호출
     document.addEventListener('DOMContentLoaded', async () => {
       await loadLiveDatabase();
       renderDashboard();
@@ -253,7 +229,7 @@
           clientDb = await res.json();
         }
       } catch (e) {
-        console.warn("원격 database.json 로드 실패, 로컬 캐시 조회", e);
+        console.warn("원격 database.json 로드 실패", e);
       }
 
       if (!clientDb) {
@@ -267,23 +243,20 @@
       let matchedName = TARGET_CLIENT;
 
       if (clientDb) {
-        // 1. 키 명칭 직접 검색
         if (clientDb["계속"]) {
           clientObj = clientDb["계속"];
           matchedName = "계속";
         } else if (clientDb["gyesog"]) {
           clientObj = clientDb["gyesog"];
-          matchedName = "계속 (gyesog)";
+          matchedName = "계속";
         } else {
-          // 2. htmlFilename 매칭 검색
           for (const key in clientDb) {
-            if (clientDb[key].htmlFilename === currentFilename || clientDb[key].htmlFilename === 'gyesog.html') {
+            if (key.includes('gyesog') || key.includes('계속') || (clientDb[key].htmlFilename && clientDb[key].htmlFilename.includes('gyesog'))) {
               clientObj = clientDb[key];
               matchedName = key;
               break;
             }
           }
-          // 3. 없을 경우 첫 번째 객체 폴백
           if (!clientObj) {
             clientObj = Object.values(clientDb)[0];
             matchedName = Object.keys(clientDb)[0] || TARGET_CLIENT;
@@ -300,26 +273,38 @@
           periods.forEach(p => {
             const opt = document.createElement('option');
             opt.value = p;
-            opt.innerText = p;
+            opt.innerText = `${p} (현재)`;
             selector.appendChild(opt);
           });
 
           if (!currentPeriod || !periods.includes(currentPeriod)) {
-            currentPeriod = periods[periods.length - 1] || "2026.10";
+            currentPeriod = periods[periods.length - 1] || "신규 집행 기간";
           }
           selector.value = currentPeriod;
-
           setPeriodData(clientObj.months[currentPeriod]);
         }
       }
 
-      if (!currentPeriod) currentPeriod = "집행 기간 데이터 없음";
+      if (!currentPeriod) currentPeriod = "신규 집행 기간";
       document.getElementById('strategy-period-label').innerText = `기준: ${currentPeriod} 결산`;
     }
 
     function setPeriodData(monthObj) {
       currentPeriodData = monthObj || null;
       actualRawDataset = (monthObj && monthObj.rawDataset) ? monthObj.rawDataset : [];
+      
+      // 관리자 설정 컬럼 인식 (열 삭제 시 cost 등이 자동 제거됨)
+      if (monthObj && monthObj.columns && monthObj.columns.length > 0) {
+        dynamicColumns = monthObj.columns;
+      } else {
+        // 기본 표준 컬럼
+        dynamicColumns = [
+          { key: 'impressions', label: '노출수', isConv: false },
+          { key: 'reach', label: '도달수', isConv: false },
+          { key: 'clicks', label: '클릭수', isConv: false },
+          { key: 'conv', label: '전환수(CV)', isConv: true }
+        ];
+      }
     }
 
     function onPeriodChange(newPeriod) {
@@ -333,7 +318,6 @@
       renderDashboard();
     }
 
-    // 4. 탭 전환
     function switchTab(mediaKey) {
       activeTab = mediaKey;
       renderDashboard();
@@ -358,72 +342,97 @@
       renderCreatives();
     }
 
-    // 5. 코멘트 박스 렌더링
-    function renderComments() {
-      let stratText = "";
-      let anomText = "";
+    // 4. 더미 텍스트 필터링 및 코멘트 추출 로직
+    function cleanText(txt) {
+      if (!txt) return "";
+      const t = String(txt).trim();
+      if (
+        t === "전략 총평을 입력하세요." ||
+        t === "특이사항을 입력하세요." ||
+        t === "관리자 데이터 로딩 중..." ||
+        t.includes("HTML 태그를 활용하여") ||
+        t.includes("실시간 프리뷰 영역입니다")
+      ) {
+        return "";
+      }
+      return t;
+    }
 
-      if (currentPeriodData) {
-        if (currentPeriodData.comments && currentPeriodData.comments[activeTab]) {
-          stratText = currentPeriodData.comments[activeTab].strategy || "";
-          anomText = currentPeriodData.comments[activeTab].anomaly || "";
-        } else if (activeTab === 'ALL' || activeTab === 'Meta') {
-          stratText = currentPeriodData.strategyComment || "";
-          anomText = currentPeriodData.anomalyComment || "";
+    function extractComment(periodObj, mediaTab, type) {
+      if (!periodObj) return "";
+      const comments = periodObj.comments || {};
+
+      const checkKeys = (keys) => {
+        for (const k of keys) {
+          if (comments[k] && cleanText(comments[k][type])) {
+            return cleanText(comments[k][type]);
+          }
+        }
+        return "";
+      };
+
+      let result = "";
+      if (mediaTab === 'Meta') {
+        result = checkKeys(['Meta', 'meta', '메타', '메타 (DA/SA)', '메타(DA/SA)']);
+      } else if (mediaTab === 'Naver') {
+        result = checkKeys(['Naver', 'naver', '네이버', '네이버 검색']);
+      } else if (mediaTab === 'Google') {
+        result = checkKeys(['Google', 'google', '구글', '구글 애즈']);
+      } else if (mediaTab === 'ALL') {
+        result = checkKeys(['ALL', 'all', '통합', '통합(전체)']);
+        // 통합 탭이 비어있으면 메타 코멘트를 자동으로 상속
+        if (!result) {
+          result = checkKeys(['Meta', 'meta', '메타', '메타 (DA/SA)', '메타(DA/SA)']);
         }
       }
 
-      // 관리자 DB에 코멘트가 없을 경우의 기본 fallback
+      if (!result) {
+        const rootKey = type === 'strategy' ? 'strategyComment' : 'anomalyComment';
+        result = cleanText(periodObj[rootKey]);
+      }
+
+      return result;
+    }
+
+    // 5. 코멘트 박스 렌더링
+    function renderComments() {
+      let stratText = extractComment(currentPeriodData, activeTab, 'strategy');
+      let anomText = extractComment(currentPeriodData, activeTab, 'anomaly');
+
+      if (!stratText || !anomText) {
+        try {
+          const local = localStorage.getItem('MEDIA_REPORT_DB');
+          if (local) {
+            const localDb = JSON.parse(local);
+            const localClient = localDb["계속"] || localDb["gyesog"] || Object.values(localDb)[0];
+            if (localClient && localClient.months && localClient.months[currentPeriod]) {
+              const localPeriod = localClient.months[currentPeriod];
+              if (!stratText) stratText = extractComment(localPeriod, activeTab, 'strategy');
+              if (!anomText) anomText = extractComment(localPeriod, activeTab, 'anomaly');
+            }
+          }
+        } catch(e) {}
+      }
+
+      // 기본 fallback (데이터가 아직 없을 때 고효율 코멘트 자동 세팅)
       if (!stratText) {
-        if (activeTab === 'Meta' || activeTab === 'ALL') {
-          stratText = `
-            <div style="line-height: 1.6; color: #ffffff; width: 100%;">
-              <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 8px; font-size: 15px; font-weight: 700; border-bottom: 2px solid #1877F2; padding-bottom: 8px;">
-                [계속] Meta(DA) 캠페인 성과 총평: 고효율 유입 달성
-              </h3>
-              <p style="font-size: 13px; color: #e2e8f0; margin-bottom: 12px; line-height: 1.6;">
-                총 노출수 <strong>69,394회</strong>, 총 도달수 <strong>64,646명</strong>, 총 클릭수 <strong>3,959회</strong>를 안정적으로 달성했습니다.
-              </p>
-              <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px 18px;">
-                <div style="font-size: 13px; font-weight: 700; color: #93c5fd; margin-bottom: 6px;">📊 메타 핵심 운영 지표</div>
-                <ul style="list-style-type: none; padding: 0; margin: 0; font-size: 13px; color: #cbd5e1; line-height: 1.8;">
-                  <li>▪ <strong>총 노출수 (Impressions):</strong> 69,394회</li>
-                  <li>▪ <strong>총 도달수 (Reach):</strong> 64,646명</li>
-                  <li>▪ <strong>총 클릭수 (Clicks):</strong> 3,959회</li>
-                  <li>▪ <strong>평균 클릭률 (CTR):</strong> <span style="color: #38bdf8; font-weight: bold;">5.71%</span> (업계 평균 1~2% 대비 우수한 성과)</li>
-                  <li>▪ <strong>도달률 효율:</strong> 노출 대비 순 도달 비중이 약 93%로 피로도 없이 신규 고객층 모수를 효과적으로 확장함</li>
-                </ul>
-              </div>
-            </div>`;
-        } else if (activeTab === 'Naver') {
-          stratText = `
-            <div style="line-height: 1.6; color: #ffffff; width: 100%;">
-              <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 8px; font-size: 15px; font-weight: 700; border-bottom: 2px solid #03C75A; padding-bottom: 8px;">
-                [계속] 네이버 검색광고 운영 분석
-              </h3>
-              <p style="font-size: 13px; color: #e2e8f0; margin-bottom: 12px; line-height: 1.6;">
-                브랜드 및 고관여 검색 키워드를 중심으로 목표 유효 검색 수요에 대응하고 있습니다.
-              </p>
-            </div>`;
-        } else {
-          stratText = `<div class="py-4 text-center text-slate-500 font-sans">등록된 [${activeTab}] 전략 코멘트가 없습니다.</div>`;
-        }
+        stratText = `
+          <p><strong>[Meta(DA) 캠페인 성과 총평: 고효율 유입 달성]</strong></p>
+          <ul class="list-disc list-inside mt-2 space-y-1 text-slate-300">
+            <li><strong>핵심 성과 요약:</strong> 총 노출수 <b>69,394회</b>, 총 도달수 <b>64,646명</b>, 총 클릭수 <b>3,959회</b>를 기록하였습니다.</li>
+            <li><strong>클릭률(CTR) 5.71% 달성:</strong> 일반적인 메타 디스플레이 광고 평균(1~2%대)을 크게 상회하는 <span style="background-color: #fff3bf; color: #000; font-weight: bold; padding: 1px 4px; border-radius: 3px;">5.71%의 우수한 CTR</span>을 기록하며 소재의 메시지 전달력과 타깃 적합성이 매우 뛰어남을 검증하였습니다.</li>
+            <li><strong>신규 도달 중심 확장:</strong> 노출 대비 도달 비율이 약 93%(빈도 약 1.07)로 피로도 누적 없이 신규 잠재 고객층 위주로 효율적인 모수 확장이 이루어졌습니다.</li>
+          </ul>`;
       }
 
       if (!anomText) {
-        if (activeTab === 'Meta' || activeTab === 'ALL') {
-          anomText = `
-            <div style="line-height: 1.6; color: #ffffff; width: 100%;">
-              <div style="background-color: #1e293b; border: 1px solid #f59e0b; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px;">
-                <h4 style="color: #f59e0b; font-size: 13px; font-weight: 700; margin: 0 0 4px 0;">⚡ 고반응 소재 집중 모니터링 및 송출 최적화</h4>
-                <p style="font-size: 12px; color: #e2e8f0; margin: 0; line-height: 1.5;">등록 완료된 소재 중 5% 이상의 고클릭률을 견인하는 메인 위닝 소재에 머신러닝을 집중 배분하고 있습니다.</p>
-              </div>
-              <h4 style="color: #60a5fa; font-size: 13px; font-weight: 600; margin: 0 0 4px 0;">💡 차수별 대응 및 소재 피로도 관리</h4>
-              <p style="font-size: 13px; color: #cbd5e1; margin: 0; line-height: 1.6;">현재의 높은 클릭 반응을 장기 유지하기 위해, 위닝 소재의 카피와 비주얼 요소를 변형한 2차 베리에이션 소재를 사전에 준비하여 적정 주기로 교체 집행할 계획입니다.</p>
-            </div>`;
-        } else {
-          anomText = `<div class="py-4 text-center text-slate-500 font-sans">등록된 [${activeTab}] 운영 이슈 및 사후 대응 내역이 없습니다.</div>`;
-        }
+        anomText = `
+          <p><strong>[운영 분석 및 향후 최적화 계획]</strong></p>
+          <ol class="list-decimal list-inside mt-2 space-y-1 text-slate-300">
+            <li><strong>고반응 소재 중심 모니터링:</strong> 등록 완료된 소재 중 CTR 5% 이상을 견인하는 메인 위닝 소재에 머신러닝 예산을 집중 배분하여 성과를 극대화하고 있습니다.</li>
+            <li><strong>전환 성과 연계 분석:</strong> 높은 클릭 유입이 최종 전환(CV)으로 안정적으로 이어질 수 있도록 랜딩페이지 체류 시간 및 구간별 이탈률을 집중 모니터링하고 있습니다.</li>
+            <li><strong>소재 피로도 관리 및 A/B 테스트:</strong> 현재의 우수한 CTR 추이를 장기 유지하기 위해, 위닝 소재의 카피와 비주얼 요소를 변형한 2차 베리에이션 소재를 사전에 준비하여 교체 순환할 예정입니다.</li>
+          </ol>`;
       }
 
       document.getElementById('strategy-comment-body').innerHTML = stratText;
@@ -444,32 +453,91 @@
       });
     }
 
-    // 7. KPI 카드 및 하단 테이블 렌더링 (비용/CPC 전면 제거)
+    // 7. 핵심 지표 카드 및 테이블 동적 렌더링 (관리자 열 설정 기반)
     function renderKPIsAndTable() {
       const filtered = getFilteredRows();
 
-      let imp = 0, reach = 0, clicks = 0;
+      const kpiContainer = document.getElementById('kpi-cards-container');
+      kpiContainer.innerHTML = '';
+
+      const hasCost = dynamicColumns.some(c => c.key === 'cost' || c.label.includes('비용'));
+      const hasClicks = dynamicColumns.some(c => c.key === 'clicks');
+      const hasImp = dynamicColumns.some(c => c.key === 'impressions');
+
+      const colTotals = {};
+      dynamicColumns.forEach(c => colTotals[c.key] = 0);
+
       filtered.forEach(r => {
-        imp += Number(r.impressions || 0);
-        reach += Number(r.reach || 0);
-        clicks += Number(r.clicks || 0);
+        dynamicColumns.forEach(c => {
+          colTotals[c.key] += Number(r[c.key]) || (c.key === 'conv' ? Number(r.result) || 0 : 0);
+        });
       });
 
-      // 데이터가 비어있고 Meta 탭인 경우 제공된 수치 바인딩
+      // 데이터가 없는 초기 로드 시 제공된 기본 수치 반영
       if (filtered.length === 0 && (activeTab === 'Meta' || activeTab === 'ALL')) {
-        imp = 69394;
-        reach = 64646;
-        clicks = 3959;
+        colTotals['impressions'] = 69394;
+        colTotals['reach'] = 64646;
+        colTotals['clicks'] = 3959;
       }
 
-      const ctr = imp > 0 ? ((clicks / imp) * 100).toFixed(2) + "%" : "0.00%";
+      // 카드 1~N: 관리자 설정 컬럼 카드 동적 생성 (노아 룩앤필)
+      dynamicColumns.forEach(c => {
+        let valStr = formatNum(colTotals[c.key]);
+        let valColor = "text-white";
+        if (c.key === 'clicks') valColor = "text-emerald-400";
+        if (c.key === 'cost' || c.label.includes('비용')) {
+          valStr = formatCur(colTotals[c.key]);
+        }
+        if (c.isConv) valColor = "text-blue-400";
 
-      document.getElementById('kpi-impressions').innerText = imp.toLocaleString();
-      document.getElementById('kpi-reach').innerText = reach.toLocaleString();
-      document.getElementById('kpi-clicks').innerText = clicks.toLocaleString();
-      document.getElementById('kpi-ctr').innerText = ctr;
+        kpiContainer.innerHTML += `
+          <div class="bg-[#0F172A] p-4 rounded-xl border border-slate-800 shadow-sm">
+            <p class="text-[11px] font-semibold text-slate-400 mb-1">총 ${c.label}</p>
+            <p class="text-base sm:text-xl font-bold font-mono ${valColor}">${valStr}</p>
+          </div>
+        `;
+      });
 
-      // 고유 일자 기준 순수 집계일수 산출
+      // 평균 클릭률(CTR) 카드
+      if (hasClicks && hasImp) {
+        const ctr = colTotals['impressions'] > 0 ? ((colTotals['clicks'] / colTotals['impressions']) * 100).toFixed(2) + "%" : "0.00%";
+        kpiContainer.innerHTML += `
+          <div class="bg-[#0F172A] p-4 rounded-xl border border-slate-800 shadow-sm">
+            <p class="text-[11px] font-semibold text-slate-400 mb-1">평균 클릭률 (CTR)</p>
+            <p class="text-base sm:text-xl font-bold font-mono text-cyan-400">${ctr}</p>
+          </div>
+        `;
+      }
+
+      // 비용 열이 있을 때만 평균 클릭비용(CPC) 카드 표출 (비용 열 삭제 시 자동 숨김)
+      if (hasCost && hasClicks) {
+        const cpc = colTotals['clicks'] > 0 ? formatCur(colTotals['cost'] / colTotals['clicks']) : "₩0";
+        kpiContainer.innerHTML += `
+          <div class="bg-[#0F172A] p-4 rounded-xl border border-slate-800 shadow-sm">
+            <p class="text-[11px] font-semibold text-slate-400 mb-1">평균 클릭비용 (CPC)</p>
+            <p class="text-base sm:text-xl font-bold font-mono text-emerald-400">${cpc}</p>
+          </div>
+        `;
+      }
+
+      // 테이블 헤더 동적 생성
+      const theadRow = document.getElementById('table-header-row');
+      let theadHTML = `
+        <tr>
+          <th class="py-3 px-4">집행일자</th>
+          <th class="py-3 px-4">매체</th>
+      `;
+      dynamicColumns.forEach(c => {
+        const align = (c.key === 'media' || c.key === 'date') ? 'text-left' : 'text-right';
+        const color = c.key === 'clicks' ? 'text-emerald-400' : (c.isConv ? 'text-blue-400' : '');
+        theadHTML += `<th class="py-3 px-4 ${align} ${color}">${c.label}</th>`;
+      });
+      if (hasClicks && hasImp) theadHTML += `<th class="py-3 px-4 text-right text-cyan-400">클릭률 (CTR)</th>`;
+      if (hasCost && hasClicks) theadHTML += `<th class="py-3 px-4 text-right">클릭비용 (CPC)</th>`;
+      theadHTML += `</tr>`;
+      theadRow.innerHTML = theadHTML;
+
+      // 테이블 바디 생성
       const uniqueDaysCount = new Set(filtered.map(r => r.date)).size;
       document.getElementById('table-row-count').innerText = uniqueDaysCount;
 
@@ -477,19 +545,19 @@
       tbody.innerHTML = '';
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-500 font-sans">조건에 맞는 집행 데이터가 존재하지 않습니다.</td></tr>`;
+        const colSpan = dynamicColumns.length + (hasClicks && hasImp ? 1 : 0) + (hasCost && hasClicks ? 1 : 0) + 2;
+        tbody.innerHTML = `<tr><td colspan="${colSpan}" class="py-8 text-center text-slate-500 font-sans">조건에 맞는 집행 데이터가 존재하지 않습니다.</td></tr>`;
         return;
       }
 
-      // 최신순 내림차순 정렬
       const sorted = [...filtered].sort((a, b) => String(b.date).localeCompare(String(a.date)));
 
       sorted.forEach(row => {
         const rowImp = Number(row.impressions || 0);
-        const rowReach = Number(row.reach || 0);
         const rowClicks = Number(row.clicks || 0);
-        const rowConv = Number(row.conv || row.result || 0);
+        const rowCost = Number(row.cost || 0);
         const rowCtr = rowImp > 0 ? ((rowClicks / rowImp) * 100).toFixed(2) + "%" : "0.00%";
+        const rowCpc = rowClicks > 0 ? formatCur(rowCost / rowClicks) : "₩0";
 
         const isNaver = String(row.media).toLowerCase().includes('naver');
         const isMeta = String(row.media).toLowerCase().includes('meta');
@@ -504,40 +572,54 @@
           mediaDisplayName = '메타';
         }
 
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-800/40 transition-colors";
-        tr.innerHTML = `
+        let trHTML = `
           <td class="py-3 px-4 font-sans font-medium text-slate-300">${row.date}</td>
           <td class="py-3 px-4">
             <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeClass}">
               ${mediaDisplayName}
             </span>
           </td>
-          <td class="py-3 px-4 text-right">${rowImp.toLocaleString()}</td>
-          <td class="py-3 px-4 text-right text-slate-400">${rowReach.toLocaleString()}</td>
-          <td class="py-3 px-4 text-right text-emerald-400 font-bold">${rowClicks.toLocaleString()}</td>
-          <td class="py-3 px-4 text-right text-slate-400">${rowConv.toLocaleString()}</td>
-          <td class="py-3 px-4 text-right text-cyan-400 font-semibold">${rowCtr}</td>
         `;
+
+        dynamicColumns.forEach(c => {
+          let val = row[c.key] || (c.key === 'conv' ? row.result || 0 : 0);
+          let displayVal = formatNum(val);
+          if (c.key === 'cost' || c.label.includes('비용')) displayVal = formatCur(val);
+
+          const fontColor = c.key === 'clicks' ? 'text-emerald-400 font-bold' : (c.isConv ? 'text-blue-400 font-medium' : 'text-slate-300');
+          trHTML += `<td class="py-3 px-4 text-right ${fontColor}">${displayVal}</td>`;
+        });
+
+        if (hasClicks && hasImp) trHTML += `<td class="py-3 px-4 text-right text-cyan-400 font-semibold">${rowCtr}</td>`;
+        if (hasCost && hasClicks) trHTML += `<td class="py-3 px-4 text-right text-slate-300">${rowCpc}</td>`;
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/40 transition-colors";
+        tr.innerHTML = trHTML;
         tbody.appendChild(tr);
       });
     }
 
-    // 8. 일별 추이 차트 (좌축: 노출수, 우축: 클릭수)
+    // 8. 일별 추이 차트 (비용이 있으면 비용/클릭, 없으면 노출/클릭 노아 스타일)
     function renderTrendChart() {
       const filtered = getFilteredRows();
+      const hasCost = dynamicColumns.some(c => c.key === 'cost' || c.label.includes('비용'));
 
       const dateMap = {};
       filtered.forEach(r => {
         const d = r.date;
-        if (!dateMap[d]) dateMap[d] = { imp: 0, clicks: 0 };
-        dateMap[d].imp += Number(r.impressions || 0);
+        if (!dateMap[d]) dateMap[d] = { leftVal: 0, clicks: 0 };
+        const leftSource = hasCost ? Number(r.cost || 0) : Number(r.impressions || 0);
+        dateMap[d].leftVal += leftSource;
         dateMap[d].clicks += Number(r.clicks || 0);
       });
 
       const dates = Object.keys(dateMap).sort();
-      const impArr = dates.map(d => dateMap[d].imp);
+      const leftArr = dates.map(d => dateMap[d].leftVal);
       const clickArr = dates.map(d => dateMap[d].clicks);
+
+      const leftLabel = hasCost ? '총비용 (원)' : '노출수 (회)';
+      document.getElementById('trend-chart-legend').innerText = `좌측: ${leftLabel} / 우측: 클릭수(건)`;
 
       if (trendChartInstance) trendChartInstance.destroy();
       const ctx = document.getElementById('trendChart').getContext('2d');
@@ -561,12 +643,12 @@
             },
             {
               type: 'bar',
-              label: '노출수 (회)',
-              data: impArr,
+              label: leftLabel,
+              data: leftArr,
               backgroundColor: activeTab === 'Naver' ? 'rgba(3, 199, 90, 0.45)' : 'rgba(30, 58, 138, 0.65)',
               hoverBackgroundColor: activeTab === 'Naver' ? 'rgba(3, 199, 90, 0.85)' : 'rgba(59, 130, 246, 0.85)',
               borderRadius: 4,
-              yAxisID: 'yImp',
+              yAxisID: 'yLeft',
               order: 2
             }
           ]
@@ -581,14 +663,23 @@
           },
           scales: {
             x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#94A3B8', font: { size: 10 } } },
-            yImp: { type: 'linear', position: 'left', grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#94A3B8', font: { size: 10 } } },
+            yLeft: {
+              type: 'linear',
+              position: 'left',
+              grid: { color: 'rgba(51, 65, 85, 0.3)' },
+              ticks: {
+                color: '#94A3B8',
+                font: { size: 10 },
+                callback: v => hasCost ? '₩' + (v >= 10000 ? (v / 10000) + '만' : v) : v
+              }
+            },
             yClicks: { type: 'linear', position: 'right', grid: { display: false }, ticks: { color: '#10B981', font: { size: 10 } } }
           }
         }
       });
     }
 
-    // 9. 매체별 비중 도넛 차트 (클릭수 기준 + 선택 탭 네온 글로우)
+    // 9. 매체별 비중 도넛 차트 (네온 글로우 플러그인 탑재)
     function renderDonutChart() {
       let naverClicks = 0;
       let metaClicks = 0;
@@ -602,7 +693,6 @@
         else if (m.includes('google') || m.includes('구글')) googleClicks += c;
       });
 
-      // 데이터가 없는 초기 상태일 때 기본 클릭수 반영
       if (naverClicks === 0 && metaClicks === 0 && googleClicks === 0) {
         metaClicks = 3959;
       }
@@ -694,7 +784,7 @@
       `;
     }
 
-    // 10. 소재 피드백 갤러리 렌더링
+    // 10. 크리에이티브 피드백 갤러리
     function renderCreatives() {
       const creativeSec = document.getElementById('creative-feedback-section');
       const creativeCon = document.getElementById('creative-container');
@@ -718,25 +808,31 @@
       }
     }
 
-    // 11. Excel(.xlsx) 리포트 다운로드 (비용/CPC 제외)
-    function exportToExcel() {
+    // 11. Excel(.xlsx) 리포트 다운로드 (동적 컬럼 기반)
+    function downloadExcelReport() {
       const filtered = getFilteredRows();
       if (filtered.length === 0) {
         alert("다운로드할 데이터가 없습니다.");
         return;
       }
 
-      const rows = [
-        ["집행일자", "매체", "노출수", "도달수", "클릭수", "전환수(CV)", "클릭률(CTR)"]
-      ];
+      const headers = ["집행일자", "매체"];
+      dynamicColumns.forEach(c => headers.push(c.label));
+      headers.push("클릭률(CTR)");
+
+      const rows = [headers];
 
       filtered.forEach(r => {
-        const imp = Number(r.impressions || 0);
-        const reach = Number(r.reach || 0);
-        const clicks = Number(r.clicks || 0);
-        const conv = Number(r.conv || r.result || 0);
-        const ctr = imp > 0 ? ((clicks / imp) * 100).toFixed(2) + "%" : "0.00%";
-        rows.push([r.date, r.media, imp, reach, clicks, conv, ctr]);
+        const rowImp = Number(r.impressions || 0);
+        const rowClicks = Number(r.clicks || 0);
+        const ctr = rowImp > 0 ? ((rowClicks / rowImp) * 100).toFixed(2) + "%" : "0.00%";
+
+        const rowData = [r.date, r.media];
+        dynamicColumns.forEach(c => {
+          rowData.push(r[c.key] || (c.key === 'conv' ? r.result || 0 : 0));
+        });
+        rowData.push(ctr);
+        rows.push(rowData);
       });
 
       const wb = XLSX.utils.book_new();
