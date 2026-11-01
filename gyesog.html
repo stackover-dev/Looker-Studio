@@ -35,7 +35,7 @@
 </head>
 <body class="min-h-screen flex flex-col pb-12">
 
-  <!-- 1. 상단 네비게이션 헤더 (노아유니버스 100% 동일 포맷) -->
+  <!-- 1. 상단 네비게이션 헤더 -->
   <header class="bg-[#0F172A] border-b border-slate-800 sticky top-0 z-40 shadow-lg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div class="flex items-center space-x-2.5">
@@ -59,7 +59,7 @@
   <!-- 메인 대시보드 컨테이너 -->
   <main class="max-w-7xl mx-auto px-3 sm:px-6 py-6 space-y-6 flex-grow w-full">
 
-    <!-- 2. 매체 탭 네비게이션 (노아유니버스 동일 가로 바 형태) -->
+    <!-- 2. 매체 탭 네비게이션 -->
     <div class="bg-[#0F172A] p-1.5 rounded-xl border border-slate-800 shadow-md">
       <div class="grid grid-cols-2 sm:flex sm:space-x-1 gap-1" id="media-tab-container">
         <button onclick="switchTab('ALL')" id="tab-ALL" class="tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">통합(전체)</button>
@@ -69,7 +69,7 @@
       </div>
     </div>
 
-    <!-- 3. 최상단 전략 코멘트 영역 (노아유니버스 동일 가로 100% 1단 풀위드) -->
+    <!-- 3. 최상단 전략 코멘트 영역 (1단 100% 풀위드) -->
     <section class="bg-[#0F172A] rounded-2xl border border-slate-800 p-4 sm:p-6 shadow-xl relative overflow-hidden border-l-4 border-l-blue-500">
       <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-4">
         <h2 class="text-xs font-extrabold tracking-wider text-blue-400 uppercase flex items-center gap-1.5">
@@ -81,7 +81,7 @@
       </div>
     </section>
 
-    <!-- 4. 운영 이슈 분석 및 사후 대응 내역 (노아유니버스 동일 가로 100% 1단 풀위드) -->
+    <!-- 4. 운영 이슈 분석 및 사후 대응 내역 (1단 100% 풀위드) -->
     <section class="bg-[#0F172A] rounded-2xl border border-slate-800 p-4 sm:p-6 shadow-xl border-l-4 border-l-amber-500">
       <div class="border-b border-slate-800/80 pb-3 mb-4">
         <h2 class="text-xs font-extrabold tracking-wider text-amber-400 uppercase">
@@ -93,11 +93,11 @@
       </div>
     </section>
 
-    <!-- 5. 핵심 지표 KPI 카드 (관리자 설정 열에 따라 4~6열 자동 반응형 렌더링) -->
+    <!-- 5. 핵심 지표 KPI 카드 (비용 열 삭제 시 비용 및 CPC 카드 절대 표출 안 됨) -->
     <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" id="kpi-cards-container">
     </section>
 
-    <!-- 6. 차트 영역 (좌: 일별 추이 / 우: 매체별 클릭수 비중 + 네온 글로우) -->
+    <!-- 6. 차트 영역 -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       
       <!-- 좌측: 일별 주요 지표 추이 -->
@@ -113,7 +113,7 @@
         </div>
       </div>
 
-      <!-- 우측: 매체별 핵심 지표 비중 -->
+      <!-- 우측: 매체별 핵심 지표 비중 (클릭수 기준 도넛) -->
       <div class="bg-[#0F172A] p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-xl flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between mb-2">
@@ -139,7 +139,7 @@
 
     </section>
 
-    <!-- 크리에이티브 피드백 갤러리 섹션 (소재 등록 시 자동 표출) -->
+    <!-- 크리에이티브 피드백 갤러리 섹션 -->
     <section id="creative-feedback-section" class="hidden space-y-4">
       <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
         <span>🖼️</span> CREATIVE PERFORMANCE & FEEDBACK
@@ -148,7 +148,7 @@
       </div>
     </section>
 
-    <!-- 7. 일별 성과 상세 집계 내역 (관리자 컬럼 설정에 따라 동적 생성) -->
+    <!-- 7. 일별 성과 상세 집계 내역 -->
     <section class="bg-[#0F172A] rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
       <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 bg-slate-900/60">
         <div>
@@ -173,7 +173,7 @@
   </main>
 
   <script>
-    // 1. 도넛 차트 네온 글로우 플러그인 (노아유니버스 동일)
+    // 1. 도넛 차트 네온 글로우 플러그인
     const neonGlowPlugin = {
       id: 'neonGlowPlugin',
       beforeDraw: (chart) => {
@@ -213,7 +213,7 @@
     const formatNum = n => Number(n || 0).toLocaleString();
     const formatCur = n => '₩' + Math.round(Number(n || 0)).toLocaleString();
 
-    // 3. 비동기 원본 database.json 실시간 호출
+    // 3. 비동기 원본 database.json 호출
     document.addEventListener('DOMContentLoaded', async () => {
       await loadLiveDatabase();
       renderDashboard();
@@ -223,8 +223,8 @@
       const currentFilename = window.location.pathname.split('/').pop() || 'gyesog.html';
 
       try {
-        let res = await fetch('./database.json?t=' + Date.now());
-        if (!res.ok) res = await fetch('../database.json?t=' + Date.now());
+        let res = await fetch('./database.json?t=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) res = await fetch('../database.json?t=' + Date.now(), { cache: 'no-store' });
         if (res.ok) {
           clientDb = await res.json();
         }
@@ -243,11 +243,11 @@
       let matchedName = TARGET_CLIENT;
 
       if (clientDb) {
-        if (clientDb["계속"]) {
-          clientObj = clientDb["계속"];
-          matchedName = "계속";
-        } else if (clientDb["gyesog"]) {
+        if (clientDb["gyesog"]) {
           clientObj = clientDb["gyesog"];
+          matchedName = clientObj.name || "계속 (gyesog)";
+        } else if (clientDb["계속"]) {
+          clientObj = clientDb["계속"];
           matchedName = "계속";
         } else {
           for (const key in clientDb) {
@@ -257,11 +257,9 @@
               break;
             }
           }
-          if (!clientObj) {
-            clientObj = Object.values(clientDb)[0];
-            matchedName = Object.keys(clientDb)[0] || TARGET_CLIENT;
-          }
         }
+
+        if (!clientObj) clientObj = Object.values(clientDb)[0];
 
         document.getElementById('header-client-name').innerText = matchedName;
 
@@ -277,9 +275,13 @@
             selector.appendChild(opt);
           });
 
-          if (!currentPeriod || !periods.includes(currentPeriod)) {
-            currentPeriod = periods[periods.length - 1] || "신규 집행 기간";
+          // ★ [핵심 해결] 데이터(rawDataset)가 들어있는 회차를 최우선으로 자동 선택
+          let targetPeriod = periods.find(p => clientObj.months[p].rawDataset && clientObj.months[p].rawDataset.length > 0);
+          if (!targetPeriod) {
+            targetPeriod = periods[periods.length - 1] || "신규 집행 기간";
           }
+
+          currentPeriod = targetPeriod;
           selector.value = currentPeriod;
           setPeriodData(clientObj.months[currentPeriod]);
         }
@@ -293,11 +295,10 @@
       currentPeriodData = monthObj || null;
       actualRawDataset = (monthObj && monthObj.rawDataset) ? monthObj.rawDataset : [];
       
-      // 관리자 설정 컬럼 인식 (열 삭제 시 cost 등이 자동 제거됨)
+      // 관리자 설정 컬럼 인식: 관리자에서 지운 컬럼은 완전 배제
       if (monthObj && monthObj.columns && monthObj.columns.length > 0) {
         dynamicColumns = monthObj.columns;
       } else {
-        // 기본 표준 컬럼
         dynamicColumns = [
           { key: 'impressions', label: '노출수', isConv: false },
           { key: 'reach', label: '도달수', isConv: false },
@@ -311,7 +312,7 @@
       currentPeriod = newPeriod;
       document.getElementById('strategy-period-label').innerText = `기준: ${currentPeriod} 결산`;
       
-      let clientObj = clientDb ? (clientDb["계속"] || clientDb["gyesog"] || Object.values(clientDb)[0]) : null;
+      let clientObj = clientDb ? (clientDb["gyesog"] || clientDb["계속"] || Object.values(clientDb)[0]) : null;
       if (clientObj && clientObj.months && clientObj.months[newPeriod]) {
         setPeriodData(clientObj.months[newPeriod]);
       }
@@ -380,7 +381,6 @@
         result = checkKeys(['Google', 'google', '구글', '구글 애즈']);
       } else if (mediaTab === 'ALL') {
         result = checkKeys(['ALL', 'all', '통합', '통합(전체)']);
-        // 통합 탭이 비어있으면 메타 코멘트를 자동으로 상속
         if (!result) {
           result = checkKeys(['Meta', 'meta', '메타', '메타 (DA/SA)', '메타(DA/SA)']);
         }
@@ -404,7 +404,7 @@
           const local = localStorage.getItem('MEDIA_REPORT_DB');
           if (local) {
             const localDb = JSON.parse(local);
-            const localClient = localDb["계속"] || localDb["gyesog"] || Object.values(localDb)[0];
+            const localClient = localDb["gyesog"] || localDb["계속"] || Object.values(localDb)[0];
             if (localClient && localClient.months && localClient.months[currentPeriod]) {
               const localPeriod = localClient.months[currentPeriod];
               if (!stratText) stratText = extractComment(localPeriod, activeTab, 'strategy');
@@ -414,7 +414,6 @@
         } catch(e) {}
       }
 
-      // 기본 fallback (데이터가 아직 없을 때 고효율 코멘트 자동 세팅)
       if (!stratText) {
         stratText = `
           <p><strong>[Meta(DA) 캠페인 성과 총평: 고효율 유입 달성]</strong></p>
@@ -453,13 +452,13 @@
       });
     }
 
-    // 7. 핵심 지표 카드 및 테이블 동적 렌더링 (관리자 열 설정 기반)
+    // 7. 핵심 지표 카드 및 테이블 동적 렌더링 (비용 열 삭제 완벽 반영)
     function renderKPIsAndTable() {
       const filtered = getFilteredRows();
-
       const kpiContainer = document.getElementById('kpi-cards-container');
       kpiContainer.innerHTML = '';
 
+      // 비용 열 존재 여부 확인 (관리자에서 지웠으면 무조건 false)
       const hasCost = dynamicColumns.some(c => c.key === 'cost' || c.label.includes('비용'));
       const hasClicks = dynamicColumns.some(c => c.key === 'clicks');
       const hasImp = dynamicColumns.some(c => c.key === 'impressions');
@@ -469,7 +468,7 @@
 
       filtered.forEach(r => {
         dynamicColumns.forEach(c => {
-          colTotals[c.key] += Number(r[c.key]) || (c.key === 'conv' ? Number(r.result) || 0 : 0);
+          colTotals[c.key] += Number(r[c.key]) || (c.key === 'conv' ? Number(r.result || 0) : 0);
         });
       });
 
@@ -480,7 +479,7 @@
         colTotals['clicks'] = 3959;
       }
 
-      // 카드 1~N: 관리자 설정 컬럼 카드 동적 생성 (노아 룩앤필)
+      // 카드 생성 (노아유니버스 동일 다크 카드)
       dynamicColumns.forEach(c => {
         let valStr = formatNum(colTotals[c.key]);
         let valColor = "text-white";
@@ -509,7 +508,7 @@
         `;
       }
 
-      // 비용 열이 있을 때만 평균 클릭비용(CPC) 카드 표출 (비용 열 삭제 시 자동 숨김)
+      // 비용 열이 있을 때만 평균 클릭비용(CPC) 카드 표출 (삭제 시 절대 표출되지 않음)
       if (hasCost && hasClicks) {
         const cpc = colTotals['clicks'] > 0 ? formatCur(colTotals['cost'] / colTotals['clicks']) : "₩0";
         kpiContainer.innerHTML += `
@@ -582,7 +581,7 @@
         `;
 
         dynamicColumns.forEach(c => {
-          let val = row[c.key] || (c.key === 'conv' ? row.result || 0 : 0);
+          let val = row[c.key] !== undefined ? row[c.key] : (c.key === 'conv' ? row.result || 0 : 0);
           let displayVal = formatNum(val);
           if (c.key === 'cost' || c.label.includes('비용')) displayVal = formatCur(val);
 
@@ -600,7 +599,7 @@
       });
     }
 
-    // 8. 일별 추이 차트 (비용이 있으면 비용/클릭, 없으면 노출/클릭 노아 스타일)
+    // 8. 일별 추이 차트
     function renderTrendChart() {
       const filtered = getFilteredRows();
       const hasCost = dynamicColumns.some(c => c.key === 'cost' || c.label.includes('비용'));
@@ -679,7 +678,7 @@
       });
     }
 
-    // 9. 매체별 비중 도넛 차트 (네온 글로우 플러그인 탑재)
+    // 9. 매체별 비중 도넛 차트
     function renderDonutChart() {
       let naverClicks = 0;
       let metaClicks = 0;
@@ -808,7 +807,7 @@
       }
     }
 
-    // 11. Excel(.xlsx) 리포트 다운로드 (동적 컬럼 기반)
+    // 11. Excel(.xlsx) 리포트 다운로드
     function downloadExcelReport() {
       const filtered = getFilteredRows();
       if (filtered.length === 0) {
@@ -829,7 +828,7 @@
 
         const rowData = [r.date, r.media];
         dynamicColumns.forEach(c => {
-          rowData.push(r[c.key] || (c.key === 'conv' ? r.result || 0 : 0));
+          rowData.push(r[c.key] !== undefined ? r[c.key] : (c.key === 'conv' ? r.result || 0 : 0));
         });
         rowData.push(ctr);
         rows.push(rowData);
