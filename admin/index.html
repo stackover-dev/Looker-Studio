@@ -357,18 +357,48 @@
 
     async function loadDatabase() {
       let remoteDb = null;
+      const token = localStorage.getItem('GH_PAT_TOKEN');
+
       try {
-        let response = await fetch('../database.json?t=' + new Date().getTime());
-        if (!response.ok) {
-          response = await fetch('./database.json?t=' + new Date().getTime());
+        // [핵심 해결] 토큰이 있을 경우 CDN 캐시를 거치지 않고 GitHub REST API를 통해 실시간 최신 원본을 즉시 호출
+        if (token && GITHUB_CONFIG.owner) {
+          const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}?ref=${GITHUB_CONFIG.branch}`;
+          const apiRes = await fetch(url, {
+            headers: { 
+              "Authorization": `Bearer ${token}`, 
+              "Accept": "application/vnd.github.v3+json" 
+            },
+            cache: "no-store"
+          });
+          
+          if (apiRes.ok) {
+            const fileData = await apiRes.json();
+            // UTF-8 한글 깨짐 방지 디코딩
+            const bin = atob(fileData.content.replace(/\s/g, ''));
+            const bytes = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) {
+              bytes[i] = bin.charCodeAt(i);
+            }
+            const jsonStr = new TextDecoder('utf-8').decode(bytes);
+            remoteDb = JSON.parse(jsonStr);
+          }
         }
-        if (response.ok) {
-          remoteDb = await response.json();
+        
+        // 토큰이 없거나 API 실패 시 일반 fetch (no-store 캐시 방지)
+        if (!remoteDb) {
+          let response = await fetch('../database.json?t=' + new Date().getTime(), { cache: 'no-store' });
+          if (!response.ok) {
+            response = await fetch('./database.json?t=' + new Date().getTime(), { cache: 'no-store' });
+          }
+          if (response.ok) {
+            remoteDb = await response.json();
+          }
         }
       } catch (e) {
         console.warn("⚠️ 원격 database.json 로드 실패, 로컬 캐시를 조회합니다.", e);
       }
 
+      // 로컬 스토리지 역덮어쓰기 방지
       if (remoteDb) {
         db = remoteDb;
         localStorage.setItem('MEDIA_REPORT_DB', JSON.stringify(db));
@@ -396,12 +426,7 @@
           
           if (!month.creatives || Array.isArray(month.creatives)) {
             const oldCreatives = Array.isArray(month.creatives) ? month.creatives : [];
-            month.creatives = {
-              ALL: oldCreatives,
-              Naver: [],
-              Meta: [],
-              Google: []
-            };
+            month.creatives = { ALL: oldCreatives, Naver: [], Meta: [], Google: [] };
           } else {
             if (!month.creatives.ALL) month.creatives.ALL = [];
             if (!month.creatives.Naver) month.creatives.Naver = [];
@@ -570,7 +595,6 @@
       
       renderCreativesList();
 
-      // [수정 1] 상단 탭 전환 시 하단 테이블 데이터도 해당 매체만 필터링하여 다시 렌더링
       renderAdminDataTable(periodData.rawDataset || []);
     }
 
@@ -1035,7 +1059,6 @@
       `).join('');
     }
 
-    // ★ 기능 2 추가: 매체 행 옆에 '↓ 일괄' 변경 버튼 추가
     function renderAdminDataTable(dataset) {
       const cols = getActiveColumns();
       const headerRow = document.getElementById('admin-table-header-row');
@@ -1057,7 +1080,6 @@
       const tbody = document.getElementById('admin-table-body');
       tbody.innerHTML = '';
 
-      // [수정 2] 상단 탭 상태에 맞춰 하단 테이블 렌더링 필터링
       const filteredDataset = (currentCommentMedia === 'ALL') 
         ? dataset 
         : dataset.filter(row => row.media === currentCommentMedia);
@@ -1068,7 +1090,6 @@
       }
 
       filteredDataset.forEach((row) => {
-        // 실제 수정, 삭제를 위해 원본 데이터셋에서의 인덱스를 추적
         const originalIdx = dataset.indexOf(row);
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50 transition-colors';
@@ -1113,11 +1134,9 @@
       }
       saveDatabase();
       renderPeriodNav();
-      // 수정 후 UI 갱신 반영
       renderAdminPanel();
     }
 
-    // ★ 기능 2 로직: 하위 매체 일괄 변경
     function applyMediaToBelow(startIdx) {
       const dataset = db[currentClient].months[currentPeriod].rawDataset;
       const targetMedia = dataset[startIdx].media; 
@@ -1242,7 +1261,6 @@
               const lk = key.toLowerCase().trim();
               const val = row[key];
 
-              // [수정 3] 통합(ALL) 탭일 때만 텍스트를 기반으로 매체를 자동 추론. 특정 매체 탭이면 해당 매체 강제 유지.
               if (currentCommentMedia === 'ALL') {
                 if (lk.includes('캠페인') || lk.includes('매체') || lk.includes('광고 세트') || lk.includes('광고 이름') || lk.includes('campaign')) {
                   const sv = String(val).toLowerCase();
