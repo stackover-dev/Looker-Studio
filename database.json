@@ -395,12 +395,6 @@
             "isConv": false
           },
           {
-            "key": "cost",
-            "label": "비용 (VAT포함)",
-            "width": "w-28",
-            "isConv": false
-          },
-          {
             "key": "conv",
             "label": "전환수(CV)",
             "width": "w-20",
