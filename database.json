@@ -411,7 +411,7 @@
             "anomaly": ""
           },
           "Meta": {
-            "strategy": "<p><strong>[Meta(DA) 캠페인 성과 총평: 고효율 유입 달성]</strong></p>\n<ul>\n  <li><strong>핵심 성과 요약:</strong> 총 노출수 <b>69,394회</b>, 총 도달수 <b>64,646명</b>, 총 클릭수 <b>3,959회</b>를 기록하였습니다.</li>\n  <li><strong>클릭률(CTR) 5.71% 달성:</strong> 일반적인 메타 디스플레이 광고 평균(1~2%대)을 크게 상회하는 <span style=\"background-color: #fff3bf; font-weight: bold;\">5.71%의 우수한 CTR</span>을 기록하며 소재의 메시지 전달력과 타깃 적합성이 매우 뛰어남을 검증하였습니다.</li>\n  <li><strong>신규 도달 중심 확장:</strong> 노출 대비 도달 비율이 약 93%(빈도 약 1.07)로 피로도 누적 없이 신규 잠재 고객층 위주로 효율적인 모수 확장이 이루어졌습니다.</li>\n</ul>",
+            "strategy": "<p><strong>[Meta(DA) 캠페인 성과 총평: 고효율 유입 달성]</strong></p>\n<ul>\n  <li><strong>핵심 성과 요약:</strong> 총 노출수 <b>69,394회</b>, 총 도달수 <b>64,646명</b>, 총 클릭수 <b>3,959회</b>를 기록하였습니다.</li>\n  <li><strong>클릭률(CTR) 5.71% 달성:</strong> 일반적인 메타 디스플레이 광고 평균(1~2%대)을 크게 상회하는 <span style=\"background-color: rgba(250, 204, 21, 0.18); color: #FDE047; border: 1px solid rgba(250, 204, 21, 0.35); font-weight: bold; padding: 1px 6px; border-radius: 4px;\">5.71%의 우수한 CTR</span>을 기록하며 소재의 메시지 전달력과 타깃 적합성이 매우 뛰어남을 검증하였습니다.</li>\n  <li><strong>신규 도달 중심 확장:</strong> 노출 대비 도달 비율이 약 93%(빈도 약 1.07)로 피로도 누적 없이 신규 잠재 고객층 위주로 효율적인 모수 확장이 이루어졌습니다.</li>\n</ul>",
             "anomaly": "<p><strong>[운영 분석 및 향후 최적화 계획]</strong></p>\n<ol>\n  <li><strong>고반응 소재 중심 모니터링:</strong> 등록 완료된 소재 중 CTR 5% 이상을 견인하는 메인 위닝 소재에 머신러닝 예산을 집중 배분하여 성과를 극대화하고 있습니다.</li>\n  <li><strong>전환 성과 연계 분석:</strong> 높은 클릭 유입이 최종 전환(CV)으로 안정적으로 이어질 수 있도록 랜딩페이지 체류 시간 및 구간별 이탈률을 모니터링 중입니다.</li>\n  <li><strong>소재 피로도 관리 및 A/B 테스트:</strong> 현재의 우수한 CTR 추이를 장기 유지하기 위해, 위닝 소재의 카피와 비주얼 요소를 변형한 2차 베리에이션 소재를 사전에 준비하여 교체 순환할 예정입니다.</li>\n</ol>"
           },
           "Google": {
