@@ -554,72 +554,6 @@
       }
     }
   },
-  "photopot": {
-    "htmlFilename": "photopot.html",
-    "months": {
-      "신규 집행 기간": {
-        "strategyComment": "<p>전략 총평을 입력하세요.</p>",
-        "anomalyComment": "특이사항을 입력하세요.",
-        "rawDataset": [],
-        "creatives": {
-          "ALL": [],
-          "Naver": [],
-          "Meta": [],
-          "Google": []
-        },
-        "columns": [
-          {
-            "key": "impressions",
-            "label": "노출수",
-            "width": "w-24",
-            "isConv": false
-          },
-          {
-            "key": "reach",
-            "label": "도달수",
-            "width": "w-24",
-            "isConv": false
-          },
-          {
-            "key": "clicks",
-            "label": "클릭수",
-            "width": "w-20",
-            "isConv": false
-          },
-          {
-            "key": "cost",
-            "label": "비용 (VAT포함)",
-            "width": "w-28",
-            "isConv": false
-          },
-          {
-            "key": "conv",
-            "label": "전환수(CV)",
-            "width": "w-20",
-            "isConv": true
-          }
-        ],
-        "comments": {
-          "ALL": {
-            "strategy": "<p>전략 총평을 입력하세요.</p>",
-            "anomaly": "특이사항을 입력하세요."
-          },
-          "Naver": {
-            "strategy": "",
-            "anomaly": ""
-          },
-          "Meta": {
-            "strategy": "",
-            "anomaly": ""
-          },
-          "Google": {
-            "strategy": "",
-            "anomaly": ""
-          }
-        }
-      }
-    }
-  },
   "노아유니버스컴퍼니": {
     "htmlFilename": "noahuniversecompany.html",
     "months": {
@@ -1903,6 +1837,157 @@
           "Meta": {
             "strategy": "<div class=\"space-y-3 font-sans\">\n  <div class=\"flex items-center gap-2\">\n    <span class=\"px-2 py-0.5 text-[11px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded\">캠페인 총평</span>\n    <span class=\"text-sm font-bold text-white\">메타(Meta) 타겟팅 최적화 및 고효율 소재 중심 성과 견인</span>\n  </div>\n  <p class=\"text-xs text-slate-300 leading-relaxed\">\n    집행 기간 동안 총 <b class=\"text-white\">24,497회</b>의 노출과 <b class=\"text-emerald-400\">1,322건</b>의 유효 클릭을 확보하였으며, 평균 클릭률(CTR)은 <mark class=\"bg-cyan-950 text-cyan-300 px-1.5 py-0.5 rounded font-bold border border-cyan-800\">5.40%</mark>로 동종 업계 벤치마크 대비 압도적인 효율을 달성했습니다.\n  </p>\n  <div class=\"bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-2\">\n    <div class=\"text-[11px] font-bold text-slate-300 flex items-center gap-1.5\">\n      <span class=\"w-1.5 h-1.5 rounded-full bg-emerald-400\"></span> 핵심 소재별 성과 분석\n    </div>\n    <ul class=\"list-disc list-inside space-y-1.5 text-xs text-slate-400\">\n      <li><strong class=\"text-slate-200\">새로운 취미:</strong> 19,486회 노출 및 1,023클릭을 집중 유인하며 CTR <span class=\"text-emerald-400 font-bold\">5.25%</span>를 기록, 신규 유저 유입의 주력 엔진 역할을 수행했습니다.</li>\n      <li><strong class=\"text-slate-200\">출근 준비:</strong> 안정적인 모수 반응도를 보이며 CTR <span class=\"text-emerald-400 font-bold\">4.47%</span>의 고효율을 유지 중인 메인 로열 소재입니다.</li>\n    </ul>\n  </div>\n  <p class=\"text-[11px] text-slate-400\">\n    💡 <b>Next Action:</b> 검증된 '취미/라이프스타일' 소구점의 후속 베리에이션 소재를 추가 발굴하고, 피로도 관리를 위한 A/B 테스트를 지속 전개할 예정입니다.\n  </p>\n</div>",
             "anomaly": "<div class=\"space-y-2.5 font-sans\">\n  <div class=\"flex items-center gap-2\">\n    <span class=\"px-2 py-0.5 text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded\">운영 점검 완료</span>\n    <span class=\"text-xs font-bold text-slate-200\">정상 송출 확인 및 예산 집행 효율화 조치</span>\n  </div>\n  <ul class=\"space-y-1.5 text-xs text-slate-300\">\n    <li class=\"flex items-start gap-1.5\">\n      <span class=\"text-emerald-400 font-bold mt-0.5\">✓</span>\n      <span><b>고성과 소재 가중치 부여:</b> 반응률이 뛰어난 [새로운 취미], [출근 준비] 소재에 머신러닝 예산 비중을 집중 배분하여 전체 CPC 단가 절감을 유도했습니다.</span>\n    </li>\n    <li class=\"flex items-start gap-1.5\">\n      <span class=\"text-emerald-400 font-bold mt-0.5\">✓</span>\n      <span><b>이상 징후 점검:</b> 특정 일자 트래픽 왜곡 및 어뷰징 유입 없이 정상 도달(22,659명) 모수 내에서 고른 클릭 흐름을 유지하고 있습니다.</span>\n    </li>\n    <li class=\"flex items-start gap-1.5\">\n      <span class=\"text-emerald-400 font-bold mt-0.5\">✓</span>\n      <span><b>빈도수(Frequency) 모니터링:</b> 노출 대비 도달 비율을 바탕으로 피로도 누적을 방지하며 일별 예산 페이싱(Pacing)을 안정적으로 유지 관리 중입니다.</span>\n    </li>\n  </ul>\n</div>"
+          },
+          "Google": {
+            "strategy": "",
+            "anomaly": ""
+          }
+        }
+      }
+    }
+  },
+  "포토팟": {
+    "htmlFilename": "photopot.html",
+    "months": {
+      "신규 집행 기간": {
+        "strategyComment": "<p>전략 총평을 입력하세요.</p>",
+        "anomalyComment": "특이사항을 입력하세요.",
+        "rawDataset": [
+          {
+            "date": "2026-10-08",
+            "media": "Meta",
+            "impressions": 92,
+            "reach": 91,
+            "clicks": 0,
+            "cost": 775,
+            "conv": 1
+          },
+          {
+            "date": "2026-10-10",
+            "media": "Meta",
+            "impressions": 907,
+            "reach": 907,
+            "clicks": 0,
+            "cost": 6801,
+            "conv": 12
+          },
+          {
+            "date": "2026-10-11",
+            "media": "Meta",
+            "impressions": 88,
+            "reach": 87,
+            "clicks": 0,
+            "cost": 744,
+            "conv": 3
+          },
+          {
+            "date": "2026-11-04",
+            "media": "Meta",
+            "impressions": 290,
+            "reach": 264,
+            "clicks": 0,
+            "cost": 2895,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-05",
+            "media": "Meta",
+            "impressions": 2096,
+            "reach": 1643,
+            "clicks": 0,
+            "cost": 21400,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-06",
+            "media": "Meta",
+            "impressions": 6483,
+            "reach": 3450,
+            "clicks": 0,
+            "cost": 26348,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-07",
+            "media": "Meta",
+            "impressions": 854508,
+            "reach": 94273,
+            "clicks": 0,
+            "cost": 45265,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-08",
+            "media": "Meta",
+            "impressions": 341866,
+            "reach": 74277,
+            "clicks": 0,
+            "cost": 37678,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-09",
+            "media": "Meta",
+            "impressions": 409892,
+            "reach": 93437,
+            "clicks": 0,
+            "cost": 34813,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-10",
+            "media": "Meta",
+            "impressions": 264045,
+            "reach": 68419,
+            "clicks": 0,
+            "cost": 29835,
+            "conv": 0
+          }
+        ],
+        "creatives": {
+          "ALL": [],
+          "Naver": [],
+          "Meta": [],
+          "Google": []
+        },
+        "columns": [
+          {
+            "key": "impressions",
+            "label": "노출수",
+            "width": "w-24",
+            "isConv": false
+          },
+          {
+            "key": "reach",
+            "label": "도달수",
+            "width": "w-24",
+            "isConv": false
+          },
+          {
+            "key": "clicks",
+            "label": "클릭수",
+            "width": "w-20",
+            "isConv": false
+          },
+          {
+            "key": "conv",
+            "label": "전환수(CV)",
+            "width": "w-20",
+            "isConv": true
+          }
+        ],
+        "comments": {
+          "ALL": {
+            "strategy": "<p>전략 총평을 입력하세요.</p>",
+            "anomaly": "특이사항을 입력하세요."
+          },
+          "Naver": {
+            "strategy": "",
+            "anomaly": ""
+          },
+          "Meta": {
+            "strategy": "",
+            "anomaly": ""
           },
           "Google": {
             "strategy": "",
