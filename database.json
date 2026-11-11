@@ -1858,7 +1858,7 @@
             "media": "Meta",
             "impressions": 92,
             "reach": 91,
-            "clicks": 0,
+            "clicks": 1,
             "cost": 775,
             "conv": 1
           },
@@ -1867,7 +1867,7 @@
             "media": "Meta",
             "impressions": 907,
             "reach": 907,
-            "clicks": 0,
+            "clicks": 18,
             "cost": 6801,
             "conv": 12
           },
@@ -1876,7 +1876,7 @@
             "media": "Meta",
             "impressions": 88,
             "reach": 87,
-            "clicks": 0,
+            "clicks": 4,
             "cost": 744,
             "conv": 3
           },
@@ -1885,7 +1885,7 @@
             "media": "Meta",
             "impressions": 290,
             "reach": 264,
-            "clicks": 0,
+            "clicks": 3,
             "cost": 2895,
             "conv": 0
           },
@@ -1894,7 +1894,7 @@
             "media": "Meta",
             "impressions": 2096,
             "reach": 1643,
-            "clicks": 0,
+            "clicks": 18,
             "cost": 21400,
             "conv": 0
           },
@@ -1903,7 +1903,7 @@
             "media": "Meta",
             "impressions": 6483,
             "reach": 3450,
-            "clicks": 0,
+            "clicks": 244,
             "cost": 26348,
             "conv": 0
           },
@@ -1912,7 +1912,7 @@
             "media": "Meta",
             "impressions": 854508,
             "reach": 94273,
-            "clicks": 0,
+            "clicks": 385,
             "cost": 45265,
             "conv": 0
           },
@@ -1921,7 +1921,7 @@
             "media": "Meta",
             "impressions": 341866,
             "reach": 74277,
-            "clicks": 0,
+            "clicks": 368,
             "cost": 37678,
             "conv": 0
           },
@@ -1930,7 +1930,7 @@
             "media": "Meta",
             "impressions": 409892,
             "reach": 93437,
-            "clicks": 0,
+            "clicks": 366,
             "cost": 34813,
             "conv": 0
           },
@@ -1939,7 +1939,7 @@
             "media": "Meta",
             "impressions": 264045,
             "reach": 68419,
-            "clicks": 0,
+            "clicks": 320,
             "cost": 29835,
             "conv": 0
           }
