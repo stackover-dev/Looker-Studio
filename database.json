@@ -488,72 +488,6 @@
       }
     }
   },
-  "jungwonyong": {
-    "htmlFilename": "jungwonyong.html",
-    "months": {
-      "신규 집행 기간": {
-        "strategyComment": "<p>전략 총평을 입력하세요.</p>",
-        "anomalyComment": "특이사항을 입력하세요.",
-        "rawDataset": [],
-        "creatives": {
-          "ALL": [],
-          "Naver": [],
-          "Meta": [],
-          "Google": []
-        },
-        "columns": [
-          {
-            "key": "impressions",
-            "label": "노출수",
-            "width": "w-24",
-            "isConv": false
-          },
-          {
-            "key": "reach",
-            "label": "도달수",
-            "width": "w-24",
-            "isConv": false
-          },
-          {
-            "key": "clicks",
-            "label": "클릭수",
-            "width": "w-20",
-            "isConv": false
-          },
-          {
-            "key": "cost",
-            "label": "비용 (VAT포함)",
-            "width": "w-28",
-            "isConv": false
-          },
-          {
-            "key": "conv",
-            "label": "전환수(CV)",
-            "width": "w-20",
-            "isConv": true
-          }
-        ],
-        "comments": {
-          "ALL": {
-            "strategy": "<p>전략 총평을 입력하세요.</p>",
-            "anomaly": "특이사항을 입력하세요."
-          },
-          "Naver": {
-            "strategy": "",
-            "anomaly": ""
-          },
-          "Meta": {
-            "strategy": "",
-            "anomaly": ""
-          },
-          "Google": {
-            "strategy": "",
-            "anomaly": ""
-          }
-        }
-      }
-    }
-  },
   "노아유니버스컴퍼니": {
     "htmlFilename": "noahuniversecompany.html",
     "months": {
@@ -2004,6 +1938,343 @@
           "Meta": {
             "strategy": "<div style=\"line-height: 1.8; font-size: 14px; color: #F1F5F9;\">\n  <p style=\"font-size: 16px; font-weight: 800; margin-bottom: 14px; color: #60A5FA; letter-spacing: -0.02em;\">\n    📌 [포토팟] 메타 앱 광고 캠페인 운영 현황 및 성과 총평\n  </p>\n\n  <!-- 핵심 성과 요약 카드 (전환수 항목 제외) -->\n  <div style=\"background-color: #1E293B; border: 1px solid #334155; border-left: 4px solid #3B82F6; padding: 14px 18px; margin-bottom: 18px; border-radius: 8px;\">\n    <div style=\"font-size: 14px; font-weight: 700; color: #38BDF8; margin-bottom: 8px;\">\n      📊 핵심 성과 데이터 집계 (총 10일 집계 기준)\n    </div>\n    <div style=\"color: #E2E8F0; font-size: 13.5px; line-height: 1.8;\">\n      • <span style=\"color: #94A3B8;\">총 노출수:</span> <strong style=\"color: #FDE047;\">1,880,267회</strong>  |  <span style=\"color: #94A3B8;\">도달수:</span> <strong style=\"color: #FFFFFF;\">336,848회</strong><br>\n      • <span style=\"color: #94A3B8;\">총 클릭수:</span> <strong style=\"color: #34D399;\">1,727회</strong>  |  <span style=\"color: #94A3B8;\">평균 클릭률(CTR):</span> <strong style=\"color: #38BDF8;\">0.09%</strong><br>\n      • 11월 7일 볼륨 확대(노출 85만 회) 이후, 일 26만~40만 회 규모의 안정적인 모수 확보 및 노출 유지 중\n    </div>\n  </div>\n\n  <!-- 1. 앱 캠페인 셋업 및 계정 정상화 완료 -->\n  <div style=\"margin-bottom: 16px;\">\n    <p style=\"font-size: 15px; font-weight: 700; color: #FDE047; margin-bottom: 6px;\">\n      1. 앱 캠페인 셋업 및 계정 정상화 완료\n    </p>\n    <ul style=\"margin: 0; padding-left: 20px; color: #CBD5E1; font-size: 13.5px; line-height: 1.8;\">\n      <li style=\"margin-bottom: 4px;\">초반 메타 비즈니스 계정의 강력한 인증 이슈 및 셋업 과정에서 발생한 복합 이슈를 집중 해결하였습니다.</li>\n      <li style=\"margin-bottom: 4px;\">일반 웹 광고와 달리 앱 등록, 개발자 인증, 연동 절차 등에 상당한 리소스가 소요되었으나, 현재 모든 세팅이 완벽히 완료되어 정상적인 앱 캠페인이 라이브 중입니다.</li>\n      <li>광고 소재의 <strong style=\"color: #38BDF8;\">CTA 링크 클릭 시 지연 없이 즉시 '포토팟 앱 설치 페이지'로 랜딩</strong>되도록 연동 최적화를 마쳤습니다.</li>\n    </ul>\n  </div>\n\n  <!-- 2. 향후 소재 운영 및 예산 최적화 방향 -->\n  <div>\n    <p style=\"font-size: 15px; font-weight: 700; color: #FDE047; margin-bottom: 6px;\">\n      2. 향후 소재 운영 및 예산 최적화 방향\n    </p>\n    <ul style=\"margin: 0; padding-left: 20px; color: #CBD5E1; font-size: 13.5px; line-height: 1.8;\">\n      <li style=\"margin-bottom: 4px;\">현재 예산 규모가 타이트한 편이므로 머신러닝 학습 분산 방지 및 비용 효율을 위해 <strong style=\"color: #FFFFFF;\">광고 세트당 운영 소재 수를 제한적으로 유지</strong>합니다.</li>\n      <li>이후 운영은 라이브된 소재 중 <strong style=\"color: #34D399;\">실제 유저 반응(클릭률 및 유입 효율)이 검증된 위너 소재 위주로 선별 및 추가 교체</strong>하여 한정된 예산 내 성과를 극대화할 계획입니다.</li>\n    </ul>\n  </div>\n</div>",
             "anomaly": "<div style=\"line-height: 1.8; font-size: 13.5px; color: #F1F5F9;\">\n  <p style=\"font-size: 15px; font-weight: 800; color: #FBBF24; margin-bottom: 8px; letter-spacing: -0.01em;\">\n    ⚙️ 계정 셋업 이슈 해결 및 앱 연동 내역\n  </p>\n  <ul style=\"margin: 0 0 16px 0; padding-left: 20px; color: #CBD5E1; line-height: 1.8;\">\n    <li style=\"margin-bottom: 6px;\">\n      <strong style=\"color: #FFFFFF;\">인증 및 계정 이슈 대응:</strong> 집행 초반 발생한 강력한 비즈니스 인증 오류 및 계정 비활성화 이슈 전면 해결 완료\n    </li>\n    <li style=\"margin-bottom: 6px;\">\n      <strong style=\"color: #FFFFFF;\">앱 세팅 리소스 소진 및 정상화:</strong> 일반 웹 세팅 대비 까다로운 앱 등록, 개발자 인증, 이벤트 연동 절차를 완료하고 본격적인 앱 캠페인 운영 궤도 진입\n    </li>\n    <li>\n      <strong style=\"color: #FFFFFF;\">랜딩 경로 최적화:</strong> 광고 클릭 시 즉각적인 앱 설치 유도를 위해 <strong style=\"color: #38BDF8;\">CTA 링크를 앱 스토어 설치 페이지로 다이렉트 연결 세팅 완료</strong>\n    </li>\n  </ul>\n\n  <p style=\"font-size: 15px; font-weight: 800; color: #FBBF24; margin-bottom: 8px; letter-spacing: -0.01em;\">\n    🎯 향후 최적화 계획\n  </p>\n  <ul style=\"margin: 0; padding-left: 20px; color: #CBD5E1; line-height: 1.8;\">\n    <li>\n      타이트한 예산 분배를 고려하여 세트 내 다수 소재 집행을 지양하고, <strong style=\"color: #34D399;\">클릭 및 설치 반응률이 높은 고효율 소재 중심으로 집중 집행</strong>\n    </li>\n  </ul>\n</div>"
+          },
+          "Google": {
+            "strategy": "",
+            "anomaly": ""
+          }
+        }
+      }
+    }
+  },
+  "정원용회계사": {
+    "htmlFilename": "jungwonyong.html",
+    "months": {
+      "신규 집행 기간": {
+        "strategyComment": "<p>전략 총평을 입력하세요.</p>",
+        "anomalyComment": "특이사항을 입력하세요.",
+        "rawDataset": [
+          {
+            "date": "2026-10-15",
+            "media": "Meta",
+            "impressions": 2018,
+            "reach": 1797,
+            "clicks": 55,
+            "cost": 25052,
+            "conv": 55
+          },
+          {
+            "date": "2026-10-16",
+            "media": "Meta",
+            "impressions": 2307,
+            "reach": 2106,
+            "clicks": 58,
+            "cost": 27973,
+            "conv": 53
+          },
+          {
+            "date": "2026-10-17",
+            "media": "Meta",
+            "impressions": 2195,
+            "reach": 1984,
+            "clicks": 57,
+            "cost": 21924,
+            "conv": 52
+          },
+          {
+            "date": "2026-10-18",
+            "media": "Meta",
+            "impressions": 2122,
+            "reach": 1936,
+            "clicks": 70,
+            "cost": 35992,
+            "conv": 76
+          },
+          {
+            "date": "2026-10-19",
+            "media": "Meta",
+            "impressions": 2967,
+            "reach": 2752,
+            "clicks": 74,
+            "cost": 33571,
+            "conv": 73
+          },
+          {
+            "date": "2026-10-20",
+            "media": "Meta",
+            "impressions": 2356,
+            "reach": 2201,
+            "clicks": 65,
+            "cost": 31902,
+            "conv": 61
+          },
+          {
+            "date": "2026-10-21",
+            "media": "Meta",
+            "impressions": 1912,
+            "reach": 1770,
+            "clicks": 65,
+            "cost": 29630,
+            "conv": 59
+          },
+          {
+            "date": "2026-10-22",
+            "media": "Meta",
+            "impressions": 2327,
+            "reach": 2225,
+            "clicks": 87,
+            "cost": 30018,
+            "conv": 85
+          },
+          {
+            "date": "2026-10-23",
+            "media": "Meta",
+            "impressions": 1811,
+            "reach": 1717,
+            "clicks": 52,
+            "cost": 25674,
+            "conv": 43
+          },
+          {
+            "date": "2026-10-24",
+            "media": "Meta",
+            "impressions": 159,
+            "reach": 147,
+            "clicks": 1,
+            "cost": 8299,
+            "conv": 0
+          },
+          {
+            "date": "2026-10-25",
+            "media": "Meta",
+            "impressions": 413,
+            "reach": 352,
+            "clicks": 5,
+            "cost": 20155,
+            "conv": 0
+          },
+          {
+            "date": "2026-10-26",
+            "media": "Meta",
+            "impressions": 359,
+            "reach": 319,
+            "clicks": 5,
+            "cost": 20644,
+            "conv": 0
+          },
+          {
+            "date": "2026-10-27",
+            "media": "Meta",
+            "impressions": 321,
+            "reach": 300,
+            "clicks": 7,
+            "cost": 16076,
+            "conv": 1
+          },
+          {
+            "date": "2026-10-28",
+            "media": "Meta",
+            "impressions": 321,
+            "reach": 276,
+            "clicks": 6,
+            "cost": 13018,
+            "conv": 0
+          },
+          {
+            "date": "2026-10-29",
+            "media": "Meta",
+            "impressions": 238,
+            "reach": 199,
+            "clicks": 5,
+            "cost": 15252,
+            "conv": 0
+          },
+          {
+            "date": "2026-10-30",
+            "media": "Meta",
+            "impressions": 322,
+            "reach": 296,
+            "clicks": 2,
+            "cost": 11548,
+            "conv": 0
+          },
+          {
+            "date": "2026-10-31",
+            "media": "Meta",
+            "impressions": 354,
+            "reach": 328,
+            "clicks": 4,
+            "cost": 8007,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-01",
+            "media": "Meta",
+            "impressions": 785,
+            "reach": 689,
+            "clicks": 5,
+            "cost": 20327,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-02",
+            "media": "Meta",
+            "impressions": 593,
+            "reach": 533,
+            "clicks": 4,
+            "cost": 19518,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-03",
+            "media": "Meta",
+            "impressions": 609,
+            "reach": 546,
+            "clicks": 9,
+            "cost": 17596,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-04",
+            "media": "Meta",
+            "impressions": 538,
+            "reach": 506,
+            "clicks": 8,
+            "cost": 15504,
+            "conv": 1
+          },
+          {
+            "date": "2026-11-05",
+            "media": "Meta",
+            "impressions": 483,
+            "reach": 436,
+            "clicks": 7,
+            "cost": 16480,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-06",
+            "media": "Meta",
+            "impressions": 382,
+            "reach": 355,
+            "clicks": 6,
+            "cost": 9880,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-07",
+            "media": "Meta",
+            "impressions": 286,
+            "reach": 261,
+            "clicks": 3,
+            "cost": 5591,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-08",
+            "media": "Meta",
+            "impressions": 1211,
+            "reach": 1058,
+            "clicks": 11,
+            "cost": 19495,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-09",
+            "media": "Meta",
+            "impressions": 953,
+            "reach": 887,
+            "clicks": 7,
+            "cost": 18905,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-10",
+            "media": "Meta",
+            "impressions": 547,
+            "reach": 524,
+            "clicks": 4,
+            "cost": 7445,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-11",
+            "media": "Meta",
+            "impressions": 33,
+            "reach": 32,
+            "clicks": 0,
+            "cost": 181,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-12",
+            "media": "Meta",
+            "impressions": 3,
+            "reach": 3,
+            "clicks": 0,
+            "cost": 2,
+            "conv": 0
+          },
+          {
+            "date": "2026-11-13",
+            "media": "Meta",
+            "impressions": 2,
+            "reach": 2,
+            "clicks": 0,
+            "cost": 2,
+            "conv": 0
+          }
+        ],
+        "creatives": {
+          "ALL": [],
+          "Naver": [],
+          "Meta": [],
+          "Google": []
+        },
+        "columns": [
+          {
+            "key": "impressions",
+            "label": "노출수",
+            "width": "w-24",
+            "isConv": false
+          },
+          {
+            "key": "reach",
+            "label": "도달수",
+            "width": "w-24",
+            "isConv": false
+          },
+          {
+            "key": "clicks",
+            "label": "클릭수",
+            "width": "w-20",
+            "isConv": false
+          },
+          {
+            "key": "cost",
+            "label": "비용 (VAT포함)",
+            "width": "w-28",
+            "isConv": false
+          },
+          {
+            "key": "conv",
+            "label": "전환수(CV)",
+            "width": "w-20",
+            "isConv": true
+          }
+        ],
+        "comments": {
+          "ALL": {
+            "strategy": "<p>전략 총평을 입력하세요.</p>",
+            "anomaly": "특이사항을 입력하세요."
+          },
+          "Naver": {
+            "strategy": "",
+            "anomaly": ""
+          },
+          "Meta": {
+            "strategy": "",
+            "anomaly": ""
           },
           "Google": {
             "strategy": "",
