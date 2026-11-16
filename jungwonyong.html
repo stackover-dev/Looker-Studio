@@ -18,6 +18,17 @@
   
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
+
+    :root {
+      --bg-card: #18181b;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --glow-cyan: rgba(6, 182, 212, 0.3);
+      --glow-cyan-hover: rgba(6, 182, 212, 0.75);
+      --glow-indigo: rgba(99, 102, 241, 0.3);
+      --glow-indigo-hover: rgba(99, 102, 241, 0.8);
+      --shimmer-spec: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0) 100%);
+    }
+
     body { 
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; 
       word-break: keep-all;
@@ -64,12 +75,12 @@
        ========================================== */
     .interactive-card {
       position: relative;
-      background-color: #18181b;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
       border-radius: 20px;
       cursor: pointer;
       overflow: hidden;
-      box-shadow: 0 0 20px 0 rgba(6, 182, 212, 0.3);
+      box-shadow: 0 0 20px 0 var(--glow-cyan);
       transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
                   box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
                   border-color 0.4s ease;
@@ -78,18 +89,18 @@
     .interactive-card:hover {
       transform: translateY(-8px);
       border-color: rgba(255, 255, 255, 0.22);
-      box-shadow: 0 0 35px 5px rgba(6, 182, 212, 0.75);
+      box-shadow: 0 0 35px 5px var(--glow-cyan-hover);
     }
 
     /* 핵심 벤치마크 배너(1번) 전용 절제된 쉬머(Shimmer) 애니메이션 */
     .interactive-card.featured-shimmer {
       background: linear-gradient(135deg, #1e1b4b 0%, #09090b 100%);
       border-color: rgba(129, 140, 248, 0.28);
-      box-shadow: 0 0 25px 2px rgba(99, 102, 241, 0.3);
+      box-shadow: 0 0 25px 2px var(--glow-indigo);
     }
     .interactive-card.featured-shimmer:hover {
       border-color: rgba(129, 140, 248, 0.65);
-      box-shadow: 0 0 40px 8px rgba(99, 102, 241, 0.8);
+      box-shadow: 0 0 40px 8px var(--glow-indigo-hover);
     }
     .interactive-card.featured-shimmer::before {
       content: '';
@@ -98,7 +109,7 @@
       left: -150%;
       width: 150%;
       height: 100%;
-      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0) 100%);
+      background: var(--shimmer-spec);
       transform: skewX(-20deg);
       animation: premium-shimmer 4.0s infinite ease-in-out;
       z-index: 10;
@@ -187,6 +198,7 @@
 
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
+    <!-- 상단 타이틀 및 매체 탭 필터 -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
       <div>
         <p class="text-xs font-medium uppercase tracking-wider text-emerald-400">Monthly Performance Media Audit</p>
@@ -201,7 +213,7 @@
       </div>
     </div>
 
-    <!-- 최상단 전략 코멘트 영역 (1단 100% 풀위드 구조) -->
+    <!-- 1. 최상단 전략 코멘트 영역 (1단 100% 풀위드 구조) -->
     <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
       <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
       <div class="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-3">
@@ -214,7 +226,7 @@
       </div>
     </section>
 
-    <!-- 운영 이슈 분석 및 사후 대응 내역 (대응 코멘트 박스 + 타사 랜딩페이지 벤치마크 배너 3종 탑재) -->
+    <!-- 2. 운영 이슈 분석 및 사후 대응 내역 (대응 코멘트 박스 + 타사 랜딩페이지 벤치마크 배너 3종 탑재) -->
     <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden mt-6">
       <div class="absolute top-0 left-0 w-1.5 h-full bg-amber-500"></div>
       <div class="border-b border-slate-800/80 pb-3 mb-4">
@@ -224,11 +236,11 @@
         <h3 class="text-base font-bold text-white mt-1">운영 이슈 분석 및 사후 대응 내역</h3>
       </div>
 
-      <!-- 관리자 코멘트 출력 영역 -->
+      <!-- 관리자 대응 코멘트 출력 영역 -->
       <div id="anomaly-comment-box" class="w-full overflow-x-auto">
       </div>
 
-      <!-- 타사 랜딩페이지 벤치마크 배너 3단 그리드 (대응 코멘트 박스 내부 고정 배치 · 클릭 시 확대 모달) -->
+      <!-- 타사 랜딩페이지 벤치마크 배너 3단 그리드 (클릭 시 확대 모달) -->
       <div class="mt-6 pt-6 border-t border-slate-800/80">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
           <div>
@@ -306,11 +318,11 @@
       </div>
     </section>
 
-    <!-- KPI 상단 요약 카드 -->
+    <!-- 3. KPI 상단 요약 카드 -->
     <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" id="kpi-cards-container">
     </section>
 
-    <!-- 차트 영역 -->
+    <!-- 4. 차트 영역 -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
         <div class="flex items-center justify-between mb-4">
@@ -337,7 +349,7 @@
       </div>
     </section>
 
-    <!-- 크리에이티브(소재) 피드백 갤러리 섹션 (방탄 렌더링 적용) -->
+    <!-- 5. 등록된 자사 크리에이티브(소재) 피드백 갤러리 섹션 -->
     <section id="creative-feedback-section" class="hidden space-y-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-800 pb-3">
         <div>
@@ -354,7 +366,7 @@
       </div>
     </section>
 
-    <!-- 일별 성과 상세 집계 내역 -->
+    <!-- 6. 일별 성과 상세 집계 내역 -->
     <section class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
       <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 bg-slate-900/60">
         <div>
@@ -380,7 +392,7 @@
 
   </main>
 
-  <!-- 스케일 모달(Modal) 확대 프레임 (벤치마크 및 소재 이미지 전체 확대 지원) -->
+  <!-- 스케일 모달(Modal) 확대 프레임 -->
   <div class="modal-blur-overlay" id="sysModal" onclick="closeSystemModal()">
     <div class="modal-scale-content" onclick="event.stopPropagation()">
       <div class="flex items-start justify-between gap-4 pb-4 border-b border-slate-800 shrink-0">
@@ -403,8 +415,10 @@
     </div>
   </div>
 
-  <!-- 1. 독립 실행형 모달 제어 스크립트 (외부 라이브러리 오류와 무관하게 100% 즉시 작동 보장) -->
   <script>
+    /* ==========================================
+       [1. 모달 확대 인터랙션 함수]
+       ========================================== */
     function openSystemModal(t, d, imgSrc, badgeText) {
       const modal = document.getElementById('sysModal');
       const modalBadge = document.getElementById('sysModalBadge');
@@ -449,11 +463,10 @@
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') closeSystemModal();
     });
-  </script>
 
-  <!-- 2. 대시보드 데이터 로드 및 차트/테이블 렌더링 스크립트 -->
-  <script>
-    // 도넛 차트 네온 글로우 플러그인 (Chart.js 로드 완료 시 안전 등록)
+    /* ==========================================
+       [2. 대시보드 데이터 로드 및 차트/테이블 로직]
+       ========================================== */
     const neonGlowPlugin = {
       id: 'neonGlowPlugin',
       beforeDraw: (chart) => {
@@ -491,7 +504,6 @@
     const formatNumber = num => new Intl.NumberFormat('ko-KR').format(Math.round(num || 0));
     const formatCurrency = num => '₩' + new Intl.NumberFormat('ko-KR').format(Math.round(num || 0));
 
-    // DB 미연동 시 즉시 표출할 2차 보고서 기본 코멘트 (전환수·금액 미언급, 노출·도달·클릭·CTR 기준)
     const FALLBACK_STRATEGY_HTML = `
       <div style="line-height: 1.8; color: #F8FAFC;">
         <p style="font-weight: bold; color: #60A5FA !important; margin-bottom: 10px;">
@@ -764,7 +776,7 @@
     function renderDashboard() {
       const periodData = (dbReportData && dbReportData.months) ? dbReportData.months[currentSelectedPeriod] : null;
       
-      // 1. 코멘트 업데이트 (DB에 없으면 2차 기본 코멘트 자동 출력)
+      // 1. 코멘트 업데이트
       const strategyBox = document.getElementById('strategy-comment-box');
       const anomalyBox = document.getElementById('anomaly-comment-box');
       
@@ -790,7 +802,7 @@
         }
       }
 
-      // 2. 등록 소재 업데이트 (interactive-card 및 스케일 모달 기능 적용)
+      // 2. 등록 소재 업데이트
       const creativeSec = document.getElementById('creative-feedback-section');
       const creativeCon = document.getElementById('creative-container');
       const countBadge = document.getElementById('creative-count-badge');
@@ -868,7 +880,6 @@
         });
       });
 
-      // DB 미연동 시 2차 결산 종합 지표 보정
       if (filtered.length === 0 && (currentMedia === 'ALL' || currentMedia === 'Meta')) {
         kpiTotals['impressions'] = 28927;
         kpiTotals['reach'] = 26537;
@@ -1146,7 +1157,6 @@
         }
       });
 
-      // 2. 도넛 차트
       if (shareChartInstance) shareChartInstance.destroy();
       
       let shareTargetKey = null;
@@ -1276,7 +1286,6 @@
       XLSX.writeFile(wb, `정원용회계사_${currentMedia}_성과보고서_${cleanFilename}.xlsx`);
     }
 
-    // 즉시 초기화 실행 (DOM 준비 여부 자동 판별)
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initDataLoad);
     } else {
