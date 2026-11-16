@@ -17,93 +17,156 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap');
-    body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; }
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
+    body { 
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; 
+      word-break: keep-all;
+    }
     
     @font-face {
-        font-family: 'Binggrae';
-        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Binggrae.woff') format('woff');
-        font-weight: 400;
-        font-style: normal;
+      font-family: 'Binggrae';
+      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Binggrae.woff') format('woff');
+      font-weight: 400;
+      font-style: normal;
     }
 
+    /* 전략 코멘트 및 운영 이슈 영역 전용 타이포그래피 스펙 */
     [id*="strategy-comment-box"], [id*="anomaly-comment-box"] {
-        font-family: 'Binggrae', sans-serif !important;
-        font-size: 16px !important;
-        line-height: 1.8 !important;
-        word-break: keep-all !important;
+      font-family: 'Binggrae', sans-serif !important;
+      font-size: 16px !important;
+      line-height: 1.8 !important;
+      word-break: keep-all !important;
     }
 
     [id*="strategy-comment-box"] p, [id*="strategy-comment-box"] h4, [id*="strategy-comment-box"] li,
     [id*="anomaly-comment-box"] p, [id*="anomaly-comment-box"] li {
-        color: #F8FAFC !important;
-        font-family: 'Binggrae', sans-serif !important;
-        font-size: 16px !important;
+      color: #F8FAFC !important;
+      font-family: 'Binggrae', sans-serif !important;
+      font-size: 16px !important;
     }
 
     [id*="strategy-comment-box"] b, [id*="strategy-comment-box"] strong,
     [id*="anomaly-comment-box"] b, [id*="anomaly-comment-box"] strong {
-        color: #FDE047 !important;
-        font-weight: bold !important;
-        font-size: 17px !important;
+      color: #FDE047 !important;
+      font-weight: bold !important;
+      font-size: 17px !important;
     }
 
     [id*="strategy-comment-box"] mark, [id*="anomaly-comment-box"] mark {
-        background-color: rgba(253, 224, 71, 0.2) !important;
-        color: #FDE047 !important;
-        padding: 2px 6px !important;
-        border-radius: 4px !important;
+      background-color: rgba(253, 224, 71, 0.2) !important;
+      color: #FDE047 !important;
+      padding: 2px 6px !important;
+      border-radius: 4px !important;
     }
 
-    /* 프리미엄 인터랙션 코어 스펙 추가[cite: 1] */
+    /* ==========================================
+       [프리미엄 인터랙션 코어 스펙]
+       ========================================== */
     .interactive-card {
-        position: relative;
-        background-color: #18181b;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 20px;
-        padding: 32px;
-        cursor: pointer;
-        overflow: hidden;
-        box-shadow: 0 0 20px 0 rgba(6, 182, 212, 0.3);
-        transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
-                    box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
-                    border-color 0.4s ease;
+      position: relative;
+      background-color: #18181b;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      cursor: pointer;
+      overflow: hidden;
+      box-shadow: 0 0 20px 0 rgba(6, 182, 212, 0.3);
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                  box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                  border-color 0.4s ease;
     }
     
     .interactive-card:hover {
-        transform: translateY(-8px);
-        border-color: rgba(255, 255, 255, 0.2);
-        box-shadow: 0 0 35px 5px rgba(6, 182, 212, 0.75);
+      transform: translateY(-8px);
+      border-color: rgba(255, 255, 255, 0.22);
+      box-shadow: 0 0 35px 5px rgba(6, 182, 212, 0.75);
     }
 
-    /* 스케일 모달 스펙 추가[cite: 1] */
+    /* 핵심 벤치마크 배너(1번) 전용 절제된 쉬머(Shimmer) 애니메이션 */
+    .interactive-card.featured-shimmer {
+      background: linear-gradient(135deg, #1e1b4b 0%, #09090b 100%);
+      border-color: rgba(129, 140, 248, 0.28);
+      box-shadow: 0 0 25px 2px rgba(99, 102, 241, 0.3);
+    }
+    .interactive-card.featured-shimmer:hover {
+      border-color: rgba(129, 140, 248, 0.65);
+      box-shadow: 0 0 40px 8px rgba(99, 102, 241, 0.8);
+    }
+    .interactive-card.featured-shimmer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -150%;
+      width: 150%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0) 100%);
+      transform: skewX(-20deg);
+      animation: premium-shimmer 4.0s infinite ease-in-out;
+      z-index: 10;
+      pointer-events: none;
+    }
+    @keyframes premium-shimmer {
+      0% { left: -150%; }
+      25% { left: 150%; }
+      100% { left: 150%; }
+    }
+
+    /* 3단 가변 그리드 레이아웃 (벤치마크 배너 전시용) */
+    .layout-benchmark-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 1024px) {
+      .layout-benchmark-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .layout-benchmark-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ==========================================
+       [스케일 모달(Modal) 확대 인터랙션]
+       ========================================== */
     .modal-blur-overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background-color: rgba(0, 0, 0, 0.85);
-        backdrop-filter: blur(12px);
-        display: flex; justify-content: center; align-items: center;
-        z-index: 1000; opacity: 0; pointer-events: none;
-        transition: opacity 0.4s ease;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex; justify-content: center; align-items: center;
+      padding: 20px;
+      z-index: 1000; opacity: 0; pointer-events: none;
+      transition: opacity 0.4s ease;
     }
     
     .modal-blur-overlay.active { opacity: 1; pointer-events: auto; }
     
     .modal-scale-content {
-        background-color: #111113;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        padding: 48px;
-        border-radius: 28px;
-        max-width: 600px; width: 90%;
-        transform: scale(0.75);
-        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background-color: #111113;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 32px;
+      border-radius: 28px;
+      max-width: 820px; width: 94%;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9);
+      transform: scale(0.75);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     
     .modal-blur-overlay.active .modal-scale-content { transform: scale(1); }
+
+    /* 커스텀 스크롤바 */
+    ::-webkit-scrollbar { height: 6px; width: 6px; }
+    ::-webkit-scrollbar-track { background: #0F172A; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen">
 
+  <!-- 상단 고정 네비게이션 헤더 -->
   <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50 shadow-lg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center space-x-3">
@@ -138,7 +201,7 @@
       </div>
     </div>
 
-    <!-- 최상단 전략 코멘트 영역 (1단 100% 풀위드 구조 반영) -->
+    <!-- 최상단 전략 코멘트 영역 (1단 100% 풀위드 구조) -->
     <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
       <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
       <div class="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-3">
@@ -152,7 +215,7 @@
       </div>
     </section>
 
-    <!-- 운영 이슈 분석 및 사후 대응 내역 (1단 100% 풀위드 구조 반영) -->
+    <!-- 운영 이슈 분석 및 사후 대응 내역 (대응 코멘트 박스 + 타사 랜딩페이지 벤치마크 배너 3종 탑재) -->
     <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden mt-6">
       <div class="absolute top-0 left-0 w-1.5 h-full bg-amber-500"></div>
       <div class="border-b border-slate-800/80 pb-3 mb-4">
@@ -161,8 +224,87 @@
         </h2>
         <h3 class="text-base font-bold text-white mt-1">운영 이슈 분석 및 사후 대응 내역</h3>
       </div>
+
+      <!-- 관리자 코멘트 출력 영역 -->
       <div id="anomaly-comment-box" class="w-full overflow-x-auto">
         <p class="text-slate-500 text-xs animate-pulse">관리자 데이터 로딩 중...</p>
+      </div>
+
+      <!-- 타사 랜딩페이지 벤치마크 배너 3단 그리드 (대응 코멘트 박스 내부 고정 배치 · 클릭 시 확대 모달) -->
+      <div class="mt-6 pt-6 border-t border-slate-800/80">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <div>
+            <span class="text-[11px] font-extrabold tracking-wider text-cyan-400 uppercase">LANDING PAGE BENCHMARK REFERENCES</span>
+            <h4 class="text-sm sm:text-base font-bold text-white mt-0.5 flex items-center gap-1.5">
+              <span>🎯</span> 타사 고효율 DB 수집 랜딩페이지 벤치마크 레퍼런스
+            </h4>
+          </div>
+          <span class="text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg bg-slate-950 text-cyan-400 border border-cyan-500/30 self-start sm:self-auto">
+            배너 클릭 시 전체 화면 확대
+          </span>
+        </div>
+
+        <div class="layout-benchmark-grid">
+          <!-- 벤치마크 1: 세무법인 혜움 (핵심 메인 배너 - 절제된 쉬머 효과 적용) -->
+          <div class="interactive-card featured-shimmer flex flex-col p-0"
+               data-title="1. 세무법인 혜움 - 벤치마크 랜딩페이지"
+               data-badge="BENCHMARK 01 · KEY REFERENCE"
+               data-image="https://rawcdn.githack.com/ADplanters/public/145e058b4190117589547cf604b4073c90f3cfe9/%EC%84%B8%EB%AC%B4%EB%B2%95%EC%9D%B8%20%ED%98%9C%EC%9B%80.png?raw=true"
+               data-feedback="고객이 즉각 체감할 수 있는 핵심 세무 혜택을 최상단에 직관적으로 배치하고, 자가진단 및 상담 신청 폼을 통해 단순 호기심 유입(막DB)을 걸러내어 진성 잠재고객 DB 수율을 극대화한 대표 벤치마크 모델입니다."
+               onclick="openCreativeCardModal(this)">
+            <div class="h-56 sm:h-60 bg-slate-950 flex items-center justify-center border-b border-slate-800/80 relative overflow-hidden">
+              <img src="https://rawcdn.githack.com/ADplanters/public/145e058b4190117589547cf604b4073c90f3cfe9/%EC%84%B8%EB%AC%B4%EB%B2%95%EC%9D%B8%20%ED%98%9C%EC%9B%80.png?raw=true" class="w-full h-full object-cover object-top transition duration-500 hover:scale-105" alt="세무법인 혜움 랜딩페이지" loading="lazy">
+              <span class="absolute top-3 left-3 px-2.5 py-0.5 rounded text-[10px] font-extrabold bg-indigo-950/90 text-indigo-300 border border-indigo-500/50 backdrop-blur-sm">BENCHMARK #1 · KEY</span>
+              <span class="absolute bottom-3 right-3 px-2.5 py-1 rounded text-[11px] font-bold bg-slate-950/85 text-cyan-300 border border-slate-700 backdrop-blur-sm">🔍 크게 보기</span>
+            </div>
+            <div class="p-4 sm:p-5 flex-grow flex flex-col justify-between bg-[#0F172A]/85">
+              <div>
+                <h5 class="text-sm font-bold text-white mb-1.5">1. 세무법인 혜움</h5>
+                <p class="text-xs text-slate-300 leading-relaxed font-sans">직관적인 핵심 혜택 소구와 단계별 입력 퍼널을 결합해 허수 DB를 차단하고 유효 상담 DB 수율을 극대화한 구조</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 벤치마크 2: 텍스핏 -->
+          <div class="interactive-card flex flex-col p-0"
+               data-title="2. 텍스핏 - 벤치마크 랜딩페이지"
+               data-badge="BENCHMARK 02 · REFERENCE"
+               data-image="https://rawcdn.githack.com/ADplanters/public/145e058b4190117589547cf604b4073c90f3cfe9/%EC%84%B8%EB%AC%B4%20%ED%85%8D%EC%8A%A4%ED%95%8F.png?raw=true"
+               data-feedback="사업자가 겪는 세무·회계 고민 포인트를 명확하게 짚어주고, 서비스 진행 프로세스와 신뢰 요소를 체계적으로 배치하여 실제 상담 니즈가 있는 잠재고객 DB만을 선별 수집하는 랜딩 구조입니다."
+               onclick="openCreativeCardModal(this)">
+            <div class="h-56 sm:h-60 bg-slate-950 flex items-center justify-center border-b border-slate-800/80 relative overflow-hidden">
+              <img src="https://rawcdn.githack.com/ADplanters/public/145e058b4190117589547cf604b4073c90f3cfe9/%EC%84%B8%EB%AC%B4%20%ED%85%8D%EC%8A%A4%ED%95%8F.png?raw=true" class="w-full h-full object-cover object-top transition duration-500 hover:scale-105" alt="텍스핏 랜딩페이지" loading="lazy">
+              <span class="absolute top-3 left-3 px-2.5 py-0.5 rounded text-[10px] font-extrabold bg-slate-900/90 text-cyan-300 border border-cyan-500/40 backdrop-blur-sm">BENCHMARK #2</span>
+              <span class="absolute bottom-3 right-3 px-2.5 py-1 rounded text-[11px] font-bold bg-slate-950/85 text-cyan-300 border border-slate-700 backdrop-blur-sm">🔍 크게 보기</span>
+            </div>
+            <div class="p-4 sm:p-5 flex-grow flex flex-col justify-between bg-[#0F172A]/85">
+              <div>
+                <h5 class="text-sm font-bold text-white mb-1.5">2. 텍스핏</h5>
+                <p class="text-xs text-slate-300 leading-relaxed font-sans">명확한 타겟 소구와 가독성 높은 정보 배치를 통해 광고 클릭 후 이탈을 줄이고 진성 고객 DB 전환을 유도한 사례</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 벤치마크 3: 디제이컴즈 -->
+          <div class="interactive-card flex flex-col p-0"
+               data-title="3. 디제이컴즈 - 벤치마크 랜딩페이지"
+               data-badge="BENCHMARK 03 · REFERENCE"
+               data-image="https://rawcdn.githack.com/ADplanters/public/145e058b4190117589547cf604b4073c90f3cfe9/%EC%84%B8%EB%AC%B4%20%EB%94%94%EC%A0%9C%EC%9D%B4%EC%BB%B4%EC%A6%88.png?raw=true"
+               data-feedback="복잡한 설명을 덜어내고 직관적인 메시지와 시각 레이아웃으로 핵심 강점을 빠르게 각인시켜, 잠재고객이 스스로 상담 정보를 남기도록 설계된 고효율 랜딩페이지 레퍼런스입니다."
+               onclick="openCreativeCardModal(this)">
+            <div class="h-56 sm:h-60 bg-slate-950 flex items-center justify-center border-b border-slate-800/80 relative overflow-hidden">
+              <img src="https://rawcdn.githack.com/ADplanters/public/145e058b4190117589547cf604b4073c90f3cfe9/%EC%84%B8%EB%AC%B4%20%EB%94%94%EC%A0%9C%EC%9D%B4%EC%BB%B4%EC%A6%88.png?raw=true" class="w-full h-full object-cover object-top transition duration-500 hover:scale-105" alt="디제이컴즈 랜딩페이지" loading="lazy">
+              <span class="absolute top-3 left-3 px-2.5 py-0.5 rounded text-[10px] font-extrabold bg-slate-900/90 text-cyan-300 border border-cyan-500/40 backdrop-blur-sm">BENCHMARK #3</span>
+              <span class="absolute bottom-3 right-3 px-2.5 py-1 rounded text-[11px] font-bold bg-slate-950/85 text-cyan-300 border border-slate-700 backdrop-blur-sm">🔍 크게 보기</span>
+            </div>
+            <div class="p-4 sm:p-5 flex-grow flex flex-col justify-between bg-[#0F172A]/85">
+              <div>
+                <h5 class="text-sm font-bold text-white mb-1.5">3. 디제이컴즈</h5>
+                <p class="text-xs text-slate-300 leading-relaxed font-sans">핵심 메시지를 압축한 직관적 구성과 명확한 상담 신청 동선을 결합하여 무분별한 막DB를 최소화한 랜딩 구조</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -240,16 +382,31 @@
 
   </main>
 
-  <!-- 시스템 모달 프레임 추가[cite: 1] -->
+  <!-- 스케일 모달(Modal) 확대 프레임 (벤치마크 및 소재 이미지 전체 확대 지원) -->
   <div class="modal-blur-overlay" id="sysModal" onclick="closeSystemModal()">
-      <div class="modal-scale-content" onclick="event.stopPropagation()">
-          <h2 id="sysModalTitle" style="font-size: 28px; margin-bottom: 12px; font-weight: bold; color: white;"></h2>
-          <p id="sysModalDesc" style="color: #a1a1aa; font-size: 16px;"></p>
+    <div class="modal-scale-content" onclick="event.stopPropagation()">
+      <div class="flex items-start justify-between gap-4 pb-4 border-b border-slate-800 shrink-0">
+        <div>
+          <span id="sysModalBadge" class="text-[11px] font-extrabold tracking-wider text-cyan-400 uppercase block mb-1">BENCHMARK REFERENCE</span>
+          <h2 id="sysModalTitle" style="font-size: 22px; font-weight: bold; color: white; line-height: 1.35;"></h2>
+        </div>
+        <button type="button" onclick="closeSystemModal()" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold shrink-0 transition border border-slate-700">
+          ✕ 닫기
+        </button>
       </div>
+
+      <div id="sysModalImgWrap" class="hidden my-4 bg-slate-950 rounded-xl border border-slate-800 p-3 overflow-y-auto max-h-[62vh] text-center">
+        <img id="sysModalImg" src="" alt="확대 미리보기" class="w-full max-w-2xl h-auto rounded-lg mx-auto shadow-2xl">
+      </div>
+
+      <div class="pt-2 shrink-0">
+        <p id="sysModalDesc" style="color: #cbd5e1; font-size: 15px; line-height: 1.7; white-space: pre-line;"></p>
+      </div>
+    </div>
   </div>
 
   <script>
-    // 도넛 차트 네온 글로우 플러그인 (포토팟 페이지 참조)
+    // 도넛 차트 네온 글로우 플러그인
     const neonGlowPlugin = {
       id: 'neonGlowPlugin',
       beforeDraw: (chart) => {
@@ -294,10 +451,10 @@
       try {
         const response = await fetch('./database.json?t=' + new Date().getTime(), { cache: 'no-store' });
         if (!response.ok) {
-            const res2 = await fetch('../database.json?t=' + new Date().getTime(), { cache: 'no-store' });
-            if(res2.ok) db = await res2.json();
+          const res2 = await fetch('../database.json?t=' + new Date().getTime(), { cache: 'no-store' });
+          if (res2.ok) db = await res2.json();
         } else {
-            db = await response.json();
+          db = await response.json();
         }
       } catch (e) {
         console.warn("⚠️ database.json 파일을 찾을 수 없습니다.");
@@ -391,7 +548,7 @@
       else if (mediaTab === 'Google') result = checkKeys(['Google', 'google', '구글', '구글 애즈']);
       else if (mediaTab === 'ALL') {
         result = checkKeys(['ALL', 'all', '통합', '통합(전체)']);
-        if (!result) result = checkKeys(['Naver', 'naver', '네이버', '네이버 검색']); // 정원용회계사는 네이버 우선일 가능성 대비
+        if (!result) result = checkKeys(['Meta', 'meta', '메타', 'Naver', 'naver', '네이버', '네이버 검색']);
       }
 
       if (!result) {
@@ -432,6 +589,15 @@
       return [];
     }
 
+    function escapeAttr(str) {
+      return String(str || '')
+        .replace(/&/g, '&')
+        .replace(/"/g, '"')
+        .replace(/'/g, ''')
+        .replace(/</g, '<')
+        .replace(/>/g, '>');
+    }
+
     function loadPeriodDataAndRender() {
       if (dbReportData && dbReportData.months && dbReportData.months[currentSelectedPeriod]) {
         const periodData = dbReportData.months[currentSelectedPeriod];
@@ -447,8 +613,6 @@
 
         document.getElementById('report-period-title').innerText = currentSelectedPeriod;
         document.getElementById('strategy-date-display').innerText = `기준: ${currentSelectedPeriod} 결산`;
-
-        // 코멘트 렌더링 수정 (탭에 맞게 변경되도록 renderDashboard로 이동)
       } else {
         rawDataset = [];
         currentColumns = [];
@@ -460,7 +624,7 @@
     function setMediaFilter(media) {
       currentMedia = media;
       document.querySelectorAll('.media-btn').forEach(btn => {
-        if(btn.dataset.media === media) {
+        if (btn.dataset.media === media) {
           btn.className = 'media-btn px-4 py-2 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow';
         } else {
           btn.className = 'media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white hover:bg-slate-800';
@@ -479,27 +643,31 @@
       let stratText = extractComment(periodData, currentMedia, 'strategy');
       let anomText = extractComment(periodData, currentMedia, 'anomaly');
 
-      if(strategyBox) {
-         if(stratText) strategyBox.innerHTML = stratText;
-         else strategyBox.innerHTML = '<p class="text-slate-500">전략 코멘트가 없습니다.</p>';
+      if (strategyBox) {
+        if (stratText) strategyBox.innerHTML = stratText;
+        else strategyBox.innerHTML = '<p class="text-slate-500">전략 코멘트가 없습니다.</p>';
       }
-      if(anomalyBox) {
-         if(anomText) {
-             // 줄바꿈 처리 로직 유지
-             if(anomText.includes('<li>') || anomText.includes('<p>')) {
-                 anomalyBox.innerHTML = anomText;
-             } else {
-                 const anomalies = anomText.split('\n').filter(t => t.trim() !== '');
-                 let html = '<ul class="text-xs leading-relaxed text-slate-300 space-y-2 list-disc list-inside">';
-                 anomalies.forEach(a => { html += `<li><strong class="text-slate-100">${a}</strong></li>`; });
-                 html += '</ul>';
-                 anomalyBox.innerHTML = html;
-             }
-         }
-         else anomalyBox.innerHTML = '<p class="text-slate-500">운영 이슈 내역이 없습니다.</p>';
+      if (anomalyBox) {
+        if (anomText) {
+          if (anomText.includes('<li>') || anomText.includes('<p>') || anomText.includes('<div')) {
+            anomalyBox.innerHTML = anomText;
+          } else {
+            const anomalies = anomText.split('\n').filter(t => t.trim() !== '');
+            let html = '<ul class="text-xs leading-relaxed text-slate-300 space-y-2 list-disc list-inside">';
+            anomalies.forEach(a => { html += `<li><strong class="text-slate-100">${a}</strong></li>`; });
+            html += '</ul>';
+            anomalyBox.innerHTML = html;
+          }
+        } else {
+          anomalyBox.innerHTML = `
+            <ul class="text-xs leading-relaxed text-slate-300 space-y-2 list-disc list-inside">
+              <li><strong class="text-slate-100">업종마다 DB 수집률은 다양할 수 있으나 현재 구조에서는 유효 DB 수율 저하 문제가 발생하여, 광고 소재는 더욱 빠르고 직관적인 메시지로 재구성하고 전용 랜딩페이지를 통해 잠재고객 DB를 수집하는 방향으로 대응합니다.</strong></li>
+            </ul>
+          `;
+        }
       }
 
-      // 소재 업데이트 (프리미엄 시스템[cite: 1]의 interactive-card 및 모달 기능 적용)
+      // 소재 업데이트 (interactive-card 및 스케일 모달 기능 적용)
       const creativeSec = document.getElementById('creative-feedback-section');
       const creativeCon = document.getElementById('creative-container');
       const countBadge = document.getElementById('creative-count-badge');
@@ -508,23 +676,28 @@
       if (creativeSec && creativeCon) {
         if (creatives && creatives.length > 0) {
           creativeSec.classList.remove('hidden');
-          if(countBadge) countBadge.innerText = creatives.length;
+          if (countBadge) countBadge.innerText = creatives.length;
           
           creativeCon.innerHTML = creatives.map((c, idx) => {
-            // 따옴표(quote) 처리를 위해 escape
-            const safeTitle = (c.title || '등록된 소재명 없음').replace(/'/g, "\\'").replace(/"/g, '"');
-            const safeFeedback = (c.feedback || '소재에 대한 피드백이 등록되지 않았습니다.').replace(/'/g, "\\'").replace(/"/g, '"');
+            const titleText = c.title || '등록된 소재명 없음';
+            const feedbackText = c.feedback || '소재에 대한 피드백이 등록되지 않았습니다.';
+            const imgSrc = c.image || '';
             
             return `
-            <div class="interactive-card flex flex-col p-0 transition hover:border-slate-700" onclick="openSystemModal('${safeTitle}', '${safeFeedback}')">
+            <div class="interactive-card flex flex-col p-0 transition hover:border-slate-700"
+                 data-title="${escapeAttr(titleText)}"
+                 data-badge="CREATIVE #${idx + 1}"
+                 data-image="${escapeAttr(imgSrc)}"
+                 data-feedback="${escapeAttr(feedbackText)}"
+                 onclick="openCreativeCardModal(this)">
               <div class="h-60 sm:h-64 bg-slate-950 flex items-center justify-center border-b border-slate-800 p-3 relative">
-                <img src="${c.image}" class="max-w-full max-h-full object-contain rounded-lg shadow-sm" alt="${c.title || '광고 소재'}" loading="lazy">
+                <img src="${imgSrc}" class="max-w-full max-h-full object-contain rounded-lg shadow-sm" alt="${escapeAttr(titleText)}" loading="lazy">
                 <span class="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-950/80 text-blue-400 border border-blue-800/80 backdrop-blur-sm">소재 #${idx + 1}</span>
               </div>
               <div class="p-4 sm:p-5 flex-grow flex flex-col justify-between bg-[#0F172A]">
                 <div>
-                  <h4 class="text-xs sm:text-sm font-bold text-white mb-2 leading-snug">${c.title || '등록된 소재명 없음'}</h4>
-                  <p class="text-xs text-slate-300 whitespace-pre-line leading-relaxed font-sans line-clamp-3">${c.feedback || '소재에 대한 피드백이 등록되지 않았습니다.'}</p>
+                  <h4 class="text-xs sm:text-sm font-bold text-white mb-2 leading-snug">${titleText}</h4>
+                  <p class="text-xs text-slate-300 whitespace-pre-line leading-relaxed font-sans line-clamp-3">${feedbackText}</p>
                 </div>
               </div>
             </div>
@@ -532,7 +705,7 @@
         } else {
           creativeSec.classList.add('hidden');
           creativeCon.innerHTML = '';
-          if(countBadge) countBadge.innerText = '0';
+          if (countBadge) countBadge.innerText = '0';
         }
       }
 
@@ -554,6 +727,7 @@
       
       const kpiTotals = {};
       
+      // 강제 이중 차단 로직: columns 배열에 'cost'가 있더라도 실제 데이터 총합이 0이면 비용/CPC 열을 그리지 않음
       let totalCostSum = 0;
       filtered.forEach(d => { totalCostSum += Number(d.cost) || 0; });
       let realHasCost = (totalCostSum > 0); 
@@ -619,9 +793,7 @@
         headerHTML += `<th class="py-3 px-4 font-semibold text-right ${colorClass}">${c.label}</th>`;
       });
       if (hasClicks && hasImpressions) headerHTML += `<th class="py-3 px-4 font-semibold text-right text-cyan-400">클릭률 (CTR)</th>`;
-      
       if (hasClicks && realHasCost) headerHTML += `<th class="py-3 px-4 font-semibold text-right">평균클릭비용 (CPC)</th>`;
-      
       theadRow.innerHTML = headerHTML;
 
       // --- 일별 데이터 집계 및 표 렌더링 ---
@@ -636,12 +808,12 @@
         });
       });
 
-      const dailyAggregated = Object.values(dailyMap).sort((a,b) => b.date.localeCompare(a.date)); // 최신순 정렬(포토팟 방식)
+      const dailyAggregated = Object.values(dailyMap).sort((a, b) => b.date.localeCompare(a.date));
       const tbody = document.getElementById('table-body');
       tbody.innerHTML = '';
       
-      if(dailyAggregated.length === 0) {
-         tbody.innerHTML = `<tr><td colspan="${displayColumns.length + 4}" class="py-8 text-center text-slate-500 font-sans">조건에 맞는 집행 데이터가 존재하지 않습니다.</td></tr>`;
+      if (dailyAggregated.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="${displayColumns.length + 4}" class="py-8 text-center text-slate-500 font-sans">조건에 맞는 집행 데이터가 존재하지 않습니다.</td></tr>`;
       } else {
         const totalTr = document.createElement('tr');
         totalTr.className = 'bg-slate-800/90 border-b-2 border-slate-700 font-bold';
@@ -698,13 +870,13 @@
           });
 
           if (hasClicks && hasImpressions) {
-             const rCtr = row['impressions'] > 0 ? ((row['clicks'] / row['impressions']) * 100).toFixed(2) : '0.00';
-             rowCellsHTML += `<td class="py-3 px-4 text-right text-cyan-400 font-semibold">${rCtr}%</td>`;
+            const rCtr = row['impressions'] > 0 ? ((row['clicks'] / row['impressions']) * 100).toFixed(2) : '0.00';
+            rowCellsHTML += `<td class="py-3 px-4 text-right text-cyan-400 font-semibold">${rCtr}%</td>`;
           }
           
           if (hasClicks && realHasCost) {
-             const rCpc = row['clicks'] > 0 ? formatCurrency(row['cost'] / row['clicks']) : '₩0';
-             rowCellsHTML += `<td class="py-3 px-4 text-right text-slate-300">${rCpc}</td>`;
+            const rCpc = row['clicks'] > 0 ? formatCurrency(row['cost'] / row['clicks']) : '₩0';
+            rowCellsHTML += `<td class="py-3 px-4 text-right text-slate-300">${rCpc}</td>`;
           }
 
           tr.innerHTML = rowCellsHTML;
@@ -719,15 +891,13 @@
     }
 
     function updateCharts(dailyData, realHasCost, hasClicks, hasImpressions, displayColumns, rawFilteredData) {
-      // 1. 추이 차트
-      if(dailyData.length === 0) {
+      if (dailyData.length === 0) {
         if (trendChartInstance) trendChartInstance.clear();
         if (shareChartInstance) shareChartInstance.clear();
         return;
       }
 
-      // 일별 데이터 정렬 (차트는 과거순 정렬)
-      const sortedDailyForChart = [...dailyData].sort((a,b) => a.date.localeCompare(b.date));
+      const sortedDailyForChart = [...dailyData].sort((a, b) => a.date.localeCompare(b.date));
       const labels = sortedDailyForChart.map(d => d.date.slice(5));
       const datasets = [];
       let chartLegendText = "";
@@ -822,7 +992,7 @@
                 color: '#94A3B8', 
                 font: { size: 10 }, 
                 callback: function(value) {
-                  if (leftAxisFormat === 'currency') return '₩' + (value >= 10000 ? (value/10000) + '만' : value);
+                  if (leftAxisFormat === 'currency') return '₩' + (value >= 10000 ? (value / 10000) + '만' : value);
                   return value;
                 }
               }
@@ -830,7 +1000,7 @@
             yClicks: {
               type: 'linear',
               position: 'right',
-              grid: { display: false },
+              grid: { drawOnChartArea: false },
               ticks: { color: '#10B981', font: { size: 10 } }
             }
           }
@@ -880,7 +1050,7 @@
       });
 
       const totalTarget = naverTotal + metaTotal + googleTotal;
-      const rawTargetData = [metaTotal, naverTotal, googleTotal]; // 포토팟 순서 (메타, 네이버, 구글)
+      const rawTargetData = [metaTotal, naverTotal, googleTotal];
 
       const baseColors = ['#1877F2', '#03C75A', '#EA4335'];
       const dimColors = ['rgba(24, 119, 242, 0.25)', 'rgba(3, 199, 90, 0.25)', 'rgba(234, 67, 53, 0.25)'];
@@ -943,7 +1113,7 @@
 
     function exportToExcel() {
       const table = document.getElementById('performance-table');
-      if(!table || rawDataset.length === 0) return alert('다운로드할 데이터가 없습니다.');
+      if (!table || rawDataset.length === 0) return alert('다운로드할 데이터가 없습니다.');
 
       const wb = XLSX.utils.book_new();
       const wsAggregated = XLSX.utils.table_to_sheet(table);
@@ -966,20 +1136,44 @@
       XLSX.writeFile(wb, `정원용회계사_${currentMedia}_성과보고서_${cleanFilename}.xlsx`);
     }
 
-    // 모달 제어 함수 추가[cite: 1]
+    // 모달 제어 함수 (벤치마크 이미지 확대 및 상세 코멘트 팝업 지원)
     const modal = document.getElementById('sysModal');
+    const modalBadge = document.getElementById('sysModalBadge');
     const title = document.getElementById('sysModalTitle');
     const desc = document.getElementById('sysModalDesc');
+    const imgWrap = document.getElementById('sysModalImgWrap');
+    const imgEl = document.getElementById('sysModalImg');
     
-    function openSystemModal(t, d) {
-        title.innerText = t; 
-        desc.innerText = d;
-        modal.classList.add('active');
+    function openSystemModal(t, d, imgSrc, badgeText) {
+      title.innerText = t; 
+      desc.innerText = d;
+      if (modalBadge) modalBadge.innerText = badgeText || 'BENCHMARK REFERENCE';
+      if (imgSrc) {
+        imgEl.src = imgSrc;
+        imgWrap.classList.remove('hidden');
+        imgWrap.scrollTop = 0;
+      } else {
+        imgEl.src = '';
+        imgWrap.classList.add('hidden');
+      }
+      modal.classList.add('active');
+    }
+
+    function openCreativeCardModal(cardEl) {
+      const t = cardEl.getAttribute('data-title') || '';
+      const d = cardEl.getAttribute('data-feedback') || '';
+      const imgSrc = cardEl.getAttribute('data-image') || '';
+      const badgeText = cardEl.getAttribute('data-badge') || 'BENCHMARK REFERENCE';
+      openSystemModal(t, d, imgSrc, badgeText);
     }
     
     function closeSystemModal() { 
-        modal.classList.remove('active'); 
+      modal.classList.remove('active'); 
     }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeSystemModal();
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
       initDataLoad();
