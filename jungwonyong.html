@@ -1,9 +1,3 @@
-맞습니다. 고객 확인용 보고서 파일인 jungwonyong.html을 수정해야 합니다.
-🔍 원인 진단
- * rawDataset 잔여 비용 데이터 감지 로직 오류: 기존 jungwonyong.html은 관리자 창에서 총비용(cost) 열을 추가했는지(currentColumns) 확인하지 않고, 원본 데이터(rawDataset)에 cost 값이 1원이라도 들어있으면 realHasCost = true로 판정해 평균클릭비용 (CPC) 열과 KPI 카드를 강제 생성하고 있었습니다.
- * 이로 인해 관리자 설정 컬럼(노출수, 도달수, 클릭수)에는 총비용 열이 빠져 보이지 않는데도, 우측 끝에 평균클릭비용 (CPC) 열만 ₩0으로 출력되는 현상이 발생했습니다.
- * 수정 내용: 관리자 컬럼 설정(currentColumns)에 cost 열이 실제로 존재하고 비용 합계가 0보다 클 때만(hasCostCol && totalCostSum > 0) 평균클릭비용 (CPC)이 표시되도록 조건을 보완했습니다.
-수정된 전체 코드입니다. VS Code에서 복사(Ctrl+A -> Ctrl+V)하여 덮어쓰기 하세요.
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -1486,4 +1480,3 @@
   </script>
 </body>
 </html>
-
