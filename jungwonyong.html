@@ -504,7 +504,7 @@
     const formatNumber = num => new Intl.NumberFormat('ko-KR').format(Math.round(num || 0));
     const formatCurrency = num => '₩' + new Intl.NumberFormat('ko-KR').format(Math.round(num || 0));
 
-    /* database.json 미연결 시에도 2차 집행 데이터가 즉시 표시되는 기본 백업 데이터셋 */
+    /* database.json 로드 실패 시에도 즉시 렌더링되는 2차 집행 백업 데이터셋 */
     const FALLBACK_RAW_DATASET = [
       { date: "2026-10-15", media: "Meta", impressions: 2018, reach: 1797, clicks: 55, cost: 25052, conv: 55 },
       { date: "2026-10-16", media: "Meta", impressions: 2307, reach: 2106, clicks: 58, cost: 27973, conv: 53 },
@@ -759,12 +759,11 @@
       return [];
     }
 
-    /* HTML 속성 이스케이프 함수 (문법 오류 수정 완료) */
     function escapeAttr(str) {
       return String(str || '')
         .replace(/&/g, '&')
         .replace(/"/g, '"')
-        .replace(/'/g, ''')
+        .replace(/'/g, '\x27')
         .replace(/</g, '<')
         .replace(/>/g, '>');
     }
@@ -825,7 +824,6 @@
       }
       if (anomalyBox) {
         if (anomText) {
-          /* database.json 내 중복 벤치마크 그리드가 포함된 경우 상단 대응 방향 박스만 추출 */
           if (anomText.includes('jwy-bm-grid')) {
             const tempWrap = document.createElement('div');
             tempWrap.innerHTML = anomText;
