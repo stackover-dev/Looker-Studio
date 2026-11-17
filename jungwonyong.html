@@ -72,6 +72,7 @@
 
     /* ==========================================
        [프리미엄 인터랙션 코어 스펙]
+       - 글로우(Glow) + 호버(Hover) 상승 + 절제된 쉬머(Shimmer)
        ========================================== */
     .interactive-card {
       position: relative;
@@ -189,7 +190,7 @@
       </nav>
 
       <div class="flex items-center space-x-2">
-        <button type="button" onclick="exportToExcel()" class="flex items-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-2 rounded-lg transition shadow-sm">
+        <button type="button" onclick="exportToExcel()" class="flex items-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-2 rounded-lg transition shadow-sm cursor-pointer">
           <span>Excel 리포트 다운로드</span>
         </button>
       </div>
@@ -199,17 +200,17 @@
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
     <!-- 상단 타이틀 및 매체 탭 필터 -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6 relative z-20">
       <div>
         <p class="text-xs font-medium uppercase tracking-wider text-emerald-400">Monthly Performance Media Audit</p>
         <h2 class="text-2xl font-bold text-white mt-1"><span id="report-period-title">2차</span> 디지털 매체 결산 보고서</h2>
       </div>
 
-      <div class="flex bg-slate-900 border border-slate-800 rounded-xl p-1 shadow-inner" id="media-filter-container">
-        <button type="button" onclick="setMediaFilter('ALL')" data-media="ALL" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow">통합(전체)</button>
-        <button type="button" onclick="setMediaFilter('Naver')" data-media="Naver" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white">네이버 검색</button>
-        <button type="button" onclick="setMediaFilter('Meta')" data-media="Meta" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white">메타 (DA/SA)</button>
-        <button type="button" onclick="setMediaFilter('Google')" data-media="Google" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white">구글 애즈</button>
+      <div class="flex flex-wrap bg-slate-900 border border-slate-800 rounded-xl p-1 shadow-inner gap-1" id="media-filter-container">
+        <button type="button" onclick="setMediaFilter('ALL')" data-media="ALL" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow cursor-pointer">통합(전체)</button>
+        <button type="button" onclick="setMediaFilter('Naver')" data-media="Naver" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white cursor-pointer">네이버 검색</button>
+        <button type="button" onclick="setMediaFilter('Meta')" data-media="Meta" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white cursor-pointer">메타 (DA/SA)</button>
+        <button type="button" onclick="setMediaFilter('Google')" data-media="Google" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white cursor-pointer">구글 애즈</button>
       </div>
     </div>
 
@@ -219,6 +220,7 @@
       <div class="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-3">
         <h2 class="text-xs font-extrabold tracking-wider text-blue-400 uppercase flex items-center gap-1.5">
           <span>STRATEGY COMMENT</span>
+          <span id="active-media-badge" class="ml-1 px-2 py-0.5 rounded bg-blue-950/80 text-blue-300 border border-blue-800/60 text-[10px]">통합(전체)</span>
         </h2>
         <span id="strategy-date-display" class="text-[11px] text-slate-400 font-mono">기준: 2차 결산</span>
       </div>
@@ -329,7 +331,7 @@
           <h3 class="text-sm font-bold text-white">일별 주요 지표 추이</h3>
           <span class="text-[11px] text-slate-400 font-mono" id="chart-legend-text">좌축: 주요지표 / 우축: 클릭수</span>
         </div>
-        <div class="relative h-72">
+        <div class="relative h-72 w-full">
           <canvas id="trendChart"></canvas>
         </div>
       </div>
@@ -339,7 +341,7 @@
           <h3 class="text-sm font-bold text-white">매체별 핵심 지표 비중</h3>
           <span class="text-[11px] text-emerald-400 font-semibold" id="share-chart-label">기준 지표 비율</span>
         </div>
-        <div class="relative h-64 flex items-center justify-center">
+        <div class="relative h-64 w-full flex items-center justify-center">
           <div id="no-share-data-msg" class="hidden absolute inset-0 flex items-center justify-center text-xs text-slate-500">등록된 지표 데이터가 없습니다.</div>
           <canvas id="shareChart"></canvas>
         </div>
@@ -400,7 +402,7 @@
           <span id="sysModalBadge" class="text-[11px] font-extrabold tracking-wider text-cyan-400 uppercase block mb-1">BENCHMARK REFERENCE</span>
           <h2 id="sysModalTitle" style="font-size: 20px; font-weight: bold; color: white; line-height: 1.35;"></h2>
         </div>
-        <button type="button" onclick="closeSystemModal()" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold shrink-0 transition border border-slate-700">
+        <button type="button" onclick="closeSystemModal()" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold shrink-0 transition border border-slate-700 cursor-pointer">
           ✕ 닫기
         </button>
       </div>
@@ -460,12 +462,16 @@
       document.body.style.overflow = '';
     }
 
+    window.openSystemModal = openSystemModal;
+    window.openCreativeCardModal = openCreativeCardModal;
+    window.closeSystemModal = closeSystemModal;
+
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') closeSystemModal();
     });
 
     /* ==========================================
-       [2. 대시보드 데이터 로드 및 차트/테이블 로직]
+       [2. 대시보드 데이터 정규화 및 로드/차트 로직]
        ========================================== */
     const neonGlowPlugin = {
       id: 'neonGlowPlugin',
@@ -501,8 +507,87 @@
     let shareChartInstance = null;
     let currentColumns = []; 
 
+    const MEDIA_LABEL_MAP = {
+      ALL: '통합(전체)',
+      Naver: '네이버 검색',
+      Meta: '메타 (DA/SA)',
+      Google: '구글 애즈'
+    };
+
     const formatNumber = num => new Intl.NumberFormat('ko-KR').format(Math.round(num || 0));
     const formatCurrency = num => '₩' + new Intl.NumberFormat('ko-KR').format(Math.round(num || 0));
+
+    function toCleanNumber(val) {
+      if (typeof val === 'number') return Number.isFinite(val) ? val : 0;
+      if (val === null || val === undefined) return 0;
+      const cleaned = String(val).replace(/[^0-9.-]/g, '');
+      const parsed = parseFloat(cleaned);
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function normalizeMediaName(rawMedia) {
+      const m = String(rawMedia || '').trim();
+      const lower = m.toLowerCase();
+      if (!m) return 'Meta';
+      if (lower.includes('naver') || lower.includes('네이버')) return 'Naver';
+      if (lower.includes('meta') || lower.includes('메타') || lower.includes('facebook') || lower.includes('instagram')) return 'Meta';
+      if (lower.includes('google') || lower.includes('구글')) return 'Google';
+      return m;
+    }
+
+    function normalizeDataset(rows) {
+      if (!Array.isArray(rows)) return [];
+      return rows.map(row => {
+        if (!row || typeof row !== 'object') return null;
+        const normalized = { ...row };
+        normalized.date = String(row.date || row.Date || row['집행일자'] || row['일자'] || row['날짜'] || '').trim() || '일자미상';
+        normalized.media = normalizeMediaName(row.media || row.Media || row.platform || row.channel || row['매체'] || row['플랫폼']);
+        normalized.impressions = toCleanNumber(row.impressions ?? row.Impressions ?? row['노출수'] ?? row['노출']);
+        normalized.reach = toCleanNumber(row.reach ?? row.Reach ?? row['도달수'] ?? row['도달']);
+        normalized.clicks = toCleanNumber(row.clicks ?? row.Clicks ?? row['클릭수'] ?? row['클릭']);
+        normalized.cost = toCleanNumber(row.cost ?? row.Cost ?? row.spend ?? row['총비용'] ?? row['비용'] ?? row['광고비']);
+        normalized.conv = toCleanNumber(row.conv ?? row.result ?? row.conversions ?? row['전환수'] ?? row['결과'] ?? row['DB수']);
+        return normalized;
+      }).filter(Boolean);
+    }
+
+    function normalizeColumns(cols) {
+      const defaultCols = [
+        { key: 'impressions', label: '노출수', isConv: false },
+        { key: 'reach', label: '도달수', isConv: false },
+        { key: 'clicks', label: '클릭수', isConv: false },
+        { key: 'cost', label: '총비용', isConv: false },
+        { key: 'conv', label: '결과(DB)', isConv: true }
+      ];
+
+      if (!Array.isArray(cols) || cols.length === 0) return defaultCols;
+
+      const labelFallbackMap = {
+        impressions: '노출수',
+        reach: '도달수',
+        clicks: '클릭수',
+        cost: '총비용',
+        conv: '전환수',
+        result: '결과(DB)'
+      };
+
+      const mapped = cols.map(c => {
+        if (!c) return null;
+        if (typeof c === 'string') {
+          return { key: c, label: labelFallbackMap[c] || c, isConv: c === 'conv' || c === 'result' };
+        }
+        const key = String(c.key || c.field || c.id || '').trim();
+        if (!key) return null;
+        const label = String(c.label || c.name || c.title || labelFallbackMap[key] || key).trim();
+        return {
+          key,
+          label,
+          isConv: Boolean(c.isConv || key === 'conv' || key === 'result')
+        };
+      }).filter(Boolean);
+
+      return mapped.length > 0 ? mapped : defaultCols;
+    }
 
     /* database.json 로드 실패 시에도 즉시 렌더링되는 2차 집행 백업 데이터셋 */
     const FALLBACK_RAW_DATASET = [
@@ -545,8 +630,8 @@
         </p>
         <div style="background-color: #1E293B; border-left: 4px solid #3B82F6; padding: 12px 16px; margin-bottom: 14px; border-radius: 8px;">
           <strong style="color: #38BDF8 !important;">📊 2차 집행 핵심 종합 데이터 집계</strong><br>
-          • <strong>총 노출수:</strong> 28,927회  |  <strong>총 도달수:</strong> 26,537명<br>
-          • <strong>총 클릭수:</strong> 682건  |  <strong>평균 클릭률(CTR):</strong> 2.36%
+          • <strong>총 노출수:</strong> 28,927회  |  <strong>총 도달수:</strong> 26,537명<br>
+          • <strong>총 클릭수:</strong> 682건  |  <strong>평균 클릭률(CTR):</strong> 2.36%
         </div>
         <ul style="margin: 0; padding-left: 20px; list-style-type: disc;">
           <li style="margin-bottom: 6px;">
@@ -591,6 +676,34 @@
       return null;
     }
 
+    function mergeClientRecords(remoteRec, localRec) {
+      if (!remoteRec) return localRec;
+      if (!localRec) return remoteRec;
+
+      const merged = { ...remoteRec, ...localRec };
+      merged.months = { ...(remoteRec.months || {}) };
+
+      if (localRec.months && typeof localRec.months === 'object') {
+        Object.keys(localRec.months).forEach(periodKey => {
+          const rMonth = (remoteRec.months && remoteRec.months[periodKey]) || {};
+          const lMonth = localRec.months[periodKey] || {};
+
+          const useLocalDataset = Array.isArray(lMonth.rawDataset) && lMonth.rawDataset.length > 0 &&
+                                  (!Array.isArray(rMonth.rawDataset) || lMonth.rawDataset.length >= rMonth.rawDataset.length);
+
+          merged.months[periodKey] = {
+            ...rMonth,
+            ...lMonth,
+            rawDataset: useLocalDataset ? lMonth.rawDataset : (rMonth.rawDataset || lMonth.rawDataset || []),
+            columns: (lMonth.columns && lMonth.columns.length > 0) ? lMonth.columns : (rMonth.columns || []),
+            comments: { ...(rMonth.comments || {}), ...(lMonth.comments || {}) },
+            creatives: (lMonth.creatives && Object.keys(lMonth.creatives).length > 0) ? lMonth.creatives : (rMonth.creatives || {})
+          };
+        });
+      }
+      return merged;
+    }
+
     async function initDataLoad() {
       let clientName = "정원용회계사";
       const currentFilename = window.location.pathname.split('/').pop() || 'jungwonyong.html';
@@ -598,16 +711,20 @@
       let remoteDb = null;
       let localDb = null;
 
-      try {
-        let response = await fetch('./database.json?t=' + Date.now(), { cache: 'no-store' });
-        if (!response.ok) {
-          response = await fetch('../database.json?t=' + Date.now(), { cache: 'no-store' });
-        }
-        if (response.ok) {
-          remoteDb = await response.json();
-        }
-      } catch (e) {
-        console.warn("⚠️ 원격 database.json 파일을 불러오지 못해 로컬/기본 데이터를 사용합니다.");
+      const candidatePaths = [
+        './database.json?t=' + Date.now(),
+        '../database.json?t=' + Date.now(),
+        '/adplanters/database.json?t=' + Date.now()
+      ];
+
+      for (const path of candidatePaths) {
+        try {
+          const response = await fetch(path, { cache: 'no-store' });
+          if (response.ok) {
+            remoteDb = await response.json();
+            break;
+          }
+        } catch (e) {}
       }
 
       try {
@@ -619,17 +736,8 @@
       const localMatch = findClientRecord(localDb, currentFilename);
 
       if (remoteMatch && localMatch) {
-        const getTotalRows = (rec) => {
-          if (!rec || !rec.months) return 0;
-          return Object.values(rec.months).reduce((sum, m) => sum + (Array.isArray(m.rawDataset) ? m.rawDataset.length : 0), 0);
-        };
-        if (getTotalRows(localMatch.record) > getTotalRows(remoteMatch.record)) {
-          clientName = localMatch.name;
-          dbReportData = localMatch.record;
-        } else {
-          clientName = remoteMatch.name;
-          dbReportData = remoteMatch.record;
-        }
+        clientName = localMatch.name || remoteMatch.name;
+        dbReportData = mergeClientRecords(remoteMatch.record, localMatch.record);
       } else if (remoteMatch) {
         clientName = remoteMatch.name;
         dbReportData = remoteMatch.record;
@@ -644,9 +752,9 @@
       if (dbReportData && dbReportData.months) {
         const availablePeriods = Object.keys(dbReportData.months);
         if (availablePeriods.length > 0) {
-          let targetPeriod = availablePeriods.find(p => p.includes('2차') && dbReportData.months[p].rawDataset && dbReportData.months[p].rawDataset.length > 0);
+          let targetPeriod = availablePeriods.find(p => p.includes('2차') && Array.isArray(dbReportData.months[p].rawDataset) && dbReportData.months[p].rawDataset.length > 0);
           if (!targetPeriod) {
-            const populated = availablePeriods.filter(p => dbReportData.months[p].rawDataset && dbReportData.months[p].rawDataset.length > 0);
+            const populated = availablePeriods.filter(p => Array.isArray(dbReportData.months[p].rawDataset) && dbReportData.months[p].rawDataset.length > 0);
             targetPeriod = populated.length > 0 ? populated[populated.length - 1] : availablePeriods[availablePeriods.length - 1];
           }
           currentSelectedPeriod = targetPeriod;
@@ -664,7 +772,7 @@
       if (!navContainer) return;
       navContainer.innerHTML = '';
 
-      if (!dbReportData || !dbReportData.months) {
+      if (!dbReportData || !dbReportData.months || Object.keys(dbReportData.months).length === 0) {
         const aTag = document.createElement('a');
         aTag.href = "javascript:void(0);";
         aTag.className = "px-3 py-1.5 text-xs font-semibold rounded-md border border-emerald-500/60 bg-emerald-500/10 text-emerald-400 shrink-0";
@@ -692,15 +800,22 @@
 
     function cleanText(txt) {
       if (!txt) return "";
-      const t = String(txt).trim();
+      const rawStr = String(txt).trim();
+      const plainText = rawStr
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/ /gi, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
       if (
-        t === "전략 총평을 입력하세요." || 
-        t === "특이사항을 입력하세요." || 
-        t === "관리자 데이터 로딩 중..." || 
-        t.includes("HTML 태그를 활용하여") ||
-        t.includes("실시간 프리뷰 영역입니다")
+        !plainText ||
+        plainText === "전략 총평을 입력하세요." || 
+        plainText === "특이사항을 입력하세요." || 
+        plainText === "관리자 데이터 로딩 중..." || 
+        plainText.includes("HTML 태그를 활용하여") ||
+        plainText.includes("실시간 프리뷰 영역입니다")
       ) return "";
-      return t;
+      return rawStr;
     }
 
     function extractComment(periodObj, mediaTab, type) {
@@ -719,7 +834,7 @@
       else if (mediaTab === 'Google') result = checkKeys(['Google', 'google', '구글', '구글 애즈']);
       else if (mediaTab === 'ALL') {
         result = checkKeys(['ALL', 'all', '통합', '통합(전체)']);
-        if (!result) result = checkKeys(['Meta', 'meta', '메타', 'Naver', 'naver', '네이버', '네이버 검색']);
+        if (!result) result = checkKeys(['Meta', 'meta', '메타', '메타 (DA/SA)', 'Naver', 'naver', '네이버', '네이버 검색', 'Google', 'google', '구글', '구글 애즈']);
       }
 
       if (!result) {
@@ -729,64 +844,73 @@
       return result;
     }
 
+    function matchMediaKey(keyName, tabKey) {
+      const k = String(keyName || '').trim().toLowerCase();
+      const t = String(tabKey || '').trim().toLowerCase();
+      if (t === 'all') return k === 'all' || k === '통합' || k === '통합(전체)';
+      if (t === 'meta') return k.includes('meta') || k.includes('메타') || k.includes('facebook') || k.includes('instagram');
+      if (t === 'naver') return k.includes('naver') || k.includes('네이버');
+      if (t === 'google') return k.includes('google') || k.includes('구글');
+      return k === t;
+    }
+
     function getCreativesForCurrentTab() {
       if (!dbReportData || !dbReportData.months || !dbReportData.months[currentSelectedPeriod]) return [];
       const periodData = dbReportData.months[currentSelectedPeriod];
       if (!periodData.creatives) return [];
       const raw = periodData.creatives;
 
-      if (Array.isArray(raw)) return raw;
+      if (Array.isArray(raw)) {
+        if (currentMedia === 'ALL') return raw;
+        const filteredArr = raw.filter(item => !item.media || matchMediaKey(item.media, currentMedia));
+        return filteredArr.length > 0 ? filteredArr : raw;
+      }
 
       if (typeof raw === 'object') {
-        const tabKey = currentMedia;
-        const findByKey = (k) => {
-          for (const key in raw) {
-            if (key.toLowerCase() === k.toLowerCase()) return raw[key];
-          }
-          return null;
-        };
-
-        if (tabKey === 'ALL') {
-          const allList = raw.ALL || raw.all || [];
-          const otherLists = Object.entries(raw).filter(([k]) => k.toUpperCase() !== 'ALL').flatMap(([, v]) => Array.isArray(v) ? v : []);
+        if (currentMedia === 'ALL') {
+          const allList = Object.entries(raw)
+            .filter(([k]) => matchMediaKey(k, 'ALL'))
+            .flatMap(([, v]) => Array.isArray(v) ? v : []);
+          const otherLists = Object.entries(raw)
+            .filter(([k]) => !matchMediaKey(k, 'ALL'))
+            .flatMap(([, v]) => Array.isArray(v) ? v : []);
           return allList.length > 0 ? allList : otherLists;
         } else {
-          let list = findByKey(tabKey) || [];
-          if (list.length === 0 && (raw.ALL || raw.all)) list = raw.ALL || raw.all || [];
-          return Array.isArray(list) ? list : [];
+          let list = Object.entries(raw)
+            .filter(([k]) => matchMediaKey(k, currentMedia))
+            .flatMap(([, v]) => Array.isArray(v) ? v : []);
+          if (list.length === 0) {
+            list = Object.entries(raw)
+              .filter(([k]) => matchMediaKey(k, 'ALL'))
+              .flatMap(([, v]) => Array.isArray(v) ? v : []);
+          }
+          return list;
         }
       }
       return [];
     }
 
+    /* HTML 속성 이스케이프 함수 (유니코드 \u0026 사용으로 복사 시 엔티티 디코딩 방지) */
     function escapeAttr(str) {
       return String(str || '')
-        .replace(/&/g, '&')
-        .replace(/"/g, '"')
-        .replace(/'/g, '\x27')
-        .replace(/</g, '<')
-        .replace(/>/g, '>');
+        .replace(/&/g, '\u0026amp;')
+        .replace(/"/g, '\u0026quot;')
+        .replace(/'/g, '\u0026#39;')
+        .replace(/</g, '\u0026lt;')
+        .replace(/>/g, '\u0026gt;');
     }
 
     function loadPeriodDataAndRender() {
       if (dbReportData && dbReportData.months && dbReportData.months[currentSelectedPeriod]) {
         const periodData = dbReportData.months[currentSelectedPeriod];
-        rawDataset = (Array.isArray(periodData.rawDataset) && periodData.rawDataset.length > 0)
-          ? periodData.rawDataset
-          : FALLBACK_RAW_DATASET;
+        const normalized = normalizeDataset(periodData.rawDataset);
+        const hasValidMetrics = normalized.some(d => (d.impressions + d.reach + d.clicks + d.cost + d.conv) > 0);
 
-        currentColumns = (periodData.columns && periodData.columns.length > 0) ? periodData.columns : [
-          { key: 'impressions', label: '노출수', isConv: false },
-          { key: 'reach', label: '도달수', isConv: false },
-          { key: 'clicks', label: '클릭수', isConv: false }
-        ];
+        rawDataset = (normalized.length > 0 && hasValidMetrics) ? normalized : normalizeDataset(FALLBACK_RAW_DATASET);
+        currentColumns = normalizeColumns(periodData.columns);
       } else {
-        rawDataset = FALLBACK_RAW_DATASET;
-        currentColumns = [
-          { key: 'impressions', label: '노출수', isConv: false },
-          { key: 'reach', label: '도달수', isConv: false },
-          { key: 'clicks', label: '클릭수', isConv: false }
-        ];
+        rawDataset = normalizeDataset(FALLBACK_RAW_DATASET);
+        currentColumns = normalizeColumns(null);
       }
 
       const periodTitleEl = document.getElementById('report-period-title');
@@ -798,16 +922,29 @@
     }
 
     function setMediaFilter(media) {
-      currentMedia = media;
+      currentMedia = media || 'ALL';
       document.querySelectorAll('.media-btn').forEach(btn => {
-        if (btn.dataset.media === media) {
-          btn.className = 'media-btn px-4 py-2 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow';
+        if (btn.dataset.media === currentMedia) {
+          btn.className = 'media-btn px-4 py-2 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow cursor-pointer';
         } else {
-          btn.className = 'media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white hover:bg-slate-800';
+          btn.className = 'media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer';
         }
       });
+
+      const badgeEl = document.getElementById('active-media-badge');
+      if (badgeEl) badgeEl.innerText = MEDIA_LABEL_MAP[currentMedia] || currentMedia;
+
       renderDashboard();
     }
+
+    window.setMediaFilter = setMediaFilter;
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('.media-btn');
+      if (btn && btn.dataset && btn.dataset.media) {
+        setMediaFilter(btn.dataset.media);
+      }
+    });
 
     function renderDashboard() {
       const periodData = (dbReportData && dbReportData.months) ? dbReportData.months[currentSelectedPeriod] : null;
@@ -869,7 +1006,7 @@
                  data-feedback="${escapeAttr(feedbackText)}"
                  onclick="openCreativeCardModal(this)">
               <div class="h-60 sm:h-64 bg-slate-950 flex items-center justify-center border-b border-slate-800 p-3 relative">
-                <img src="${imgSrc}" class="max-w-full max-h-full object-contain rounded-lg shadow-sm" alt="${escapeAttr(titleText)}" loading="lazy">
+                <img src="${escapeAttr(imgSrc)}" class="max-w-full max-h-full object-contain rounded-lg shadow-sm" alt="${escapeAttr(titleText)}" loading="lazy">
                 <span class="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-950/80 text-blue-400 border border-blue-800/80 backdrop-blur-sm">소재 #${idx + 1}</span>
               </div>
               <div class="p-4 sm:p-5 flex-grow flex flex-col justify-between bg-[#0F172A]">
@@ -887,7 +1024,7 @@
         }
       }
 
-      // 3. 필터링
+      // 3. 매체 필터링
       const filtered = currentMedia === 'ALL' ? rawDataset : rawDataset.filter(item => {
         const m = String(item.media || '').trim().toLowerCase();
         const t = currentMedia.toLowerCase();
@@ -905,7 +1042,7 @@
       const kpiTotals = {};
       
       let totalCostSum = 0;
-      filtered.forEach(d => { totalCostSum += Number(d.cost) || 0; });
+      filtered.forEach(d => { totalCostSum += toCleanNumber(d.cost); });
       let realHasCost = (totalCostSum > 0); 
 
       let displayColumns = currentColumns.filter(c => {
@@ -919,22 +1056,23 @@
 
         kpiTotals[c.key] = 0;
         filtered.forEach(d => {
-          kpiTotals[c.key] += Number(d[c.key]) || (c.key === 'conv' ? Number(d.result) || 0 : 0);
+          kpiTotals[c.key] += toCleanNumber(d[c.key]) || (c.key === 'conv' ? toCleanNumber(d.result) : 0);
         });
       });
 
       displayColumns.forEach(c => {
+        const labelStr = String(c.label || c.key || '');
         let displayValue = formatNumber(kpiTotals[c.key]);
         let valColor = "text-white";
         if (c.key === 'clicks') valColor = "text-emerald-400";
-        if (c.key === 'cost' || c.label.includes('비용') || c.label.includes('단가') || c.label.includes('금액')) {
+        if (c.key === 'cost' || labelStr.includes('비용') || labelStr.includes('단가') || labelStr.includes('금액')) {
           displayValue = formatCurrency(kpiTotals[c.key]);
         }
         if (c.isConv) valColor = "text-blue-400";
         
         kpiContainer.innerHTML += `
           <div class="bg-[#0F172A] p-4 rounded-xl border border-slate-800 shadow-sm">
-            <span class="text-[11px] font-semibold text-slate-400 mb-1">총 ${c.label}</span>
+            <span class="text-[11px] font-semibold text-slate-400 mb-1">총 ${labelStr}</span>
             <div class="text-base sm:text-xl font-bold font-mono ${valColor} mt-1">${displayValue}</div>
           </div>
         `;
@@ -967,8 +1105,9 @@
         <th class="py-3 px-4 font-semibold">매체</th>
       `;
       displayColumns.forEach(c => {
+        const labelStr = String(c.label || c.key || '');
         const colorClass = c.key === 'clicks' ? 'text-emerald-400' : (c.isConv ? 'text-blue-400' : '');
-        headerHTML += `<th class="py-3 px-4 font-semibold text-right ${colorClass}">${c.label}</th>`;
+        headerHTML += `<th class="py-3 px-4 font-semibold text-right ${colorClass}">${labelStr}</th>`;
       });
       if (hasClicks && hasImpressions) headerHTML += `<th class="py-3 px-4 font-semibold text-right text-cyan-400">클릭률 (CTR)</th>`;
       if (hasClicks && realHasCost) headerHTML += `<th class="py-3 px-4 font-semibold text-right">평균클릭비용 (CPC)</th>`;
@@ -983,7 +1122,7 @@
           displayColumns.forEach(c => dailyMap[cleanDate][c.key] = 0);
         }
         displayColumns.forEach(c => {
-          dailyMap[cleanDate][c.key] += Number(item[c.key]) || (c.key === 'conv' ? Number(item.result) || 0 : 0);
+          dailyMap[cleanDate][c.key] += toCleanNumber(item[c.key]) || (c.key === 'conv' ? toCleanNumber(item.result) : 0);
         });
       });
 
@@ -992,7 +1131,7 @@
       tbody.innerHTML = '';
       
       if (dailyAggregated.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="${displayColumns.length + 4}" class="py-8 text-center text-slate-500 font-sans">선택하신 매체에 집행된 데이터가 없습니다.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="${displayColumns.length + 4}" class="py-8 text-center text-slate-500 font-sans">선택하신 매체(${MEDIA_LABEL_MAP[currentMedia] || currentMedia})에 집행된 데이터가 없습니다.</td></tr>`;
       } else {
         const totalTr = document.createElement('tr');
         totalTr.className = 'bg-slate-800/90 border-b-2 border-slate-700 font-bold';
@@ -1003,8 +1142,9 @@
         `;
 
         displayColumns.forEach(c => {
+          const labelStr = String(c.label || c.key || '');
           let displayVal = formatNumber(kpiTotals[c.key]);
-          if (c.key === 'cost' || c.label.includes('비용') || c.label.includes('단가')) {
+          if (c.key === 'cost' || labelStr.includes('비용') || labelStr.includes('단가')) {
             displayVal = formatCurrency(kpiTotals[c.key]);
           }
           const colorClass = c.key === 'clicks' ? 'text-emerald-400 font-bold' : (c.isConv ? 'text-blue-400 font-medium' : 'text-slate-300');
@@ -1040,8 +1180,9 @@
           `;
 
           displayColumns.forEach(c => {
+            const labelStr = String(c.label || c.key || '');
             let rowVal = formatNumber(row[c.key]);
-            if (c.key === 'cost' || c.label.includes('비용') || c.label.includes('단가')) {
+            if (c.key === 'cost' || labelStr.includes('비용') || labelStr.includes('단가')) {
               rowVal = formatCurrency(row[c.key]);
             }
             const fontColor = c.key === 'clicks' ? 'text-emerald-400 font-bold' : (c.isConv ? 'text-blue-400 font-medium' : 'text-slate-300');
@@ -1068,143 +1209,147 @@
 
       if (typeof Chart !== 'undefined') {
         try {
-          updateCharts(dailyAggregated, realHasCost, hasClicks, hasImpressions, displayColumns, filtered);
+          updateCharts(dailyAggregated, realHasCost, hasClicks, hasImpressions, displayColumns);
         } catch (e) {
           console.warn("차트 렌더링 예외:", e);
         }
       }
     }
 
-    function updateCharts(dailyData, realHasCost, hasClicks, hasImpressions, displayColumns, rawFilteredData) {
-      if (dailyData.length === 0) {
-        if (trendChartInstance) trendChartInstance.clear();
-        if (shareChartInstance) shareChartInstance.clear();
-        return;
+    function updateCharts(dailyData, realHasCost, hasClicks, hasImpressions, displayColumns) {
+      if (trendChartInstance) {
+        trendChartInstance.destroy();
+        trendChartInstance = null;
       }
 
-      const sortedDailyForChart = [...dailyData].sort((a, b) => a.date.localeCompare(b.date));
-      const labels = sortedDailyForChart.map(d => d.date.slice(5));
-      const datasets = [];
-      let chartLegendText = "";
+      if (dailyData.length > 0) {
+        const sortedDailyForChart = [...dailyData].sort((a, b) => a.date.localeCompare(b.date));
+        const labels = sortedDailyForChart.map(d => d.date.length >= 10 ? d.date.slice(5) : d.date);
+        const datasets = [];
+        let chartLegendText = "";
 
-      if (hasClicks) {
-        datasets.push({
-          type: 'line',
-          label: '클릭수 (건)',
-          data: sortedDailyForChart.map(d => d.clicks),
-          borderColor: '#10b981', 
-          backgroundColor: '#10b981',
-          yAxisID: 'yClicks',
-          borderWidth: 2,
-          pointRadius: 3,
-          tension: 0.35,
-          order: 1
-        });
-        chartLegendText += "우축: 클릭수(건)";
-      }
+        if (hasClicks) {
+          datasets.push({
+            type: 'line',
+            label: '클릭수 (건)',
+            data: sortedDailyForChart.map(d => d.clicks),
+            borderColor: '#10b981', 
+            backgroundColor: '#10b981',
+            yAxisID: 'yClicks',
+            borderWidth: 2,
+            pointRadius: 3,
+            tension: 0.35,
+            order: 1
+          });
+          chartLegendText += "우축: 클릭수(건)";
+        }
 
-      let hasConv = displayColumns.some(c => c.key === 'conv');
-      let leftAxisLabel = "";
-      let leftAxisFormat = 'number';
+        let hasConv = displayColumns.some(c => c.key === 'conv');
+        let leftAxisLabel = "";
+        let leftAxisFormat = 'number';
 
-      let barColor = currentMedia === 'Naver' ? 'rgba(3, 199, 90, 0.45)' : 'rgba(59, 130, 246, 0.65)';
-      let barHoverColor = currentMedia === 'Naver' ? 'rgba(3, 199, 90, 0.85)' : 'rgba(59, 130, 246, 0.85)';
+        let barColor = currentMedia === 'Naver' ? 'rgba(3, 199, 90, 0.45)' : 'rgba(59, 130, 246, 0.65)';
+        let barHoverColor = currentMedia === 'Naver' ? 'rgba(3, 199, 90, 0.85)' : 'rgba(59, 130, 246, 0.85)';
 
-      if (realHasCost) {
-        datasets.push({
+        if (realHasCost) {
+          datasets.push({
+            type: 'bar',
+            label: '총비용 (원)',
+            data: sortedDailyForChart.map(d => d.cost),
+            backgroundColor: barColor,
+            hoverBackgroundColor: barHoverColor,
+            borderRadius: 4,
+            yAxisID: 'yLeft',
+            order: 2
+          });
+          leftAxisLabel = "비용(원)";
+          leftAxisFormat = 'currency';
+        } else if (hasImpressions) {
+          datasets.push({
+            type: 'bar',
+            label: '노출수 (회)',
+            data: sortedDailyForChart.map(d => d.impressions),
+            backgroundColor: barColor,
+            hoverBackgroundColor: barHoverColor,
+            borderRadius: 4,
+            yAxisID: 'yLeft',
+            order: 2
+          });
+          leftAxisLabel = "노출수(회)";
+          leftAxisFormat = 'number';
+        } else if (hasConv) {
+          datasets.push({
+            type: 'bar',
+            label: '전환수 (CV)',
+            data: sortedDailyForChart.map(d => d.conv || d.result || 0),
+            backgroundColor: barColor,
+            hoverBackgroundColor: barHoverColor,
+            borderRadius: 4,
+            yAxisID: 'yLeft',
+            order: 2
+          });
+          leftAxisLabel = "전환수(건)";
+          leftAxisFormat = 'number';
+        }
+        
+        chartLegendText = `좌축: ${leftAxisLabel} / ${chartLegendText}`;
+        document.getElementById('chart-legend-text').innerText = chartLegendText || '활성 지표 데이터가 부족합니다.';
+
+        const ctxTrend = document.getElementById('trendChart').getContext('2d');
+        trendChartInstance = new Chart(ctxTrend, {
           type: 'bar',
-          label: '총비용 (원)',
-          data: sortedDailyForChart.map(d => d.cost),
-          backgroundColor: barColor,
-          hoverBackgroundColor: barHoverColor,
-          borderRadius: 4,
-          yAxisID: 'yLeft',
-          order: 2
-        });
-        leftAxisLabel = "비용(원)";
-        leftAxisFormat = 'currency';
-      } else if (hasImpressions) {
-        datasets.push({
-          type: 'bar',
-          label: '노출수 (회)',
-          data: sortedDailyForChart.map(d => d.impressions),
-          backgroundColor: barColor,
-          hoverBackgroundColor: barHoverColor,
-          borderRadius: 4,
-          yAxisID: 'yLeft',
-          order: 2
-        });
-        leftAxisLabel = "노출수(회)";
-        leftAxisFormat = 'number';
-      } else if (hasConv) {
-        datasets.push({
-          type: 'bar',
-          label: '전환수 (CV)',
-          data: sortedDailyForChart.map(d => d.conv || d.result || 0),
-          backgroundColor: barColor,
-          hoverBackgroundColor: barHoverColor,
-          borderRadius: 4,
-          yAxisID: 'yLeft',
-          order: 2
-        });
-        leftAxisLabel = "전환수(건)";
-        leftAxisFormat = 'number';
-      }
-      
-      chartLegendText = `좌축: ${leftAxisLabel} / ${chartLegendText}`;
-      document.getElementById('chart-legend-text').innerText = chartLegendText || '활성 지표 데이터가 부족합니다.';
-
-      if (trendChartInstance) trendChartInstance.destroy();
-      const ctxTrend = document.getElementById('trendChart').getContext('2d');
-      trendChartInstance = new Chart(ctxTrend, {
-        type: 'bar',
-        data: { labels: labels, datasets: datasets },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { mode: 'index', intersect: false },
-          plugins: {
-            legend: { display: false },
-            tooltip: { backgroundColor: '#0F172A', titleColor: '#F8FAFC', bodyColor: '#F8FAFC', borderColor: '#334155', borderWidth: 1 }
-          },
-          scales: {
-            x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#94A3B8', font: { size: 10 } } },
-            yLeft: {
-              type: 'linear',
-              position: 'left',
-              grid: { color: 'rgba(51, 65, 85, 0.3)' },
-              ticks: { 
-                color: '#94A3B8', 
-                font: { size: 10 }, 
-                callback: function(value) {
-                  if (leftAxisFormat === 'currency') return '₩' + (value >= 10000 ? (value / 10000) + '만' : value);
-                  return value;
-                }
-              }
+          data: { labels: labels, datasets: datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { display: false },
+              tooltip: { backgroundColor: '#0F172A', titleColor: '#F8FAFC', bodyColor: '#F8FAFC', borderColor: '#334155', borderWidth: 1 }
             },
-            yClicks: {
-              type: 'linear',
-              position: 'right',
-              grid: { drawOnChartArea: false },
-              ticks: { color: '#10B981', font: { size: 10 } }
+            scales: {
+              x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#94A3B8', font: { size: 10 } } },
+              yLeft: {
+                type: 'linear',
+                position: 'left',
+                grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                ticks: { 
+                  color: '#94A3B8', 
+                  font: { size: 10 }, 
+                  callback: function(value) {
+                    if (leftAxisFormat === 'currency') return '₩' + (value >= 10000 ? (value / 10000) + '만' : value);
+                    return value;
+                  }
+                }
+              },
+              yClicks: {
+                type: 'linear',
+                position: 'right',
+                grid: { drawOnChartArea: false },
+                ticks: { color: '#10B981', font: { size: 10 } }
+              }
             }
           }
-        }
-      });
+        });
+      } else {
+        document.getElementById('chart-legend-text').innerText = '선택 매체 집행 데이터가 없습니다.';
+      }
 
-      if (shareChartInstance) shareChartInstance.destroy();
+      if (shareChartInstance) {
+        shareChartInstance.destroy();
+        shareChartInstance = null;
+      }
       
-      let shareTargetKey = null;
       const findValidKey = (keys) => {
         for (let k of keys) {
           let sum = 0;
-          rawDataset.forEach(d => { sum += Number(d[k] || (k === 'conv' ? d.result : 0) || 0); });
+          rawDataset.forEach(d => { sum += toCleanNumber(d[k] || (k === 'conv' ? d.result : 0)); });
           if (sum > 0) return k;
         }
         return null;
       };
 
-      shareTargetKey = findValidKey(['cost', 'impressions', 'clicks', 'conv']);
+      const shareTargetKey = findValidKey(['cost', 'impressions', 'clicks', 'conv']);
       const msgElem = document.getElementById('no-share-data-msg');
 
       if (!shareTargetKey) {
@@ -1226,7 +1371,7 @@
       let googleTotal = 0;
 
       rawDataset.forEach(d => { 
-        const val = Number(d[shareTargetKey] || (shareTargetKey === 'conv' ? d.result : 0) || 0);
+        const val = toCleanNumber(d[shareTargetKey] || (shareTargetKey === 'conv' ? d.result : 0));
         const m = String(d.media || '').toLowerCase();
         if (m.includes('naver') || m.includes('네이버')) naverTotal += val;
         else if (m.includes('meta') || m.includes('메타')) metaTotal += val;
@@ -1320,6 +1465,8 @@
       const cleanFilename = (currentSelectedPeriod || '2차').replace(/[^0-9a-zA-Z가-힣.-]/g, '_');
       XLSX.writeFile(wb, `정원용회계사_${currentMedia}_성과보고서_${cleanFilename}.xlsx`);
     }
+
+    window.exportToExcel = exportToExcel;
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initDataLoad);
