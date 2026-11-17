@@ -1,3 +1,9 @@
+맞습니다. 고객 확인용 보고서 파일인 jungwonyong.html을 수정해야 합니다.
+🔍 원인 진단
+ * rawDataset 잔여 비용 데이터 감지 로직 오류: 기존 jungwonyong.html은 관리자 창에서 총비용(cost) 열을 추가했는지(currentColumns) 확인하지 않고, 원본 데이터(rawDataset)에 cost 값이 1원이라도 들어있으면 realHasCost = true로 판정해 평균클릭비용 (CPC) 열과 KPI 카드를 강제 생성하고 있었습니다.
+ * 이로 인해 관리자 설정 컬럼(노출수, 도달수, 클릭수)에는 총비용 열이 빠져 보이지 않는데도, 우측 끝에 평균클릭비용 (CPC) 열만 ₩0으로 출력되는 현상이 발생했습니다.
+ * 수정 내용: 관리자 컬럼 설정(currentColumns)에 cost 열이 실제로 존재하고 비용 합계가 0보다 클 때만(hasCostCol && totalCostSum > 0) 평균클릭비용 (CPC)이 표시되도록 조건을 보완했습니다.
+수정된 전체 코드입니다. VS Code에서 복사(Ctrl+A -> Ctrl+V)하여 덮어쓰기 하세요.
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -551,13 +557,12 @@
       }).filter(Boolean);
     }
 
+    /* 기본 컬럼은 관리자 업로드 기준(노출수·도달수·클릭수)을 유지하며, 비용(cost)은 명시된 경우에만 포함 */
     function normalizeColumns(cols) {
       const defaultCols = [
         { key: 'impressions', label: '노출수', isConv: false },
         { key: 'reach', label: '도달수', isConv: false },
-        { key: 'clicks', label: '클릭수', isConv: false },
-        { key: 'cost', label: '총비용', isConv: false },
-        { key: 'conv', label: '결과(DB)', isConv: true }
+        { key: 'clicks', label: '클릭수', isConv: false }
       ];
 
       if (!Array.isArray(cols) || cols.length === 0) return defaultCols;
@@ -591,36 +596,36 @@
 
     /* database.json 로드 실패 시에도 즉시 렌더링되는 2차 집행 백업 데이터셋 */
     const FALLBACK_RAW_DATASET = [
-      { date: "2026-10-15", media: "Meta", impressions: 2018, reach: 1797, clicks: 55, cost: 25052, conv: 55 },
-      { date: "2026-10-16", media: "Meta", impressions: 2307, reach: 2106, clicks: 58, cost: 27973, conv: 53 },
-      { date: "2026-10-17", media: "Meta", impressions: 2195, reach: 1984, clicks: 57, cost: 21924, conv: 52 },
-      { date: "2026-10-18", media: "Meta", impressions: 2122, reach: 1936, clicks: 70, cost: 35992, conv: 76 },
-      { date: "2026-10-19", media: "Meta", impressions: 2967, reach: 2752, clicks: 74, cost: 33571, conv: 73 },
-      { date: "2026-10-20", media: "Meta", impressions: 2356, reach: 2201, clicks: 65, cost: 31902, conv: 61 },
-      { date: "2026-10-21", media: "Meta", impressions: 1912, reach: 1770, clicks: 65, cost: 29630, conv: 59 },
-      { date: "2026-10-22", media: "Meta", impressions: 2327, reach: 2225, clicks: 87, cost: 30018, conv: 85 },
-      { date: "2026-10-23", media: "Meta", impressions: 1811, reach: 1717, clicks: 52, cost: 25674, conv: 43 },
-      { date: "2026-10-24", media: "Meta", impressions: 159, reach: 147, clicks: 1, cost: 8299, conv: 0 },
-      { date: "2026-10-25", media: "Meta", impressions: 413, reach: 352, clicks: 5, cost: 20155, conv: 0 },
-      { date: "2026-10-26", media: "Meta", impressions: 359, reach: 319, clicks: 5, cost: 20644, conv: 0 },
-      { date: "2026-10-27", media: "Meta", impressions: 321, reach: 300, clicks: 7, cost: 16076, conv: 1 },
-      { date: "2026-10-28", media: "Meta", impressions: 321, reach: 276, clicks: 6, cost: 13018, conv: 0 },
-      { date: "2026-10-29", media: "Meta", impressions: 238, reach: 199, clicks: 5, cost: 15252, conv: 0 },
-      { date: "2026-10-30", media: "Meta", impressions: 322, reach: 296, clicks: 2, cost: 11548, conv: 0 },
-      { date: "2026-10-31", media: "Meta", impressions: 354, reach: 328, clicks: 4, cost: 8007, conv: 0 },
-      { date: "2026-11-01", media: "Meta", impressions: 785, reach: 689, clicks: 5, cost: 20327, conv: 0 },
-      { date: "2026-11-02", media: "Meta", impressions: 593, reach: 533, clicks: 4, cost: 19518, conv: 0 },
-      { date: "2026-11-03", media: "Meta", impressions: 609, reach: 546, clicks: 9, cost: 17596, conv: 0 },
-      { date: "2026-11-04", media: "Meta", impressions: 538, reach: 506, clicks: 8, cost: 15504, conv: 1 },
-      { date: "2026-11-05", media: "Meta", impressions: 483, reach: 436, clicks: 7, cost: 16480, conv: 0 },
-      { date: "2026-11-06", media: "Meta", impressions: 382, reach: 355, clicks: 6, cost: 9880, conv: 0 },
-      { date: "2026-11-07", media: "Meta", impressions: 286, reach: 261, clicks: 3, cost: 5591, conv: 0 },
-      { date: "2026-11-08", media: "Meta", impressions: 1211, reach: 1058, clicks: 11, cost: 19495, conv: 0 },
-      { date: "2026-11-09", media: "Meta", impressions: 953, reach: 887, clicks: 7, cost: 18905, conv: 0 },
-      { date: "2026-11-10", media: "Meta", impressions: 547, reach: 524, clicks: 4, cost: 7445, conv: 0 },
-      { date: "2026-11-11", media: "Meta", impressions: 33, reach: 32, clicks: 0, cost: 181, conv: 0 },
-      { date: "2026-11-12", media: "Meta", impressions: 3, reach: 3, clicks: 0, cost: 2, conv: 0 },
-      { date: "2026-11-13", media: "Meta", impressions: 2, reach: 2, clicks: 0, cost: 2, conv: 0 }
+      { date: "2026-10-15", media: "Meta", impressions: 2018, reach: 1797, clicks: 55, cost: 0, conv: 55 },
+      { date: "2026-10-16", media: "Meta", impressions: 2307, reach: 2106, clicks: 58, cost: 0, conv: 53 },
+      { date: "2026-10-17", media: "Meta", impressions: 2195, reach: 1984, clicks: 57, cost: 0, conv: 52 },
+      { date: "2026-10-18", media: "Meta", impressions: 2122, reach: 1936, clicks: 70, cost: 0, conv: 76 },
+      { date: "2026-10-19", media: "Meta", impressions: 2967, reach: 2752, clicks: 74, cost: 0, conv: 73 },
+      { date: "2026-10-20", media: "Meta", impressions: 2356, reach: 2201, clicks: 65, cost: 0, conv: 61 },
+      { date: "2026-10-21", media: "Meta", impressions: 1912, reach: 1770, clicks: 65, cost: 0, conv: 59 },
+      { date: "2026-10-22", media: "Meta", impressions: 2327, reach: 2225, clicks: 87, cost: 0, conv: 85 },
+      { date: "2026-10-23", media: "Meta", impressions: 1811, reach: 1717, clicks: 52, cost: 0, conv: 43 },
+      { date: "2026-10-24", media: "Meta", impressions: 159, reach: 147, clicks: 1, cost: 0, conv: 0 },
+      { date: "2026-10-25", media: "Meta", impressions: 413, reach: 352, clicks: 5, cost: 0, conv: 0 },
+      { date: "2026-10-26", media: "Meta", impressions: 359, reach: 319, clicks: 5, cost: 0, conv: 0 },
+      { date: "2026-10-27", media: "Meta", impressions: 321, reach: 300, clicks: 7, cost: 0, conv: 1 },
+      { date: "2026-10-28", media: "Meta", impressions: 321, reach: 276, clicks: 6, cost: 0, conv: 0 },
+      { date: "2026-10-29", media: "Meta", impressions: 238, reach: 199, clicks: 5, cost: 0, conv: 0 },
+      { date: "2026-10-30", media: "Meta", impressions: 322, reach: 296, clicks: 2, cost: 0, conv: 0 },
+      { date: "2026-10-31", media: "Meta", impressions: 354, reach: 328, clicks: 4, cost: 0, conv: 0 },
+      { date: "2026-11-01", media: "Meta", impressions: 785, reach: 689, clicks: 5, cost: 0, conv: 0 },
+      { date: "2026-11-02", media: "Meta", impressions: 593, reach: 533, clicks: 4, cost: 0, conv: 0 },
+      { date: "2026-11-03", media: "Meta", impressions: 609, reach: 546, clicks: 9, cost: 0, conv: 0 },
+      { date: "2026-11-04", media: "Meta", impressions: 538, reach: 506, clicks: 8, cost: 0, conv: 1 },
+      { date: "2026-11-05", media: "Meta", impressions: 483, reach: 436, clicks: 7, cost: 0, conv: 0 },
+      { date: "2026-11-06", media: "Meta", impressions: 382, reach: 355, clicks: 6, cost: 0, conv: 0 },
+      { date: "2026-11-07", media: "Meta", impressions: 286, reach: 261, clicks: 3, cost: 0, conv: 0 },
+      { date: "2026-11-08", media: "Meta", impressions: 1211, reach: 1058, clicks: 11, cost: 0, conv: 0 },
+      { date: "2026-11-09", media: "Meta", impressions: 953, reach: 887, clicks: 7, cost: 0, conv: 0 },
+      { date: "2026-11-10", media: "Meta", impressions: 547, reach: 524, clicks: 4, cost: 0, conv: 0 },
+      { date: "2026-11-11", media: "Meta", impressions: 33, reach: 32, clicks: 0, cost: 0, conv: 0 },
+      { date: "2026-11-12", media: "Meta", impressions: 3, reach: 3, clicks: 0, cost: 0, conv: 0 },
+      { date: "2026-11-13", media: "Meta", impressions: 2, reach: 2, clicks: 0, cost: 0, conv: 0 }
     ];
 
     const FALLBACK_STRATEGY_HTML = `
@@ -803,7 +808,7 @@
       const rawStr = String(txt).trim();
       const plainText = rawStr
         .replace(/<[^>]*>/g, ' ')
-        .replace(/ /gi, ' ')
+        .replace(/&nbsp;/gi, ' ')
         .replace(/\s+/g, ' ')
         .trim();
 
@@ -1043,7 +1048,10 @@
       
       let totalCostSum = 0;
       filtered.forEach(d => { totalCostSum += toCleanNumber(d.cost); });
-      let realHasCost = (totalCostSum > 0); 
+
+      // [핵심 수정] 관리자 컬럼 설정(currentColumns)에 비용(cost) 열이 실제로 추가된 경우에만 비용/CPC 활성화
+      const hasCostCol = currentColumns.some(c => c.key === 'cost');
+      let realHasCost = hasCostCol && (totalCostSum > 0); 
 
       let displayColumns = currentColumns.filter(c => {
         if (c.key === 'cost' && !realHasCost) return false;
@@ -1340,8 +1348,10 @@
         shareChartInstance = null;
       }
       
+      const allowedKeys = displayColumns.map(c => c.key);
       const findValidKey = (keys) => {
         for (let k of keys) {
+          if (!allowedKeys.includes(k)) continue;
           let sum = 0;
           rawDataset.forEach(d => { sum += toCleanNumber(d[k] || (k === 'conv' ? d.result : 0)); });
           if (sum > 0) return k;
@@ -1476,3 +1486,4 @@
   </script>
 </body>
 </html>
+
