@@ -11,7 +11,7 @@
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
-
+    
     /* ==========================================
        [1. 글로벌 프리미엄 디자인 시스템 변수]
        ========================================== */
@@ -23,7 +23,7 @@
       --glow-cyan-hover: rgba(6, 182, 212, 0.55);
       --glow-indigo: rgba(99, 102, 241, 0.18);
       --glow-indigo-hover: rgba(99, 102, 241, 0.6);
-      --shimmer-spec: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.09) 50%, rgba(255, 255, 255, 0) 100%);
+      --shimmer-spec: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0) 100%);
     }
 
     body {
@@ -51,11 +51,11 @@
       padding: 24px;
       overflow: hidden;
       box-shadow: 0 0 18px 0 var(--glow-cyan);
-      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                  box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                  box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
                   border-color 0.4s ease;
     }
-
+    
     .interactive-card:hover {
       transform: translateY(-6px);
       border-color: rgba(255, 255, 255, 0.2);
@@ -67,11 +67,9 @@
       background: linear-gradient(135deg, #1e1b4b 0%, #0F172A 100%);
       box-shadow: 0 0 22px 2px var(--glow-indigo);
     }
-
     .interactive-card.featured-shimmer:hover {
       box-shadow: 0 0 36px 6px var(--glow-indigo-hover);
     }
-
     .interactive-card.featured-shimmer::before {
       content: '';
       position: absolute;
@@ -84,7 +82,6 @@
       animation: premium-shimmer 4.0s infinite ease-in-out;
       pointer-events: none;
     }
-
     @keyframes premium-shimmer {
       0% { left: -150%; }
       25% { left: 150%; }
@@ -97,11 +94,9 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
     }
-
     @media (max-width: 1024px) {
       .layout-magazine-grid { grid-template-columns: repeat(2, 1fr); }
     }
-
     @media (max-width: 640px) {
       .layout-magazine-grid { grid-template-columns: 1fr; }
     }
@@ -126,12 +121,7 @@
       transition: opacity 0.35s ease;
       padding: 16px;
     }
-
-    .modal-blur-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
+    .modal-blur-overlay.active { opacity: 1; pointer-events: auto; }
     .modal-scale-content {
       background-color: #0F172A;
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -145,18 +135,11 @@
       transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
     }
-
-    .modal-blur-overlay.active .modal-scale-content {
-      transform: scale(1);
-    }
-
-    .modal-scale-content::-webkit-scrollbar {
-      width: 4px;
-    }
+    .modal-blur-overlay.active .modal-scale-content { transform: scale(1); }
+    .modal-scale-content::-webkit-scrollbar { width: 4px; }
 
     /* ==========================================
        [4. 좌우 잘림 0% 무결점 A4 PDF 출력 전용 엔진]
-       - 비표준 color-adjust 제거 및 표준 print-color-adjust 적용
        ========================================== */
     @page {
       size: A4 portrait;
@@ -261,7 +244,6 @@
           </div>
         </div>
 
-        <!-- 매체 선택형 PDF 다운로드 트리거 버튼 -->
         <button type="button" onclick="openPdfSelectModal()" class="no-print flex-grow sm:flex-grow-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-md shadow-indigo-950/60 cursor-pointer">
           <span>📄 PDF 리포트 다운로드</span>
         </button>
@@ -405,7 +387,7 @@
 
   </main>
 
-  <!-- 모달 1: 매체 선택형 PDF 리포트 다운로드 팝업 (스케일 모달 인터랙션) -->
+  <!-- 모달 1: 매체 선택형 PDF 리포트 다운로드 팝업 -->
   <div class="modal-blur-overlay no-print" id="pdfSelectModal" onclick="closePdfSelectModal()">
     <div class="modal-scale-content" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
@@ -630,7 +612,7 @@
       renderDonutChart();
     }
 
-    // 5. 코멘트 박스 렌더링
+    // 5. 코멘트 박스 렌더링 (★데이터 미존재 시 강제 공란 처리 반영)
     function renderComments() {
       let stratText = "";
       let anomText = "";
@@ -643,21 +625,29 @@
         anomText = (monthData.comments[activeTab].anomaly || "").trim();
       }
 
+      // [핵심 수정]: 실제 집행된 로우(row) 데이터가 없는 경우, DB에 잘못 기입된 텍스트가 있어도 강제로 초기화하여 노출 차단
+      const currentTabRows = getFilteredRows(activeTab);
+      const hasActualData = currentTabRows.length > 0;
+
+      if (!hasActualData) {
+        stratText = "";
+        anomText = "";
+      }
+
       if (stratText && stratText.includes('max-width: 650px')) {
         stratText = "";
       }
 
-      const currentTabRows = getFilteredRows(activeTab);
-      const hasActualData = currentTabRows.length > 0;
       const mediaLabelMap = { ALL: '통합 매체', Naver: '네이버 검색', Meta: '메타 (Meta)', Google: '구글 애즈' };
       const currentTabLabel = mediaLabelMap[activeTab] || activeTab;
 
+      // 공란일 경우 출력되는 UI 메시지
       if (!stratText) {
         if (!hasActualData) {
           stratText = `
-            <div class="py-8 text-center text-slate-400 font-sans">
-              <span class="text-base font-bold text-slate-300 block mb-1">집행 내역 없음</span>
-              해당 기간 내 집행된 <strong class="text-emerald-400">[${currentTabLabel}]</strong> 광고 데이터 및 등록된 전략 코멘트가 없습니다.
+            <div class="py-8 text-center text-slate-500 font-sans">
+              <span class="text-base font-bold text-slate-400 block mb-1">집행 내역 없음 (공란)</span>
+              해당 기간 내 집행된 <strong class="text-emerald-400">[${currentTabLabel}]</strong> 광고 데이터가 존재하지 않아 공란 처리되었습니다.
             </div>`;
         } else {
           stratText = `
@@ -670,8 +660,8 @@
       if (!anomText) {
         if (!hasActualData) {
           anomText = `
-            <div class="py-6 text-center text-slate-400 font-sans text-xs">
-              해당 기간 내 집행된 <strong class="text-amber-400">[${currentTabLabel}]</strong> 운영 이슈 내역이 없습니다.
+            <div class="py-6 text-center text-slate-500 font-sans text-xs">
+              해당 기간 내 집행된 <strong class="text-amber-400">[${currentTabLabel}]</strong> 광고가 없으므로 보고 내역이 없습니다.
             </div>`;
         } else {
           anomText = `
@@ -685,7 +675,7 @@
       document.getElementById('anomaly-comment-body').innerHTML = anomText;
     }
 
-    // 5-1. 광고 소재 성과 피드백 렌더링
+    // 5-1. 광고 소재 성과 피드백 렌더링 (★데이터 미존재 시 강제 비활성화 반영)
     function renderCreatives() {
       const section = document.getElementById('creatives-section');
       const grid = document.getElementById('creatives-grid');
@@ -696,6 +686,14 @@
       let creatives = [];
       if (monthData && monthData.creatives && monthData.creatives[activeTab]) {
         creatives = monthData.creatives[activeTab];
+      }
+
+      // [핵심 수정]: 집행 데이터가 없으면 소재 피드백 구역도 강제로 차단
+      const currentTabRows = getFilteredRows(activeTab);
+      const hasActualData = currentTabRows.length > 0;
+      
+      if (!hasActualData) {
+        creatives = [];
       }
 
       if (creatives.length === 0) {

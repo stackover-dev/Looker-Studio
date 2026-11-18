@@ -306,7 +306,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen">
 
-  <!-- 상단 고정 네비게이션 헤더 (우측 끝에 [2차 (현재)] + [PDF 리포트 다운로드] 밀착 배치) -->
+  <!-- 상단 고정 네비게이션 헤더 -->
   <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50 shadow-lg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center space-x-3">
@@ -314,7 +314,7 @@
         <h1 class="text-base font-bold tracking-tight text-white">PERFORMANCE AD REPOSITORY <span id="client-name-display" class="text-xs text-slate-400 font-normal ml-1">| 고객사: 정원용회계사님</span></h1>
       </div>
 
-      <!-- 우측 통합 액션 그룹: 회차 버튼 바로 오른쪽에 PDF 다운로드 버튼 밀착 -->
+      <!-- 우측 통합 액션 그룹 -->
       <div class="flex items-center justify-end gap-2 ml-auto">
         <nav id="dynamic-period-nav" class="flex items-center gap-1.5 overflow-x-auto py-1">
         </nav>
@@ -343,7 +343,7 @@
       </div>
     </div>
 
-    <!-- 1. 최상단 전략 코멘트 영역 (1단 100% 풀위드 구조) -->
+    <!-- 1. 최상단 전략 코멘트 영역 -->
     <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
       <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
       <div class="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-3">
@@ -357,7 +357,7 @@
       </div>
     </section>
 
-    <!-- 2. 운영 이슈 분석 및 사후 대응 내역 (대응 코멘트 박스 + 타사 랜딩페이지 벤치마크 배너 3종 탑재) -->
+    <!-- 2. 운영 이슈 분석 및 사후 대응 내역 -->
     <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden mt-6">
       <div class="absolute top-0 left-0 w-1.5 h-full bg-amber-500"></div>
       <div class="border-b border-slate-800/80 pb-3 mb-4">
@@ -385,7 +385,7 @@
         </div>
 
         <div class="layout-benchmark-grid">
-          <!-- 벤치마크 1: 세무법인 혜움 (핵심 메인 배너 - 절제된 쉬머 효과 적용) -->
+          <!-- 벤치마크 1: 세무법인 혜움 -->
           <div class="interactive-card featured-shimmer cursor-pointer flex flex-col p-0"
                data-title="1. 세무법인 혜움 - 벤치마크 랜딩페이지"
                data-badge="BENCHMARK 01 · KEY REFERENCE"
@@ -448,7 +448,7 @@
       </div>
     </section>
 
-    <!-- 3. KPI 상단 요약 카드 (비용·CPC·전환수 완전 제외) -->
+    <!-- 3. KPI 상단 요약 카드 -->
     <section class="grid grid-cols-2 md:grid-cols-4 gap-4 print-kpi-grid" id="kpi-cards-container">
     </section>
 
@@ -496,7 +496,7 @@
       </div>
     </section>
 
-    <!-- 6. 일별 성과 상세 집계 내역 (전환수·비용·CPC 열 제거 완료) -->
+    <!-- 6. 일별 성과 상세 집계 내역 -->
     <section class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
       <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 bg-slate-900/60">
         <div>
@@ -596,7 +596,7 @@
       </div>
 
       <div id="sysModalImgWrap" class="hidden my-4 bg-slate-950 rounded-xl border border-slate-800 p-3 overflow-y-auto max-h-[64vh] text-center">
-        <img id="sysModalImg" src="" alt="확대 미리보기" class="w-full max-w-2xl h-auto rounded-lg mx-auto shadow-2xl">
+        <img id="sysModalImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="확대 미리보기" class="w-full max-w-2xl h-auto rounded-lg mx-auto shadow-2xl">
       </div>
 
       <div class="pt-2 shrink-0">
@@ -983,6 +983,7 @@
       const plainText = rawStr
         .replace(/<[^>]*>/g, ' ')
         .replace(/ /gi, ' ')
+        .replace(/\u00A0/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
 
@@ -1016,7 +1017,7 @@
         if (!result) result = checkKeys(['Meta', 'meta', '메타', '메타 (DA/SA)', 'Naver', 'naver', '네이버', '네이버 검색', 'Google', 'google', '구글', '구글 애즈']);
       }
 
-      if (!result) {
+      if (!result && (mediaTab === 'ALL' || mediaTab === 'Meta')) {
         const rootKey = type === 'strategy' ? 'strategyComment' : 'anomalyComment';
         result = cleanText(periodObj[rootKey]);
       }
@@ -1034,6 +1035,10 @@
     }
 
     function getCreativesForCurrentTab() {
+      // [핵심 수정]: 실제 광고 집행 데이터(로우 데이터)가 없는 매체는 소재 피드백을 강제로 비활성화(공란) 처리
+      const hasActualData = getFilteredRows(currentMedia).length > 0;
+      if (!hasActualData) return [];
+
       if (!dbReportData || !dbReportData.months || !dbReportData.months[currentSelectedPeriod]) return [];
       const periodData = dbReportData.months[currentSelectedPeriod];
       if (!periodData.creatives) return [];
@@ -1071,11 +1076,11 @@
 
     function escapeAttr(str) {
       return String(str || '')
-        .replace(/&/g, '\u0026amp;')
-        .replace(/"/g, '\u0026quot;')
-        .replace(/'/g, '\u0026#39;')
-        .replace(/</g, '\u0026lt;')
-        .replace(/>/g, '\u0026gt;');
+        .replace(/&/g, '&')
+        .replace(/"/g, '"')
+        .replace(/'/g, ''')
+        .replace(/</g, '<')
+        .replace(/>/g, '>');
     }
 
     function loadPeriodDataAndRender() {
@@ -1134,19 +1139,41 @@
 
     function renderDashboard() {
       const periodData = (dbReportData && dbReportData.months) ? dbReportData.months[currentSelectedPeriod] : null;
+      const filtered = getFilteredRows(currentMedia);
+      const hasActualData = filtered.length > 0;
+      const currentTabLabel = MEDIA_LABEL_MAP[currentMedia] || currentMedia;
       
-      // 1. 코멘트 업데이트
+      // 1. 코멘트 업데이트 (★실제 집행 데이터가 없는 매체는 강제 공란 처리)
       const strategyBox = document.getElementById('strategy-comment-box');
       const anomalyBox = document.getElementById('anomaly-comment-box');
       
       let stratText = extractComment(periodData, currentMedia, 'strategy');
       let anomText = extractComment(periodData, currentMedia, 'anomaly');
 
-      if (strategyBox) {
-        strategyBox.innerHTML = stratText ? stratText : FALLBACK_STRATEGY_HTML;
+      if (!hasActualData) {
+        stratText = "";
+        anomText = "";
       }
+
+      if (strategyBox) {
+        if (!hasActualData) {
+          strategyBox.innerHTML = `
+            <div class="py-8 text-center text-slate-500 font-sans">
+              <span class="text-base font-bold text-slate-400 block mb-1">집행 내역 없음 (공란)</span>
+              해당 기간 내 집행된 <strong class="text-emerald-400">[${currentTabLabel}]</strong> 광고 데이터가 존재하지 않아 공란 처리되었습니다.
+            </div>`;
+        } else {
+          strategyBox.innerHTML = stratText ? stratText : FALLBACK_STRATEGY_HTML;
+        }
+      }
+
       if (anomalyBox) {
-        if (anomText) {
+        if (!hasActualData) {
+          anomalyBox.innerHTML = `
+            <div class="py-6 text-center text-slate-500 font-sans text-xs">
+              해당 기간 내 집행된 <strong class="text-amber-400">[${currentTabLabel}]</strong> 광고가 없으므로 보고 내역이 없습니다.
+            </div>`;
+        } else if (anomText) {
           if (anomText.includes('jwy-bm-grid')) {
             const tempWrap = document.createElement('div');
             tempWrap.innerHTML = anomText;
@@ -1168,7 +1195,7 @@
         }
       }
 
-      // 2. 등록 소재 업데이트
+      // 2. 등록 소재 업데이트 (★집행 데이터 없는 매체는 자동 숨김 처리)
       const creativeSec = document.getElementById('creative-feedback-section');
       const creativeCon = document.getElementById('creative-container');
       const countBadge = document.getElementById('creative-count-badge');
@@ -1211,8 +1238,7 @@
         }
       }
 
-      // 3. 매체 필터링 및 KPI 카드 렌더링 (비용·CPC·전환수 완전 제외)
-      const filtered = getFilteredRows(currentMedia);
+      // 3. 매체 필터링 및 KPI 카드 렌더링
       const kpiContainer = document.getElementById('kpi-cards-container');
       kpiContainer.innerHTML = '';
 
@@ -1253,7 +1279,7 @@
         `;
       }
 
-      // --- 테이블 헤더 생성 (전환수·비용 열 제거 완료) ---
+      // --- 테이블 헤더 생성 ---
       const theadRow = document.getElementById('table-header-row');
       let headerHTML = `
         <th class="py-3 px-4 font-semibold">집행일자</th>
