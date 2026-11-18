@@ -12,32 +12,241 @@
 
   <title>포토팟 - 퍼포먼스 마케팅 통합 보고서</title>
 
-  <!-- Tailwind CSS & Chart.js & SheetJS CDN -->
+  <!-- Tailwind CSS & Chart.js CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
+
+    /* ==========================================
+       [1. 글로벌 프리미엄 디자인 시스템 변수]
+       ========================================== */
+    :root {
+      --bg-primary: #0B1120;
+      --bg-card: #0F172A;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --glow-cyan: rgba(6, 182, 212, 0.16);
+      --glow-cyan-hover: rgba(6, 182, 212, 0.55);
+      --glow-indigo: rgba(99, 102, 241, 0.18);
+      --glow-indigo-hover: rgba(99, 102, 241, 0.6);
+      --shimmer-spec: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0) 100%);
+    }
+
     body {
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-      background-color: #0B1120;
+      background-color: var(--bg-primary);
       color: #F8FAFC;
       -webkit-font-smoothing: antialiased;
       word-break: keep-all;
       overflow-wrap: break-word;
     }
+
     ::-webkit-scrollbar { height: 6px; width: 6px; }
     ::-webkit-scrollbar-track { background: #0F172A; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    /* ==========================================
+       [2. 프리미엄 인터랙션 카드 & 절제된 쉬머 스펙]
+       ========================================== */
+    .interactive-card {
+      position: relative;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 0 18px 0 var(--glow-cyan);
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                  box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                  border-color 0.4s ease;
+    }
+
+    .interactive-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 30px 4px var(--glow-cyan-hover);
+    }
+
+    /* 대표 소재(BEST #1) 전용 절제된 쉬머 애니메이션 */
+    .interactive-card.featured-shimmer {
+      background: linear-gradient(135deg, #1e1b4b 0%, #0F172A 100%);
+      box-shadow: 0 0 22px 2px var(--glow-indigo);
+    }
+    .interactive-card.featured-shimmer:hover {
+      box-shadow: 0 0 36px 6px var(--glow-indigo-hover);
+    }
+    .interactive-card.featured-shimmer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -150%;
+      width: 150%;
+      height: 100%;
+      background: var(--shimmer-spec);
+      transform: skewX(-20deg);
+      animation: premium-shimmer 4.0s infinite ease-in-out;
+      pointer-events: none;
+    }
+    @keyframes premium-shimmer {
+      0% { left: -150%; }
+      25% { left: 150%; }
+      100% { left: 150%; }
+    }
+
+    /* 3단 매거진 그리드 레이아웃 */
+    .layout-magazine-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 1024px) {
+      .layout-magazine-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .layout-magazine-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ==========================================
+       [3. 스케일 모달(Modal) 확대 인터랙션]
+       ========================================== */
+    .modal-blur-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(11, 17, 32, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      padding: 16px;
+    }
+    .modal-blur-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal-scale-content {
+      background-color: #0F172A;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 28px;
+      border-radius: 24px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.75);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
+    }
+    .modal-blur-overlay.active .modal-scale-content { transform: scale(1); }
+    .modal-scale-content::-webkit-scrollbar { width: 4px; }
+
+    /* ==========================================
+       [4. 좌우 잘림 0% 무결점 A4 PDF 출력 전용 엔진]
+       ========================================== */
+    @page {
+      size: A4 portrait;
+      margin: 8mm;
+    }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+
+      html {
+        background-color: #0B1120 !important;
+        width: 100% !important;
+      }
+
+      body {
+        background-color: #0B1120 !important;
+        color: #F8FAFC !important;
+        width: 1120px !important;
+        max-width: 1120px !important;
+        min-width: 1120px !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        zoom: 0.67;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .print-only-badge {
+        display: inline-block !important;
+      }
+
+      header {
+        position: static !important;
+        box-shadow: none !important;
+        background-color: #0F172A !important;
+        width: 100% !important;
+      }
+
+      main {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 16px 12px !important;
+        margin: 0 !important;
+      }
+
+      section, .interactive-card {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+
+      .interactive-card.featured-shimmer::before {
+        display: none !important;
+      }
+
+      .print-kpi-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 12px !important;
+      }
+
+      .print-chart-grid {
+        display: grid !important;
+        grid-template-columns: 2fr 1fr !important;
+        gap: 16px !important;
+      }
+
+      .layout-magazine-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 16px !important;
+      }
+
+      .overflow-x-auto {
+        overflow: visible !important;
+      }
+
+      table {
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+
+      tr {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col pb-12">
 
-  <!-- 1. 상단 네비게이션 헤더 -->
+  <!-- 1. 상단 네비게이션 헤더 (우측 끝에 [회차 선택] + [PDF 버튼] 밀착 배치) -->
   <header class="bg-[#0F172A] border-b border-slate-800 sticky top-0 z-40 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center space-x-2.5">
         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
         <h1 class="text-xs sm:text-sm font-bold tracking-wider text-slate-100 uppercase">
@@ -45,12 +254,16 @@
         </h1>
       </div>
 
-      <div class="flex items-center space-x-2 w-full sm:w-auto">
-        <select id="period-selector" onchange="onPeriodChange(this.value)" class="px-3 py-1.5 bg-slate-900 border border-emerald-500/40 text-emerald-400 rounded-lg text-xs font-semibold tracking-tight shrink-0 focus:outline-none focus:ring-1 focus:ring-emerald-400 cursor-pointer">
+      <!-- 우측 통합 액션 그룹: 회차 선택 바로 오른쪽에 PDF 다운로드 버튼 밀착 -->
+      <div class="flex items-center justify-end gap-2 ml-auto">
+        <select id="period-selector" onchange="onPeriodChange(this.value)" class="no-print px-3 py-1.5 bg-slate-900 border border-emerald-500/40 text-emerald-400 rounded-lg text-xs font-semibold tracking-tight shrink-0 focus:outline-none focus:ring-1 focus:ring-emerald-400 cursor-pointer">
           <option value="">집행 기간 로드 중...</option>
         </select>
-        <button onclick="downloadExcelReport()" class="flex-grow sm:flex-grow-0 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1 shadow-sm">
-          <span>Excel 리포트 다운로드</span>
+        <div id="print-period-badge" class="hidden print-only-badge px-3 py-1.5 bg-slate-900 border border-emerald-500/40 text-emerald-400 rounded-lg text-xs font-semibold tracking-tight shrink-0">
+          신규 집행 기간 (현재)
+        </div>
+        <button type="button" onclick="openPdfSelectModal()" class="no-print px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-md shadow-indigo-950/60 cursor-pointer shrink-0">
+          <span>📄 PDF 리포트 다운로드</span>
         </button>
       </div>
     </div>
@@ -62,15 +275,15 @@
     <!-- 2. 매체 탭 네비게이션 -->
     <div class="bg-[#0F172A] p-1.5 rounded-xl border border-slate-800 shadow-md">
       <div class="grid grid-cols-2 sm:flex sm:space-x-1 gap-1" id="media-tab-container">
-        <button onclick="switchTab('ALL')" id="tab-ALL" class="tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">통합(전체)</button>
-        <button onclick="switchTab('Naver')" id="tab-Naver" class="tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">네이버 검색</button>
-        <button onclick="switchTab('Meta')" id="tab-Meta" class="tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">메타 (DA/SA)</button>
-        <button onclick="switchTab('Google')" id="tab-Google" class="tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">구글 애즈</button>
+        <button type="button" onclick="switchTab('ALL')" id="tab-ALL" class="tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white cursor-pointer">통합(전체)</button>
+        <button type="button" onclick="switchTab('Naver')" id="tab-Naver" class="tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white cursor-pointer">네이버 검색</button>
+        <button type="button" onclick="switchTab('Meta')" id="tab-Meta" class="tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white cursor-pointer">메타 (DA/SA)</button>
+        <button type="button" onclick="switchTab('Google')" id="tab-Google" class="tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white cursor-pointer">구글 애즈</button>
       </div>
     </div>
 
     <!-- 3. 최상단 전략 코멘트 영역 (1단 100% 풀위드) -->
-    <section class="bg-[#0F172A] rounded-2xl border border-slate-800 p-4 sm:p-6 shadow-xl relative overflow-hidden border-l-4 border-l-blue-500">
+    <section class="interactive-card p-4 sm:p-6 relative border-l-4 border-l-blue-500">
       <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-4">
         <h2 class="text-xs font-extrabold tracking-wider text-blue-400 uppercase flex items-center gap-1.5">
           <span>STRATEGY COMMENT</span>
@@ -82,7 +295,7 @@
     </section>
 
     <!-- 4. 운영 이슈 분석 및 사후 대응 내역 (1단 100% 풀위드) -->
-    <section class="bg-[#0F172A] rounded-2xl border border-slate-800 p-4 sm:p-6 shadow-xl border-l-4 border-l-amber-500">
+    <section class="interactive-card p-4 sm:p-6 border-l-4 border-l-amber-500">
       <div class="border-b border-slate-800/80 pb-3 mb-4">
         <h2 class="text-xs font-extrabold tracking-wider text-amber-400 uppercase">
           ANOMALIES & OPERATIONAL ACTIONS
@@ -93,12 +306,12 @@
       </div>
     </section>
 
-    <!-- 5. 핵심 지표 KPI 카드 (비용 열 삭제 시 비용 및 CPC 카드 절대 표출 안 됨) -->
-    <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" id="kpi-cards-container">
+    <!-- 5. 핵심 지표 KPI 카드 (비용·CPC·전환수 완전 제외) -->
+    <section class="grid grid-cols-2 sm:grid-cols-4 gap-3 print-kpi-grid" id="kpi-cards-container">
     </section>
 
     <!-- 6. 차트 영역 -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 print-chart-grid">
       
       <!-- 좌측: 일별 주요 지표 추이 -->
       <div class="lg:col-span-2 bg-[#0F172A] p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-xl flex flex-col">
@@ -139,7 +352,7 @@
 
     </section>
 
-    <!-- ★ 6.5. 크리에이티브 피드백 갤러리 섹션 (방탄 렌더링 적용) -->
+    <!-- 6.5. 크리에이티브 피드백 갤러리 섹션 (3단 매거진 그리드 + 쉬머 대표 소재 + 스케일 모달) -->
     <section id="creative-feedback-section" class="hidden space-y-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-800 pb-3">
         <div>
@@ -152,11 +365,11 @@
           등록 소재: <span id="creative-count-badge">0</span>건
         </span>
       </div>
-      <div id="creative-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div id="creative-container" class="layout-magazine-grid">
       </div>
     </section>
 
-    <!-- 7. 일별 성과 상세 집계 내역 -->
+    <!-- 7. 일별 성과 상세 집계 내역 (전환수·비용·CPC 열 제거 완료) -->
     <section class="bg-[#0F172A] rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
       <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 bg-slate-900/60">
         <div>
@@ -169,7 +382,7 @@
       </div>
 
       <div class="overflow-x-auto w-full">
-        <table class="w-full text-left text-xs whitespace-nowrap min-w-[560px]" id="performance-table">
+        <table class="w-full text-left text-xs whitespace-nowrap min-w-[520px]" id="performance-table">
           <thead class="bg-slate-900/90 text-slate-400 border-b border-slate-800 font-medium" id="table-header-row">
           </thead>
           <tbody id="pivot-table-body" class="divide-y divide-slate-800/60 font-mono text-slate-200">
@@ -179,6 +392,78 @@
     </section>
 
   </main>
+
+  <!-- 모달 1: 매체 선택형 PDF 리포트 다운로드 팝업 -->
+  <div class="modal-blur-overlay no-print" id="pdfSelectModal" onclick="closePdfSelectModal()">
+    <div class="modal-scale-content" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
+        <div>
+          <span class="text-[11px] font-extrabold tracking-wider text-indigo-400 uppercase block mb-1">EXPORT REPORT TO PDF</span>
+          <h2 class="text-lg sm:text-xl font-bold text-white">다운로드할 보고서 매체 선택</h2>
+        </div>
+        <button type="button" onclick="closePdfSelectModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold transition cursor-pointer">✕</button>
+      </div>
+
+      <p class="text-xs text-slate-400 mb-5 leading-relaxed">
+        선택하신 매체 탭의 전략 코멘트·운영 이슈·KPI·차트·소재 피드백·일별 데이터 전체가 A4 규격에 맞춰 좌우 잘림 없이 고해상도 PDF로 출력됩니다.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6">
+        <button type="button" onclick="startMediaPdfPrint('ALL')" class="interactive-card p-4 text-left flex flex-col justify-between group cursor-pointer border-indigo-500/30">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">ALL CHANNELS</span>
+            <span id="pdf-count-ALL" class="text-[11px] font-mono text-slate-400">0건</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-emerald-400 transition-colors">통합(전체) 보고서</h3>
+          <p class="text-[11px] text-slate-400 mt-1">전체 매체 통합 성과 및 종합 전략</p>
+        </button>
+
+        <button type="button" onclick="startMediaPdfPrint('Naver')" class="interactive-card p-4 text-left flex flex-col justify-between group cursor-pointer">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-950 text-emerald-400 border border-emerald-800">NAVER</span>
+            <span id="pdf-count-Naver" class="text-[11px] font-mono text-slate-400">0건</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-emerald-400 transition-colors">네이버 검색 보고서</h3>
+          <p class="text-[11px] text-slate-400 mt-1">네이버 검색광고 단독 지표 및 코멘트</p>
+        </button>
+
+        <button type="button" onclick="startMediaPdfPrint('Meta')" class="interactive-card p-4 text-left flex flex-col justify-between group cursor-pointer">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-blue-950 text-blue-400 border border-blue-800">META</span>
+            <span id="pdf-count-Meta" class="text-[11px] font-mono text-slate-400">0건</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-blue-400 transition-colors">메타 (DA/SA) 보고서</h3>
+          <p class="text-[11px] text-slate-400 mt-1">인스타그램·페이스북 성과 및 소재 리포트</p>
+        </button>
+
+        <button type="button" onclick="startMediaPdfPrint('Google')" class="interactive-card p-4 text-left flex flex-col justify-between group cursor-pointer">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-rose-950 text-rose-400 border border-rose-800">GOOGLE</span>
+            <span id="pdf-count-Google" class="text-[11px] font-mono text-slate-400">0건</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-rose-400 transition-colors">구글 애즈 보고서</h3>
+          <p class="text-[11px] text-slate-400 mt-1">구글 검색·디스플레이 성과 및 코멘트</p>
+        </button>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 text-[11.5px] text-slate-300 flex items-start gap-2.5">
+        <span class="text-indigo-400 font-bold shrink-0">💡 안내:</span>
+        <span>매체 선택 후 열리는 인쇄 창에서 대상을 <b>[PDF로 저장]</b>으로 선택하시고, 설정의 <b>[배경 그래픽]</b>이 체크되어 있는지 확인해 주세요.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 모달 2: 광고 소재 상세 확대 모달 -->
+  <div class="modal-blur-overlay no-print" id="creativeDetailModal" onclick="closeCreativeModal()">
+    <div class="modal-scale-content" onclick="event.stopPropagation()">
+      <div class="w-full bg-slate-950 rounded-xl mb-4 border border-slate-800 p-2 flex justify-center items-center overflow-hidden">
+        <img id="modal-creative-img" src="" class="max-w-full max-h-[60vh] object-contain rounded-lg" alt="소재 이미지">
+      </div>
+      <h2 id="modal-creative-title" class="text-lg font-bold text-white mb-2"></h2>
+      <p id="modal-creative-feedback" class="text-slate-300 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap bg-slate-900/60 p-3.5 rounded-xl border border-slate-800"></p>
+      <button type="button" onclick="closeCreativeModal()" class="mt-5 w-full py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-lg text-xs font-bold transition shadow-md cursor-pointer">닫기</button>
+    </div>
+  </div>
 
   <script>
     // 1. 도넛 차트 네온 글로우 플러그인
@@ -208,18 +493,20 @@
 
     // 2. 전역 상태 (포토팟 설정)
     const TARGET_CLIENT = "포토팟";
+    let matchedClientDisplayName = "포토팟";
     let activeTab = 'ALL';
     let currentPeriod = "";
     let clientDb = null;
     let actualRawDataset = [];
     let currentPeriodData = null;
     let dynamicColumns = [];
+    let currentCreativesList = [];
+    let disableChartAnimOnce = false;
 
     let trendChartInstance = null;
     let donutChartInstance = null;
 
     const formatNum = n => Number(n || 0).toLocaleString();
-    const formatCur = n => '₩' + Math.round(Number(n || 0)).toLocaleString();
 
     // 3. 비동기 원본 database.json 실시간 호출
     document.addEventListener('DOMContentLoaded', async () => {
@@ -243,7 +530,7 @@
       if (!clientDb) {
         const local = localStorage.getItem('MEDIA_REPORT_DB');
         if (local) {
-          try { clientDb = JSON.parse(local); } catch(e){}
+          try { clientDb = JSON.parse(local); } catch (e) {}
         }
       }
 
@@ -273,6 +560,7 @@
 
         if (!clientObj) clientObj = Object.values(clientDb)[0];
 
+        matchedClientDisplayName = matchedName;
         document.getElementById('header-client-name').innerText = matchedName;
 
         if (clientObj && clientObj.months) {
@@ -287,7 +575,6 @@
             selector.appendChild(opt);
           });
 
-          // 데이터가 들어있는 회차 우선 탐색
           let targetPeriod = periods.find(p => clientObj.months[p].rawDataset && clientObj.months[p].rawDataset.length > 0);
           if (!targetPeriod) {
             targetPeriod = periods[periods.length - 1] || "신규 집행 기간";
@@ -301,39 +588,48 @@
 
       if (!currentPeriod) currentPeriod = "신규 집행 기간";
       document.getElementById('strategy-period-label').innerText = `기준: ${currentPeriod} 결산`;
+      document.getElementById('print-period-badge').innerText = `${currentPeriod} (현재)`;
     }
 
     function setPeriodData(monthObj) {
       currentPeriodData = monthObj || null;
       actualRawDataset = (monthObj && monthObj.rawDataset) ? monthObj.rawDataset : [];
       
-      // 관리자 설정 컬럼 인식: 관리자에서 지운 비용 열은 배제
-      if (monthObj && monthObj.columns && monthObj.columns.length > 0) {
-        dynamicColumns = monthObj.columns;
-      } else {
-        dynamicColumns = [
-          { key: 'impressions', label: '노출수', isConv: false },
-          { key: 'reach', label: '도달수', isConv: false },
-          { key: 'clicks', label: '클릭수', isConv: false },
-          { key: 'conv', label: '전환수(CV)', isConv: true }
-        ];
-      }
+      // 비용(cost) 및 전환수(conv/result) 열 완전 제거
+      const baseCols = (monthObj && monthObj.columns && monthObj.columns.length > 0)
+        ? monthObj.columns
+        : [
+            { key: 'impressions', label: '노출수', isConv: false },
+            { key: 'reach', label: '도달수', isConv: false },
+            { key: 'clicks', label: '클릭수', isConv: false }
+          ];
+
+      dynamicColumns = baseCols.filter(c =>
+        c.key !== 'cost' &&
+        c.key !== 'conv' &&
+        c.key !== 'result' &&
+        !String(c.label || '').includes('비용') &&
+        !String(c.label || '').includes('전환')
+      );
     }
 
     function onPeriodChange(newPeriod) {
       currentPeriod = newPeriod;
       document.getElementById('strategy-period-label').innerText = `기준: ${currentPeriod} 결산`;
+      document.getElementById('print-period-badge').innerText = `${currentPeriod} (현재)`;
       
-      let clientObj = clientDb ? (clientDb["photopot"] || clientDb["포토팟"] || Object.values(clientDb)[0]) : null;
+      const clientObj = clientDb ? (clientDb["photopot"] || clientDb["포토팟"] || Object.values(clientDb)[0]) : null;
       if (clientObj && clientObj.months && clientObj.months[newPeriod]) {
         setPeriodData(clientObj.months[newPeriod]);
       }
       renderDashboard();
     }
 
-    function switchTab(mediaKey) {
+    function switchTab(mediaKey, instantMode = false) {
       activeTab = mediaKey;
+      disableChartAnimOnce = instantMode;
       renderDashboard();
+      disableChartAnimOnce = false;
     }
 
     function renderDashboard() {
@@ -342,9 +638,9 @@
         const btn = document.getElementById(`tab-${t}`);
         if (!btn) return;
         if (t === activeTab) {
-          btn.className = "tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all bg-emerald-500 text-slate-950 shadow-md";
+          btn.className = "tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all bg-emerald-500 text-slate-950 shadow-md cursor-pointer";
         } else {
-          btn.className = "tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800";
+          btn.className = "tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer";
         }
       });
 
@@ -352,7 +648,7 @@
       renderKPIsAndTable();
       renderTrendChart();
       renderDonutChart();
-      renderCreatives(); // 방탄 크리에이티브 갤러리 렌더링 호출
+      renderCreatives();
     }
 
     // 4. 코멘트 추출 로직
@@ -422,10 +718,9 @@
               if (!anomText) anomText = extractComment(localPeriod, activeTab, 'anomaly');
             }
           }
-        } catch(e) {}
+        } catch (e) {}
       }
 
-      // 포토팟 전용 Fallback 코멘트 (DB가 비어있을 때 기본 표출)
       if (!stratText) {
         stratText = `
           <div style="line-height: 1.7; font-size: 13.5px; color: #F8FAFC;">
@@ -435,19 +730,19 @@
             <div style="background-color: #1E293B; border-left: 4px solid #3B82F6; padding: 12px 16px; margin-bottom: 14px; border-radius: 6px;">
               <strong style="color: #38BDF8;">📊 핵심 성과 데이터 집계</strong><br>
               • <strong>총 노출수:</strong> 1,880,267회 | <strong>도달수:</strong> 336,848회<br>
-              • <strong>총 클릭수:</strong> 1,727회 | <strong>전환수(CV):</strong> 16회 | <strong>평균 클릭률(CTR):</strong> 0.09%<br>
-              • 11월 7일 모수 볼륨 확대(노출 85만 회) 이후 일 26만~40만 회 규모의 안정적인 노출 및 설치 유입 유지 중
+              • <strong>총 클릭수:</strong> 1,727회 | <strong>평균 클릭률(CTR):</strong> 0.09%<br>
+              • 11월 7일 모수 볼륨 확대(노출 85만 회) 이후 일 26만~40만 회 규모의 안정적인 노출 및 유입 유지 중
             </div>
             <p style="margin-bottom: 6px;"><strong style="color: #FDE047;">1. 앱 캠페인 전환 및 셋업 정상화 완료</strong></p>
             <ul style="margin-top: 4px; margin-bottom: 12px; padding-left: 20px;" class="list-disc list-inside space-y-1 text-slate-300">
               <li>초반 메타 비즈니스 계정의 강력한 인증 이슈 및 셋업 과정에서 발생한 복합 이슈를 집중 해결하였습니다.</li>
-              <li>일반 웹 광고와 달리 앱 등록, 개발자 인증, 이벤트 연동 등에 상당한 리소스가 소요되었으나, 현재 모든 세팅이 완료되어 안정적인 앱 설치 광고를 진행 중입니다.</li>
+              <li>일반 웹 광고와 달리 앱 등록, 개발자 인증, 이벤트 연동 등에 상당한 리소스가 소요되었으나, 현재 모든 세팅이 완료되어 안정적인 앱 광고를 진행 중입니다.</li>
               <li>광고 소재의 <strong style="color: #38BDF8;">CTA 링크 클릭 시 즉시 '포토팟 앱 설치 페이지'로 랜딩</strong>되도록 세팅을 완료하였습니다.</li>
             </ul>
             <p style="margin-bottom: 6px;"><strong style="color: #FDE047;">2. 향후 소재 운영 및 예산 최적화 방향</strong></p>
             <ul style="margin-top: 4px; margin-bottom: 6px; padding-left: 20px;" class="list-disc list-inside space-y-1 text-slate-300">
               <li>현재 예산이 타이트한 점을 감안하여 머신러닝 학습 분산 방지를 위해 <strong style="color: #FDE047;">한 광고 세트 내 운영 소재 수는 제한적으로 유지</strong>합니다.</li>
-              <li>앞으로는 여러 소재 중 유저들의 클릭 및 전환 반응을 가장 높게 이끌어내는 <strong style="color: #34D399;">고효율 위너 소재 위주로 선별 및 추가 교체</strong>하여 성과를 극대화할 계획입니다.</li>
+              <li>앞으로는 여러 소재 중 유저들의 클릭 반응을 가장 높게 이끌어내는 <strong style="color: #34D399;">고효율 위너 소재 위주로 선별 및 추가 교체</strong>하여 성과를 극대화할 계획입니다.</li>
             </ul>
           </div>`;
       }
@@ -473,12 +768,12 @@
     }
 
     // 5. 필터링 함수
-    function getFilteredRows() {
+    function getFilteredRows(targetTab = activeTab) {
       if (!actualRawDataset || actualRawDataset.length === 0) return [];
-      if (activeTab === 'ALL') return actualRawDataset;
+      if (targetTab === 'ALL') return actualRawDataset;
       return actualRawDataset.filter(r => {
         const m = String(r.media || '').trim().toLowerCase();
-        const t = activeTab.toLowerCase();
+        const t = targetTab.toLowerCase();
         if (t === 'naver') return m.includes('naver') || m.includes('네이버');
         if (t === 'meta') return m.includes('meta') || m.includes('메타');
         if (t === 'google') return m.includes('google') || m.includes('구글');
@@ -486,13 +781,12 @@
       });
     }
 
-    // 6. 핵심 지표 카드 및 테이블 동적 렌더링
+    // 6. 핵심 지표 카드 및 테이블 동적 렌더링 (비용·CPC·전환수 완전 제외)
     function renderKPIsAndTable() {
-      const filtered = getFilteredRows();
+      const filtered = getFilteredRows(activeTab);
       const kpiContainer = document.getElementById('kpi-cards-container');
       kpiContainer.innerHTML = '';
 
-      const hasCost = dynamicColumns.some(c => c.key === 'cost' || c.label.includes('비용'));
       const hasClicks = dynamicColumns.some(c => c.key === 'clicks');
       const hasImp = dynamicColumns.some(c => c.key === 'impressions');
 
@@ -501,27 +795,22 @@
 
       filtered.forEach(r => {
         dynamicColumns.forEach(c => {
-          colTotals[c.key] += Number(r[c.key]) || (c.key === 'conv' ? Number(r.result || 0) : 0);
+          colTotals[c.key] += Number(r[c.key]) || 0;
         });
       });
 
-      // 데이터가 없을 때 포토팟 기본 성과 수치 보정
       if (filtered.length === 0 && (activeTab === 'Meta' || activeTab === 'ALL')) {
         colTotals['impressions'] = 1880267;
         colTotals['reach'] = 336848;
         colTotals['clicks'] = 1727;
-        colTotals['conv'] = 16;
       }
 
       dynamicColumns.forEach(c => {
-        let valStr = formatNum(colTotals[c.key]);
-        let valColor = "text-white";
-        if (c.key === 'clicks') valColor = "text-emerald-400";
-        if (c.key === 'cost' || c.label.includes('비용')) valStr = formatCur(colTotals[c.key]);
-        if (c.isConv) valColor = "text-blue-400";
+        const valStr = formatNum(colTotals[c.key]);
+        const valColor = c.key === 'clicks' ? "text-emerald-400" : "text-white";
 
         kpiContainer.innerHTML += `
-          <div class="bg-[#0F172A] p-4 rounded-xl border border-slate-800 shadow-sm">
+          <div class="interactive-card p-4 !rounded-xl">
             <p class="text-[11px] font-semibold text-slate-400 mb-1">총 ${c.label}</p>
             <p class="text-base sm:text-xl font-bold font-mono ${valColor}">${valStr}</p>
           </div>
@@ -531,19 +820,9 @@
       if (hasClicks && hasImp) {
         const ctr = colTotals['impressions'] > 0 ? ((colTotals['clicks'] / colTotals['impressions']) * 100).toFixed(2) + "%" : "0.09%";
         kpiContainer.innerHTML += `
-          <div class="bg-[#0F172A] p-4 rounded-xl border border-slate-800 shadow-sm">
+          <div class="interactive-card p-4 !rounded-xl">
             <p class="text-[11px] font-semibold text-slate-400 mb-1">평균 클릭률 (CTR)</p>
             <p class="text-base sm:text-xl font-bold font-mono text-cyan-400">${ctr}</p>
-          </div>
-        `;
-      }
-
-      if (hasCost && hasClicks) {
-        const cpc = colTotals['clicks'] > 0 ? formatCur(colTotals['cost'] / colTotals['clicks']) : "₩0";
-        kpiContainer.innerHTML += `
-          <div class="bg-[#0F172A] p-4 rounded-xl border border-slate-800 shadow-sm">
-            <p class="text-[11px] font-semibold text-slate-400 mb-1">평균 클릭비용 (CPC)</p>
-            <p class="text-base sm:text-xl font-bold font-mono text-emerald-400">${cpc}</p>
           </div>
         `;
       }
@@ -556,11 +835,10 @@
       `;
       dynamicColumns.forEach(c => {
         const align = (c.key === 'media' || c.key === 'date') ? 'text-left' : 'text-right';
-        const color = c.key === 'clicks' ? 'text-emerald-400' : (c.isConv ? 'text-blue-400' : '');
+        const color = c.key === 'clicks' ? 'text-emerald-400' : '';
         theadHTML += `<th class="py-3 px-4 ${align} ${color}">${c.label}</th>`;
       });
       if (hasClicks && hasImp) theadHTML += `<th class="py-3 px-4 text-right text-cyan-400">클릭률 (CTR)</th>`;
-      if (hasCost && hasClicks) theadHTML += `<th class="py-3 px-4 text-right">클릭비용 (CPC)</th>`;
       theadHTML += `</tr>`;
       theadRow.innerHTML = theadHTML;
 
@@ -571,7 +849,7 @@
       tbody.innerHTML = '';
 
       if (filtered.length === 0) {
-        const colSpan = dynamicColumns.length + (hasClicks && hasImp ? 1 : 0) + (hasCost && hasClicks ? 1 : 0) + 2;
+        const colSpan = dynamicColumns.length + (hasClicks && hasImp ? 1 : 0) + 2;
         tbody.innerHTML = `<tr><td colspan="${colSpan}" class="py-8 text-center text-slate-500 font-sans">조건에 맞는 집행 데이터가 존재하지 않습니다.</td></tr>`;
         return;
       }
@@ -581,12 +859,12 @@
       sorted.forEach(row => {
         const rowImp = Number(row.impressions || 0);
         const rowClicks = Number(row.clicks || 0);
-        const rowCost = Number(row.cost || 0);
         const rowCtr = rowImp > 0 ? ((rowClicks / rowImp) * 100).toFixed(2) + "%" : "0.00%";
-        const rowCpc = rowClicks > 0 ? formatCur(rowCost / rowClicks) : "₩0";
 
-        const isNaver = String(row.media).toLowerCase().includes('naver');
-        const isMeta = String(row.media).toLowerCase().includes('meta');
+        const mediaLower = String(row.media || '').toLowerCase();
+        const isNaver = mediaLower.includes('naver') || mediaLower.includes('네이버');
+        const isMeta = mediaLower.includes('meta') || mediaLower.includes('메타');
+        const isGoogle = mediaLower.includes('google') || mediaLower.includes('구글');
 
         let badgeClass = 'bg-slate-800 text-slate-300 border border-slate-700';
         let mediaDisplayName = row.media || '기타';
@@ -596,6 +874,9 @@
         } else if (isMeta) {
           badgeClass = 'bg-blue-950 text-blue-400 border border-blue-800';
           mediaDisplayName = '메타';
+        } else if (isGoogle) {
+          badgeClass = 'bg-rose-950 text-rose-400 border border-rose-800';
+          mediaDisplayName = '구글';
         }
 
         let trHTML = `
@@ -608,16 +889,13 @@
         `;
 
         dynamicColumns.forEach(c => {
-          let val = row[c.key] !== undefined ? row[c.key] : (c.key === 'conv' ? row.result || 0 : 0);
-          let displayVal = formatNum(val);
-          if (c.key === 'cost' || c.label.includes('비용')) displayVal = formatCur(val);
-
-          const fontColor = c.key === 'clicks' ? 'text-emerald-400 font-bold' : (c.isConv ? 'text-blue-400 font-medium' : 'text-slate-300');
+          const val = row[c.key] !== undefined ? row[c.key] : 0;
+          const displayVal = formatNum(val);
+          const fontColor = c.key === 'clicks' ? 'text-emerald-400 font-bold' : 'text-slate-300';
           trHTML += `<td class="py-3 px-4 text-right ${fontColor}">${displayVal}</td>`;
         });
 
         if (hasClicks && hasImp) trHTML += `<td class="py-3 px-4 text-right text-cyan-400 font-semibold">${rowCtr}</td>`;
-        if (hasCost && hasClicks) trHTML += `<td class="py-3 px-4 text-right text-slate-300">${rowCpc}</td>`;
 
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-800/40 transition-colors";
@@ -626,17 +904,15 @@
       });
     }
 
-    // 7. 일별 추이 차트
+    // 7. 일별 추이 차트 (노출수 막대 + 클릭수 선)
     function renderTrendChart() {
-      const filtered = getFilteredRows();
-      const hasCost = dynamicColumns.some(c => c.key === 'cost' || c.label.includes('비용'));
+      const filtered = getFilteredRows(activeTab);
 
       const dateMap = {};
       filtered.forEach(r => {
         const d = r.date;
         if (!dateMap[d]) dateMap[d] = { leftVal: 0, clicks: 0 };
-        const leftSource = hasCost ? Number(r.cost || 0) : Number(r.impressions || 0);
-        dateMap[d].leftVal += leftSource;
+        dateMap[d].leftVal += Number(r.impressions || 0);
         dateMap[d].clicks += Number(r.clicks || 0);
       });
 
@@ -644,8 +920,7 @@
       const leftArr = dates.map(d => dateMap[d].leftVal);
       const clickArr = dates.map(d => dateMap[d].clicks);
 
-      const leftLabel = hasCost ? '총비용 (원)' : '노출수 (회)';
-      document.getElementById('trend-chart-legend').innerText = `좌측: ${leftLabel} / 우측: 클릭수(건)`;
+      document.getElementById('trend-chart-legend').innerText = "좌축: 노출수(회) / 우축: 클릭수(건)";
 
       if (trendChartInstance) trendChartInstance.destroy();
       const ctx = document.getElementById('trendChart').getContext('2d');
@@ -669,7 +944,7 @@
             },
             {
               type: 'bar',
-              label: leftLabel,
+              label: '노출수 (회)',
               data: leftArr,
               backgroundColor: activeTab === 'Naver' ? 'rgba(3, 199, 90, 0.45)' : 'rgba(30, 58, 138, 0.65)',
               hoverBackgroundColor: activeTab === 'Naver' ? 'rgba(3, 199, 90, 0.85)' : 'rgba(59, 130, 246, 0.85)',
@@ -682,6 +957,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: disableChartAnimOnce ? false : { duration: 400 },
           interaction: { mode: 'index', intersect: false },
           plugins: {
             legend: { display: false },
@@ -693,11 +969,7 @@
               type: 'linear',
               position: 'left',
               grid: { color: 'rgba(51, 65, 85, 0.3)' },
-              ticks: {
-                color: '#94A3B8',
-                font: { size: 10 },
-                callback: v => hasCost ? '₩' + (v >= 10000 ? (v / 10000) + '만' : v) : v
-              }
+              ticks: { color: '#94A3B8', font: { size: 10 } }
             },
             yClicks: { type: 'linear', position: 'right', grid: { display: false }, ticks: { color: '#10B981', font: { size: 10 } } }
           }
@@ -768,6 +1040,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: disableChartAnimOnce ? false : { duration: 400 },
           cutout: '72%',
           plugins: {
             legend: { display: false },
@@ -810,15 +1083,13 @@
       `;
     }
 
-    // ★ 9. 크리에이티브(소재) 추출 및 방탄 렌더링 로직 (어떤 데이터 구조도 완벽 매칭)
+    // 9. 크리에이티브(소재) 추출 및 렌더링 (쉬머 대표 소재 + 스케일 모달 적용)
     function getCreativesForCurrentTab() {
       if (!currentPeriodData || !currentPeriodData.creatives) return [];
       const raw = currentPeriodData.creatives;
 
-      // 1. 단순 배열인 경우
       if (Array.isArray(raw)) return raw;
 
-      // 2. 객체인 경우: { ALL: [], Meta: [...], Naver: [] }
       if (typeof raw === 'object') {
         const tabKey = activeTab;
 
@@ -830,7 +1101,6 @@
         };
 
         if (tabKey === 'ALL') {
-          // 통합 탭: ALL 리스트 + Meta 등 특정 매체에 등록된 모든 소재를 병합
           const allList = raw.ALL || raw.all || [];
           const otherLists = Object.entries(raw)
             .filter(([k]) => k.toUpperCase() !== 'ALL')
@@ -839,7 +1109,6 @@
           if (allList.length > 0) return allList;
           return otherLists;
         } else {
-          // 특정 매체 탭 (예: Meta)
           let list = findByKey(tabKey) || [];
           if (list.length === 0 && (raw.ALL || raw.all)) {
             list = raw.ALL || raw.all || [];
@@ -858,25 +1127,33 @@
       if (!creativeSec || !creativeCon) return;
 
       const creatives = getCreativesForCurrentTab();
+      currentCreativesList = creatives;
 
       if (creatives && creatives.length > 0) {
         creativeSec.classList.remove('hidden');
         if (countBadge) countBadge.innerText = creatives.length;
 
-        creativeCon.innerHTML = creatives.map((c, idx) => `
-          <div class="bg-[#0F172A] border border-slate-800 rounded-2xl overflow-hidden shadow-xl flex flex-col transition hover:border-slate-700">
-            <div class="h-60 sm:h-64 bg-slate-950 flex items-center justify-center border-b border-slate-800 p-3 relative">
-              <img src="${c.image}" class="max-w-full max-h-full object-contain rounded-lg shadow-sm" alt="${c.title || '광고 소재'}" loading="lazy">
-              <span class="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-950/80 text-blue-400 border border-blue-800/80 backdrop-blur-sm">소재 #${idx + 1}</span>
-            </div>
-            <div class="p-4 sm:p-5 flex-grow flex flex-col justify-between bg-[#0F172A]">
-              <div>
-                <h4 class="text-xs sm:text-sm font-bold text-white mb-2 leading-snug">${c.title || '등록된 소재명 없음'}</h4>
-                <p class="text-xs text-slate-300 whitespace-pre-line leading-relaxed font-sans">${c.feedback || '소재에 대한 피드백이 등록되지 않았습니다.'}</p>
+        creativeCon.innerHTML = creatives.map((c, idx) => {
+          const isFeatured = idx === 0 ? 'featured-shimmer' : '';
+          const badgeHtml = idx === 0
+            ? `<span class="absolute top-3 left-3 px-2.5 py-0.5 rounded text-[10px] font-bold bg-indigo-950/90 text-indigo-300 border border-indigo-700/80 backdrop-blur-sm">🏆 BEST #1</span>`
+            : `<span class="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-950/80 text-blue-400 border border-blue-800/80 backdrop-blur-sm">소재 #${idx + 1}</span>`;
+
+          return `
+            <div class="interactive-card ${isFeatured} flex flex-col cursor-pointer group" onclick="openCreativeModal(${idx})">
+              <div class="h-60 sm:h-64 bg-slate-950 flex items-center justify-center border-b border-slate-800 p-3 relative">
+                <img src="${c.image}" class="max-w-full max-h-full object-contain rounded-lg shadow-sm transition-transform duration-500 group-hover:scale-105" alt="${c.title || '광고 소재'}" loading="lazy">
+                ${badgeHtml}
+              </div>
+              <div class="p-4 sm:p-5 flex-grow flex flex-col justify-between bg-transparent">
+                <div>
+                  <h4 class="text-xs sm:text-sm font-bold text-white mb-2 leading-snug group-hover:text-emerald-400 transition-colors">${c.title || '등록된 소재명 없음'}</h4>
+                  <p class="text-xs text-slate-300 whitespace-pre-line leading-relaxed font-sans line-clamp-3">${c.feedback || '소재에 대한 피드백이 등록되지 않았습니다.'}</p>
+                </div>
               </div>
             </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       } else {
         creativeSec.classList.add('hidden');
         creativeCon.innerHTML = '';
@@ -884,39 +1161,54 @@
       }
     }
 
-    // 10. Excel(.xlsx) 리포트 다운로드
-    function downloadExcelReport() {
-      const filtered = getFilteredRows();
-      if (filtered.length === 0) {
-        alert("다운로드할 데이터가 없습니다.");
-        return;
-      }
+    function openCreativeModal(idx) {
+      const item = currentCreativesList[idx];
+      if (!item) return;
+      document.getElementById('modal-creative-img').src = item.image;
+      document.getElementById('modal-creative-title').innerText = item.title || '광고 소재 상세';
+      document.getElementById('modal-creative-feedback').innerText = item.feedback || '소재에 대한 피드백이 등록되지 않았습니다.';
+      document.getElementById('creativeDetailModal').classList.add('active');
+    }
 
-      const headers = ["집행일자", "매체"];
-      dynamicColumns.forEach(c => headers.push(c.label));
-      headers.push("클릭률(CTR)");
+    function closeCreativeModal() {
+      document.getElementById('creativeDetailModal').classList.remove('active');
+    }
 
-      const rows = [headers];
+    // 10. 매체 선택형 무결점 A4 PDF 출력 엔진
+    function openPdfSelectModal() {
+      document.getElementById('pdf-count-ALL').innerText = `데이터 ${getFilteredRows('ALL').length}건`;
+      document.getElementById('pdf-count-Naver').innerText = `데이터 ${getFilteredRows('Naver').length}건`;
+      document.getElementById('pdf-count-Meta').innerText = `데이터 ${getFilteredRows('Meta').length}건`;
+      document.getElementById('pdf-count-Google').innerText = `데이터 ${getFilteredRows('Google').length}건`;
+      document.getElementById('pdfSelectModal').classList.add('active');
+    }
 
-      filtered.forEach(r => {
-        const rowImp = Number(r.impressions || 0);
-        const rowClicks = Number(r.clicks || 0);
-        const ctr = rowImp > 0 ? ((rowClicks / rowImp) * 100).toFixed(2) + "%" : "0.00%";
+    function closePdfSelectModal() {
+      document.getElementById('pdfSelectModal').classList.remove('active');
+    }
 
-        const rowData = [r.date, r.media];
-        dynamicColumns.forEach(c => {
-          rowData.push(r[c.key] !== undefined ? r[c.key] : (c.key === 'conv' ? r.result || 0 : 0));
-        });
-        rowData.push(ctr);
-        rows.push(rowData);
-      });
+    function startMediaPdfPrint(selectedMedia) {
+      closePdfSelectModal();
+      switchTab(selectedMedia, true);
 
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.aoa_to_sheet(rows);
-      XLSX.utils.book_append_sheet(wb, ws, "성과보고서");
+      const mediaFileLabel = {
+        ALL: '통합전체',
+        Naver: '네이버검색',
+        Meta: '메타',
+        Google: '구글애즈'
+      }[selectedMedia] || selectedMedia;
 
-      const cleanPeriod = (currentPeriod || '결산').replace(/[^0-9a-zA-Z가-힣.-]/g, '_');
-      XLSX.writeFile(wb, `포토팟_${activeTab}_성과보고서_${cleanPeriod}.xlsx`);
+      const originalTitle = document.title;
+      const safeClient = String(matchedClientDisplayName || '포토팟').replace(/[\\/:*?"<>|]/g, '_');
+      const safePeriod = String(currentPeriod || '결산').replace(/[\\/:*?"<>|]/g, '_');
+      document.title = `${safeClient}_${mediaFileLabel}_성과보고서_${safePeriod}`;
+
+      setTimeout(() => {
+        if (trendChartInstance) trendChartInstance.resize();
+        if (donutChartInstance) donutChartInstance.resize();
+        window.print();
+        document.title = originalTitle;
+      }, 220);
     }
   </script>
 </body>
