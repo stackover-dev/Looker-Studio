@@ -316,8 +316,7 @@
 
       <!-- 우측 통합 액션 그룹 -->
       <div class="flex items-center justify-end gap-2 ml-auto">
-        <nav id="dynamic-period-nav" class="flex items-center gap-1.5 overflow-x-auto py-1">
-        </nav>
+        <nav id="dynamic-period-nav" class="flex items-center gap-1.5 overflow-x-auto py-1"></nav>
 
         <button type="button" onclick="openPdfSelectModal()" class="no-print flex items-center space-x-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-1.5 rounded-lg transition shadow-md shadow-indigo-950/60 cursor-pointer shrink-0">
           <span>📄 PDF 리포트 다운로드</span>
@@ -353,8 +352,7 @@
         </h2>
         <span id="strategy-date-display" class="text-[11px] text-slate-400 font-mono">기준: 2차 결산</span>
       </div>
-      <div id="strategy-comment-box" class="text-sm leading-relaxed text-slate-300 w-full overflow-x-auto">
-      </div>
+      <div id="strategy-comment-box" class="text-sm leading-relaxed text-slate-300 w-full overflow-x-auto"></div>
     </section>
 
     <!-- 2. 운영 이슈 분석 및 사후 대응 내역 -->
@@ -367,8 +365,7 @@
         <h3 class="text-base font-bold text-white mt-1">운영 이슈 분석 및 사후 대응 내역</h3>
       </div>
 
-      <div id="anomaly-comment-box" class="w-full overflow-x-auto">
-      </div>
+      <div id="anomaly-comment-box" class="w-full overflow-x-auto"></div>
 
       <!-- 타사 랜딩페이지 벤치마크 배너 3단 그리드 -->
       <div class="mt-6 pt-6 border-t border-slate-800/80">
@@ -449,8 +446,7 @@
     </section>
 
     <!-- 3. KPI 상단 요약 카드 -->
-    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 print-kpi-grid" id="kpi-cards-container">
-    </section>
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 print-kpi-grid" id="kpi-cards-container"></section>
 
     <!-- 4. 차트 영역 -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 print-chart-grid">
@@ -492,8 +488,7 @@
           등록 소재: <span id="creative-count-badge">0</span>건
         </span>
       </div>
-      <div id="creative-container" class="layout-magazine-grid">
-      </div>
+      <div id="creative-container" class="layout-magazine-grid"></div>
     </section>
 
     <!-- 6. 일별 성과 상세 집계 내역 -->
@@ -511,11 +506,9 @@
       <div class="overflow-x-auto w-full">
         <table class="w-full text-left text-xs whitespace-nowrap min-w-[520px]" id="performance-table">
           <thead class="bg-slate-900/90 text-slate-400 border-b border-slate-800 font-medium tracking-wider">
-            <tr id="table-header-row">
-            </tr>
+            <tr id="table-header-row"></tr>
           </thead>
-          <tbody class="divide-y divide-slate-800/60 font-mono text-slate-300" id="table-body">
-          </tbody>
+          <tbody class="divide-y divide-slate-800/60 font-mono text-slate-300" id="table-body"></tbody>
         </table>
       </div>
     </section>
@@ -610,12 +603,12 @@
        [1. 모달 확대 인터랙션 함수]
        ========================================== */
     function openSystemModal(t, d, imgSrc, badgeText) {
-      const modal = document.getElementById('sysModal');
-      const modalBadge = document.getElementById('sysModalBadge');
-      const title = document.getElementById('sysModalTitle');
-      const desc = document.getElementById('sysModalDesc');
-      const imgWrap = document.getElementById('sysModalImgWrap');
-      const imgEl = document.getElementById('sysModalImg');
+      var modal = document.getElementById('sysModal');
+      var modalBadge = document.getElementById('sysModalBadge');
+      var title = document.getElementById('sysModalTitle');
+      var desc = document.getElementById('sysModalDesc');
+      var imgWrap = document.getElementById('sysModalImgWrap');
+      var imgEl = document.getElementById('sysModalImg');
 
       if (!modal) return;
       if (title) title.innerText = t || '';
@@ -637,15 +630,15 @@
 
     function openCreativeCardModal(cardEl) {
       if (!cardEl) return;
-      const t = cardEl.getAttribute('data-title') || '';
-      const d = cardEl.getAttribute('data-feedback') || '';
-      const imgSrc = cardEl.getAttribute('data-image') || '';
-      const badgeText = cardEl.getAttribute('data-badge') || 'BENCHMARK REFERENCE';
+      var t = cardEl.getAttribute('data-title') || '';
+      var d = cardEl.getAttribute('data-feedback') || '';
+      var imgSrc = cardEl.getAttribute('data-image') || '';
+      var badgeText = cardEl.getAttribute('data-badge') || 'BENCHMARK REFERENCE';
       openSystemModal(t, d, imgSrc, badgeText);
     }
 
     function closeSystemModal() {
-      const modal = document.getElementById('sysModal');
+      var modal = document.getElementById('sysModal');
       if (modal) modal.classList.remove('active');
       document.body.style.overflow = '';
     }
@@ -664,16 +657,16 @@
     /* ==========================================
        [2. 대시보드 데이터 정규화 및 로드/차트 로직]
        ========================================== */
-    const neonGlowPlugin = {
+    var neonGlowPlugin = {
       id: 'neonGlowPlugin',
-      beforeDraw: (chart) => {
+      beforeDraw: function(chart) {
         if (chart.config.type !== 'doughnut') return;
-        const ctx = chart.ctx;
-        const glowIdx = chart.config.data.activeGlowIndex;
+        var ctx = chart.ctx;
+        var glowIdx = chart.config.data.activeGlowIndex;
 
         if (glowIdx !== undefined && glowIdx !== null && glowIdx !== -1) {
-          const meta = chart.getDatasetMeta(0);
-          const arc = meta.data[glowIdx];
+          var meta = chart.getDatasetMeta(0);
+          var arc = meta.data[glowIdx];
           if (arc) {
             ctx.save();
             ctx.shadowColor = chart.config.data.datasets[0].backgroundColor[glowIdx];
@@ -690,36 +683,38 @@
       try { Chart.register(neonGlowPlugin); } catch (e) {}
     }
 
-    let dbReportData = null;
-    let matchedClientDisplayName = "정원용회계사님";
-    let currentSelectedPeriod = "2차";
-    let rawDataset = [];
-    let currentMedia = 'ALL';
-    let trendChartInstance = null;
-    let shareChartInstance = null;
-    let currentColumns = [];
-    let disableChartAnimOnce = false;
+    var dbReportData = null;
+    var matchedClientDisplayName = "정원용회계사님";
+    var currentSelectedPeriod = "2차";
+    var rawDataset = [];
+    var currentMedia = 'ALL';
+    var trendChartInstance = null;
+    var shareChartInstance = null;
+    var currentColumns = [];
+    var disableChartAnimOnce = false;
 
-    const MEDIA_LABEL_MAP = {
+    var MEDIA_LABEL_MAP = {
       ALL: '통합(전체)',
       Naver: '네이버 검색',
       Meta: '메타 (DA/SA)',
       Google: '구글 애즈'
     };
 
-    const formatNumber = num => new Intl.NumberFormat('ko-KR').format(Math.round(num || 0));
+    function formatNumber(num) {
+      return new Intl.NumberFormat('ko-KR').format(Math.round(num || 0));
+    }
 
     function toCleanNumber(val) {
       if (typeof val === 'number') return Number.isFinite(val) ? val : 0;
       if (val === null || val === undefined) return 0;
-      const cleaned = String(val).replace(/[^0-9.-]/g, '');
-      const parsed = parseFloat(cleaned);
+      var cleaned = String(val).replace(/[^0-9.-]/g, '');
+      var parsed = parseFloat(cleaned);
       return Number.isFinite(parsed) ? parsed : 0;
     }
 
     function normalizeMediaName(rawMedia) {
-      const m = String(rawMedia || '').trim();
-      const lower = m.toLowerCase();
+      var m = String(rawMedia || '').trim();
+      var lower = m.toLowerCase();
       if (!m) return 'Meta';
       if (lower.includes('naver') || lower.includes('네이버')) return 'Naver';
       if (lower.includes('meta') || lower.includes('메타') || lower.includes('facebook') || lower.includes('instagram')) return 'Meta';
@@ -729,20 +724,20 @@
 
     function normalizeDataset(rows) {
       if (!Array.isArray(rows)) return [];
-      return rows.map(row => {
+      return rows.map(function(row) {
         if (!row || typeof row !== 'object') return null;
-        const normalized = { ...row };
+        var normalized = Object.assign({}, row);
         normalized.date = String(row.date || row.Date || row['집행일자'] || row['일자'] || row['날짜'] || '').trim() || '일자미상';
         normalized.media = normalizeMediaName(row.media || row.Media || row.platform || row.channel || row['매체'] || row['플랫폼']);
-        normalized.impressions = toCleanNumber(row.impressions ?? row.Impressions ?? row['노출수'] ?? row['노출']);
-        normalized.reach = toCleanNumber(row.reach ?? row.Reach ?? row['도달수'] ?? row['도달']);
-        normalized.clicks = toCleanNumber(row.clicks ?? row.Clicks ?? row['클릭수'] ?? row['클릭']);
+        normalized.impressions = toCleanNumber(row.impressions !== undefined ? row.impressions : (row.Impressions !== undefined ? row.Impressions : (row['노출수'] !== undefined ? row['노출수'] : row['노출'])));
+        normalized.reach = toCleanNumber(row.reach !== undefined ? row.reach : (row.Reach !== undefined ? row.Reach : (row['도달수'] !== undefined ? row['도달수'] : row['도달'])));
+        normalized.clicks = toCleanNumber(row.clicks !== undefined ? row.clicks : (row.Clicks !== undefined ? row.Clicks : (row['클릭수'] !== undefined ? row['클릭수'] : row['클릭'])));
         return normalized;
       }).filter(Boolean);
     }
 
     function normalizeColumns(cols) {
-      const defaultCols = [
+      var defaultCols = [
         { key: 'impressions', label: '노출수', isConv: false },
         { key: 'reach', label: '도달수', isConv: false },
         { key: 'clicks', label: '클릭수', isConv: false }
@@ -750,25 +745,25 @@
 
       if (!Array.isArray(cols) || cols.length === 0) return defaultCols;
 
-      const labelFallbackMap = {
+      var labelFallbackMap = {
         impressions: '노출수',
         reach: '도달수',
         clicks: '클릭수'
       };
 
-      const mapped = cols.map(c => {
+      var mapped = cols.map(function(c) {
         if (!c) return null;
-        const key = typeof c === 'string' ? c : String(c.key || c.field || c.id || '').trim();
+        var key = typeof c === 'string' ? c : String(c.key || c.field || c.id || '').trim();
         if (!key || key === 'cost' || key === 'conv' || key === 'result') return null;
-        const label = typeof c === 'string' ? (labelFallbackMap[key] || key) : String(c.label || c.name || c.title || labelFallbackMap[key] || key).trim();
+        var label = typeof c === 'string' ? (labelFallbackMap[key] || key) : String(c.label || c.name || c.title || labelFallbackMap[key] || key).trim();
         if (label.includes('비용') || label.includes('전환')) return null;
-        return { key, label, isConv: false };
+        return { key: key, label: label, isConv: false };
       }).filter(Boolean);
 
       return mapped.length > 0 ? mapped : defaultCols;
     }
 
-    const FALLBACK_RAW_DATASET = [
+    var FALLBACK_RAW_DATASET = [
       { date: "2026-10-15", media: "Meta", impressions: 2018, reach: 1797, clicks: 55 },
       { date: "2026-10-16", media: "Meta", impressions: 2307, reach: 2106, clicks: 58 },
       { date: "2026-10-17", media: "Meta", impressions: 2195, reach: 1984, clicks: 57 },
@@ -801,35 +796,35 @@
       { date: "2026-11-13", media: "Meta", impressions: 2, reach: 2, clicks: 0 }
     ];
 
-    const FALLBACK_STRATEGY_HTML = `
-      <div style="line-height: 1.8; color: #F8FAFC;">
-        <p style="font-weight: bold; color: #60A5FA !important; margin-bottom: 10px;">
-          📌 [정원용회계사님] 2차 퍼포먼스 광고 캠페인 성과 요약 및 전략 총평
-        </p>
-        <div style="background-color: #1E293B; border-left: 4px solid #3B82F6; padding: 12px 16px; margin-bottom: 14px; border-radius: 8px;">
-          <strong style="color: #38BDF8 !important;">📊 2차 집행 핵심 종합 데이터 집계</strong><br>
-          • <strong>총 노출수:</strong> 28,927회  |  <strong>총 도달수:</strong> 26,537명<br>
-          • <strong>총 클릭수:</strong> 682건  |  <strong>평균 클릭률(CTR):</strong> 2.36%
-        </div>
-        <ul style="margin: 0; padding-left: 20px; list-style-type: disc;">
-          <li style="margin-bottom: 6px;">
-            광고 데이터 기준 노출수 약 28,927회, 클릭수 682건, <strong>평균 클릭률 2.36%</strong>로 초기 유입 반응은 양호하게 형성되었으나, <strong>예정보다 광고 예산이 빠르게 소진</strong>되었습니다.
-          </li>
-          <li style="margin-bottom: 6px;">
-            실제 DB는 <strong>총 5건이 수집되었으나 단순 호기심·저관여 성향의 '막DB'들이 포함되어 있어 유효 DB 수집률이 매우 저조한 상황</strong>입니다.
-          </li>
-          <li>
-            이럴 때는 잠재고객에게 혜택을 빠르게 각인시키는 <strong>광고 소재 메시지 변경</strong>과 함께, <mark>타사 세무·회계사 사례처럼 전용 랜딩페이지를 통해 잠재고객 DB를 수집하는 구조로의 변경이 필요</mark>합니다.
-          </li>
-        </ul>
-      </div>
-    `;
+    var FALLBACK_STRATEGY_HTML = [
+      '<div style="line-height: 1.8; color: #F8FAFC;">',
+      '  <p style="font-weight: bold; color: #60A5FA !important; margin-bottom: 10px;">',
+      '    📌 [정원용회계사님] 2차 퍼포먼스 광고 캠페인 성과 요약 및 전략 총평',
+      '  </p>',
+      '  <div style="background-color: #1E293B; border-left: 4px solid #3B82F6; padding: 12px 16px; margin-bottom: 14px; border-radius: 8px;">',
+      '    <strong style="color: #38BDF8 !important;">📊 2차 집행 핵심 종합 데이터 집계</strong><br>',
+      '    • <strong>총 노출수:</strong> 28,927회  |  <strong>총 도달수:</strong> 26,537명<br>',
+      '    • <strong>총 클릭수:</strong> 682건  |  <strong>평균 클릭률(CTR):</strong> 2.36%',
+      '  </div>',
+      '  <ul style="margin: 0; padding-left: 20px; list-style-type: disc;">',
+      '    <li style="margin-bottom: 6px;">',
+      '      광고 데이터 기준 노출수 약 28,927회, 클릭수 682건, <strong>평균 클릭률 2.36%</strong>로 초기 유입 반응은 양호하게 형성되었으나, <strong>예정보다 광고 예산이 빠르게 소진</strong>되었습니다.',
+      '    </li>',
+      '    <li style="margin-bottom: 6px;">',
+      '      실제 DB는 <strong>총 5건이 수집되었으나 단순 호기심·저관여 성향의 \'막DB\'들이 포함되어 있어 유효 DB 수집률이 매우 저조한 상황</strong>입니다.',
+      '    </li>',
+      '    <li>',
+      '      이럴 때는 잠재고객에게 혜택을 빠르게 각인시키는 <strong>광고 소재 메시지 변경</strong>과 함께, <mark>타사 세무·회계사 사례처럼 전용 랜딩페이지를 통해 잠재고객 DB를 수집하는 구조로의 변경이 필요</mark>합니다.',
+      '    </li>',
+      '  </ul>',
+      '</div>'
+    ].join('\n');
 
-    const FALLBACK_ANOMALY_HTML = `
-      <ul class="text-xs leading-relaxed text-slate-300 space-y-2 list-disc list-inside">
-        <li><strong class="text-slate-100">업종마다 DB 수집률은 다양할 수 있으나 현재는 유효 DB 수율에 명확한 문제가 발생하여, 광고 소재는 조금 더 빠르고 직관적인 메시지로 구성하고 전용 랜딩페이지를 통해 잠재고객 DB를 수집하는 방향으로 대응합니다.</strong></li>
-      </ul>
-    `;
+    var FALLBACK_ANOMALY_HTML = [
+      '<ul class="text-xs leading-relaxed text-slate-300 space-y-2 list-disc list-inside">',
+      '  <li><strong class="text-slate-100">업종마다 DB 수집률은 다양할 수 있으나 현재는 유효 DB 수율에 명확한 문제가 발생하여, 광고 소재는 조금 더 빠르고 직관적인 메시지로 구성하고 전용 랜딩페이지를 통해 잠재고객 DB를 수집하는 방향으로 대응합니다.</strong></li>',
+      '</ul>'
+    ].join('\n');
 
     function findClientRecord(db, currentFilename) {
       if (!db || typeof db !== 'object') return null;
@@ -839,8 +834,9 @@
       if (db["정원용회계사님"]) {
         return { name: "정원용회계사님", record: db["정원용회계사님"] };
       }
-      for (const key in db) {
-        const item = db[key];
+      for (var key in db) {
+        if (!Object.prototype.hasOwnProperty.call(db, key)) continue;
+        var item = db[key];
         if (!item) continue;
         if (
           key.includes("정원용") ||
@@ -858,46 +854,45 @@
       if (!remoteRec) return localRec;
       if (!localRec) return remoteRec;
 
-      const merged = { ...remoteRec, ...localRec };
-      merged.months = { ...(remoteRec.months || {}) };
+      var merged = Object.assign({}, remoteRec, localRec);
+      merged.months = Object.assign({}, remoteRec.months || {});
 
       if (localRec.months && typeof localRec.months === 'object') {
-        Object.keys(localRec.months).forEach(periodKey => {
-          const rMonth = (remoteRec.months && remoteRec.months[periodKey]) || {};
-          const lMonth = localRec.months[periodKey] || {};
+        Object.keys(localRec.months).forEach(function(periodKey) {
+          var rMonth = (remoteRec.months && remoteRec.months[periodKey]) || {};
+          var lMonth = localRec.months[periodKey] || {};
 
-          const useLocalDataset = Array.isArray(lMonth.rawDataset) && lMonth.rawDataset.length > 0 &&
-                                  (!Array.isArray(rMonth.rawDataset) || lMonth.rawDataset.length >= rMonth.rawDataset.length);
+          var useLocalDataset = Array.isArray(lMonth.rawDataset) && lMonth.rawDataset.length > 0 &&
+                                (!Array.isArray(rMonth.rawDataset) || lMonth.rawDataset.length >= rMonth.rawDataset.length);
 
-          merged.months[periodKey] = {
-            ...rMonth,
-            ...lMonth,
+          merged.months[periodKey] = Object.assign({}, rMonth, lMonth, {
             rawDataset: useLocalDataset ? lMonth.rawDataset : (rMonth.rawDataset || lMonth.rawDataset || []),
             columns: (lMonth.columns && lMonth.columns.length > 0) ? lMonth.columns : (rMonth.columns || []),
-            comments: { ...(rMonth.comments || {}), ...(lMonth.comments || {}) },
+            comments: Object.assign({}, rMonth.comments || {}, lMonth.comments || {}),
             creatives: (lMonth.creatives && Object.keys(lMonth.creatives).length > 0) ? lMonth.creatives : (rMonth.creatives || {})
-          };
+          });
         });
       }
       return merged;
     }
 
     async function initDataLoad() {
-      let clientName = "정원용회계사님";
-      const currentFilename = window.location.pathname.split('/').pop() || 'jungwonyong.html';
+      var clientName = "정원용회계사님";
+      var currentFilename = window.location.pathname.split('/').pop() || 'jungwonyong.html';
       
-      let remoteDb = null;
-      let localDb = null;
+      var remoteDb = null;
+      var localDb = null;
 
-      const candidatePaths = [
+      var candidatePaths = [
         './database.json?t=' + Date.now(),
         '../database.json?t=' + Date.now(),
+        '/Looker-Studio/database.json?t=' + Date.now(),
         '/adplanters/database.json?t=' + Date.now()
       ];
 
-      for (const path of candidatePaths) {
+      for (var i = 0; i < candidatePaths.length; i++) {
         try {
-          const response = await fetch(path, { cache: 'no-store' });
+          var response = await fetch(candidatePaths[i], { cache: 'no-store' });
           if (response.ok) {
             remoteDb = await response.json();
             break;
@@ -906,12 +901,12 @@
       }
 
       try {
-        const savedDb = localStorage.getItem('MEDIA_REPORT_DB');
+        var savedDb = localStorage.getItem('MEDIA_REPORT_DB');
         if (savedDb) localDb = JSON.parse(savedDb);
       } catch (e) {}
 
-      const remoteMatch = findClientRecord(remoteDb, currentFilename);
-      const localMatch = findClientRecord(localDb, currentFilename);
+      var remoteMatch = findClientRecord(remoteDb, currentFilename);
+      var localMatch = findClientRecord(localDb, currentFilename);
 
       if (remoteMatch && localMatch) {
         clientName = localMatch.name || remoteMatch.name;
@@ -925,15 +920,19 @@
       }
 
       matchedClientDisplayName = clientName;
-      const clientDisplayEl = document.getElementById('client-name-display');
-      if (clientDisplayEl) clientDisplayEl.innerText = `| 고객사: ${clientName}`;
+      var clientDisplayEl = document.getElementById('client-name-display');
+      if (clientDisplayEl) clientDisplayEl.innerText = '| 고객사: ' + clientName;
 
       if (dbReportData && dbReportData.months) {
-        const availablePeriods = Object.keys(dbReportData.months);
+        var availablePeriods = Object.keys(dbReportData.months);
         if (availablePeriods.length > 0) {
-          let targetPeriod = availablePeriods.find(p => p.includes('2차') && Array.isArray(dbReportData.months[p].rawDataset) && dbReportData.months[p].rawDataset.length > 0);
+          var targetPeriod = availablePeriods.find(function(p) {
+            return p.includes('2차') && Array.isArray(dbReportData.months[p].rawDataset) && dbReportData.months[p].rawDataset.length > 0;
+          });
           if (!targetPeriod) {
-            const populated = availablePeriods.filter(p => Array.isArray(dbReportData.months[p].rawDataset) && dbReportData.months[p].rawDataset.length > 0);
+            var populated = availablePeriods.filter(function(p) {
+              return Array.isArray(dbReportData.months[p].rawDataset) && dbReportData.months[p].rawDataset.length > 0;
+            });
             targetPeriod = populated.length > 0 ? populated[populated.length - 1] : availablePeriods[availablePeriods.length - 1];
           }
           currentSelectedPeriod = targetPeriod;
@@ -947,12 +946,12 @@
     }
 
     function renderPeriodNavigation() {
-      const navContainer = document.getElementById('dynamic-period-nav');
+      var navContainer = document.getElementById('dynamic-period-nav');
       if (!navContainer) return;
       navContainer.innerHTML = '';
 
       if (!dbReportData || !dbReportData.months || Object.keys(dbReportData.months).length === 0) {
-        const aTag = document.createElement('a');
+        var aTag = document.createElement('a');
         aTag.href = "javascript:void(0);";
         aTag.className = "px-3 py-1.5 text-xs font-semibold rounded-md border border-emerald-500/60 bg-emerald-500/10 text-emerald-400 shrink-0";
         aTag.innerText = "2차 (현재)";
@@ -960,18 +959,22 @@
         return;
       }
 
-      const periods = Object.keys(dbReportData.months);
-      periods.forEach(p => {
-        const aTag = document.createElement('a');
+      var periods = Object.keys(dbReportData.months);
+      periods.forEach(function(p) {
+        var aTag = document.createElement('a');
         aTag.href = "javascript:void(0);";
         
         if (p === currentSelectedPeriod) {
           aTag.className = "px-3 py-1.5 text-xs font-semibold rounded-md border border-emerald-500/60 bg-emerald-500/10 text-emerald-400 shrink-0";
-          aTag.innerText = `${p} (현재)`;
+          aTag.innerText = p + ' (현재)';
         } else {
           aTag.className = "no-print px-3 py-1.5 text-xs font-semibold rounded-md border border-slate-700 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition shrink-0";
           aTag.innerText = p;
-          aTag.onclick = () => { currentSelectedPeriod = p; renderPeriodNavigation(); loadPeriodDataAndRender(); };
+          aTag.onclick = function() {
+            currentSelectedPeriod = p;
+            renderPeriodNavigation();
+            loadPeriodDataAndRender();
+          };
         }
         navContainer.appendChild(aTag);
       });
@@ -979,10 +982,10 @@
 
     function cleanText(txt) {
       if (!txt) return "";
-      const rawStr = String(txt).trim();
-      const plainText = rawStr
+      var rawStr = String(txt).trim();
+      var plainText = rawStr
         .replace(/<[^>]*>/g, ' ')
-        .replace(/ /gi, ' ')
+        .replace(/\u0026nbsp;/gi, ' ')
         .replace(/\u00A0/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
@@ -1000,15 +1003,16 @@
 
     function extractComment(periodObj, mediaTab, type) {
       if (!periodObj) return "";
-      const comments = periodObj.comments || {};
-      const checkKeys = (keys) => {
-        for (const k of keys) {
+      var comments = periodObj.comments || {};
+      var checkKeys = function(keys) {
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
           if (comments[k] && cleanText(comments[k][type])) return cleanText(comments[k][type]);
         }
         return "";
       };
 
-      let result = "";
+      var result = "";
       if (mediaTab === 'Meta') result = checkKeys(['Meta', 'meta', '메타', '메타 (DA/SA)']);
       else if (mediaTab === 'Naver') result = checkKeys(['Naver', 'naver', '네이버', '네이버 검색']);
       else if (mediaTab === 'Google') result = checkKeys(['Google', 'google', '구글', '구글 애즈']);
@@ -1018,15 +1022,15 @@
       }
 
       if (!result && (mediaTab === 'ALL' || mediaTab === 'Meta')) {
-        const rootKey = type === 'strategy' ? 'strategyComment' : 'anomalyComment';
+        var rootKey = type === 'strategy' ? 'strategyComment' : 'anomalyComment';
         result = cleanText(periodObj[rootKey]);
       }
       return result;
     }
 
     function matchMediaKey(keyName, tabKey) {
-      const k = String(keyName || '').trim().toLowerCase();
-      const t = String(tabKey || '').trim().toLowerCase();
+      var k = String(keyName || '').trim().toLowerCase();
+      var t = String(tabKey || '').trim().toLowerCase();
       if (t === 'all') return k === 'all' || k === '통합' || k === '통합(전체)';
       if (t === 'meta') return k.includes('meta') || k.includes('메타') || k.includes('facebook') || k.includes('instagram');
       if (t === 'naver') return k.includes('naver') || k.includes('네이버');
@@ -1034,39 +1038,54 @@
       return k === t;
     }
 
+    function hasMediaActualDelivery(targetTab) {
+      var rows = getFilteredRows(targetTab);
+      if (!rows || rows.length === 0) return false;
+      return rows.some(function(r) {
+        return (toCleanNumber(r.impressions) + toCleanNumber(r.reach) + toCleanNumber(r.clicks)) > 0;
+      });
+    }
+
     function getCreativesForCurrentTab() {
-      // [핵심 수정]: 실제 광고 집행 데이터(로우 데이터)가 없는 매체는 소재 피드백을 강제로 비활성화(공란) 처리
-      const hasActualData = getFilteredRows(currentMedia).length > 0;
-      if (!hasActualData) return [];
+      // 실제 광고 집행 데이터(로우 데이터)가 없는 매체는 소재 피드백을 강제로 비활성화(공란) 처리
+      if (!hasMediaActualDelivery(currentMedia)) return [];
 
       if (!dbReportData || !dbReportData.months || !dbReportData.months[currentSelectedPeriod]) return [];
-      const periodData = dbReportData.months[currentSelectedPeriod];
+      var periodData = dbReportData.months[currentSelectedPeriod];
       if (!periodData.creatives) return [];
-      const raw = periodData.creatives;
+      var raw = periodData.creatives;
 
       if (Array.isArray(raw)) {
         if (currentMedia === 'ALL') return raw;
-        const filteredArr = raw.filter(item => !item.media || matchMediaKey(item.media, currentMedia));
+        var filteredArr = raw.filter(function(item) {
+          return !item.media || matchMediaKey(item.media, currentMedia);
+        });
         return filteredArr.length > 0 ? filteredArr : raw;
       }
 
       if (typeof raw === 'object') {
         if (currentMedia === 'ALL') {
-          const allList = Object.entries(raw)
-            .filter(([k]) => matchMediaKey(k, 'ALL'))
-            .flatMap(([, v]) => Array.isArray(v) ? v : []);
-          const otherLists = Object.entries(raw)
-            .filter(([k]) => !matchMediaKey(k, 'ALL'))
-            .flatMap(([, v]) => Array.isArray(v) ? v : []);
+          var allList = [];
+          var otherLists = [];
+          Object.keys(raw).forEach(function(k) {
+            var arr = Array.isArray(raw[k]) ? raw[k] : [];
+            if (matchMediaKey(k, 'ALL')) allList = allList.concat(arr);
+            else otherLists = otherLists.concat(arr);
+          });
           return allList.length > 0 ? allList : otherLists;
         } else {
-          let list = Object.entries(raw)
-            .filter(([k]) => matchMediaKey(k, currentMedia))
-            .flatMap(([, v]) => Array.isArray(v) ? v : []);
+          var list = [];
+          Object.keys(raw).forEach(function(k) {
+            if (matchMediaKey(k, currentMedia) && Array.isArray(raw[k])) {
+              list = list.concat(raw[k]);
+            }
+          });
           if (list.length === 0) {
-            list = Object.entries(raw)
-              .filter(([k]) => matchMediaKey(k, 'ALL'))
-              .flatMap(([, v]) => Array.isArray(v) ? v : []);
+            Object.keys(raw).forEach(function(k) {
+              if (matchMediaKey(k, 'ALL') && Array.isArray(raw[k])) {
+                list = list.concat(raw[k]);
+              }
+            });
           }
           return list;
         }
@@ -1076,18 +1095,20 @@
 
     function escapeAttr(str) {
       return String(str || '')
-        .replace(/&/g, '&')
-        .replace(/"/g, '"')
-        .replace(/'/g, ''')
-        .replace(/</g, '<')
-        .replace(/>/g, '>');
+        .replace(/&/g, '\u0026amp;')
+        .replace(/"/g, '\u0026quot;')
+        .replace(/'/g, '\u0026#39;')
+        .replace(/</g, '\u0026lt;')
+        .replace(/>/g, '\u0026gt;');
     }
 
     function loadPeriodDataAndRender() {
       if (dbReportData && dbReportData.months && dbReportData.months[currentSelectedPeriod]) {
-        const periodData = dbReportData.months[currentSelectedPeriod];
-        const normalized = normalizeDataset(periodData.rawDataset);
-        const hasValidMetrics = normalized.some(d => (d.impressions + d.reach + d.clicks) > 0);
+        var periodData = dbReportData.months[currentSelectedPeriod];
+        var normalized = normalizeDataset(periodData.rawDataset);
+        var hasValidMetrics = normalized.some(function(d) {
+          return (d.impressions + d.reach + d.clicks) > 0;
+        });
 
         rawDataset = (normalized.length > 0 && hasValidMetrics) ? normalized : normalizeDataset(FALLBACK_RAW_DATASET);
         currentColumns = normalizeColumns(periodData.columns);
@@ -1096,19 +1117,20 @@
         currentColumns = normalizeColumns(null);
       }
 
-      const periodTitleEl = document.getElementById('report-period-title');
-      const stratDateEl = document.getElementById('strategy-date-display');
+      var periodTitleEl = document.getElementById('report-period-title');
+      var stratDateEl = document.getElementById('strategy-date-display');
       if (periodTitleEl) periodTitleEl.innerText = currentSelectedPeriod || "2차";
-      if (stratDateEl) stratDateEl.innerText = `기준: ${currentSelectedPeriod || "2차"} 결산`;
+      if (stratDateEl) stratDateEl.innerText = '기준: ' + (currentSelectedPeriod || "2차") + ' 결산';
       
       renderDashboard();
     }
 
-    function getFilteredRows(targetTab = currentMedia) {
-      if (targetTab === 'ALL') return rawDataset;
-      return rawDataset.filter(item => {
-        const m = String(item.media || '').trim().toLowerCase();
-        const t = targetTab.toLowerCase();
+    function getFilteredRows(targetTab) {
+      var tab = targetTab || currentMedia;
+      if (tab === 'ALL') return rawDataset;
+      return rawDataset.filter(function(item) {
+        var m = String(item.media || '').trim().toLowerCase();
+        var t = tab.toLowerCase();
         if (t === 'naver') return m.includes('naver') || m.includes('네이버');
         if (t === 'meta') return m.includes('meta') || m.includes('메타') || m.includes('facebook') || m.includes('instagram');
         if (t === 'google') return m.includes('google') || m.includes('구글');
@@ -1116,11 +1138,11 @@
       });
     }
 
-    function setMediaFilter(media, instantMode = false) {
+    function setMediaFilter(media, instantMode) {
       currentMedia = media || 'ALL';
-      disableChartAnimOnce = instantMode;
+      disableChartAnimOnce = Boolean(instantMode);
 
-      document.querySelectorAll('.media-btn').forEach(btn => {
+      document.querySelectorAll('.media-btn').forEach(function(btn) {
         if (btn.dataset.media === currentMedia) {
           btn.className = 'media-btn px-4 py-2 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow cursor-pointer';
         } else {
@@ -1128,7 +1150,7 @@
         }
       });
 
-      const badgeEl = document.getElementById('active-media-badge');
+      var badgeEl = document.getElementById('active-media-badge');
       if (badgeEl) badgeEl.innerText = MEDIA_LABEL_MAP[currentMedia] || currentMedia;
 
       renderDashboard();
@@ -1138,17 +1160,17 @@
     window.setMediaFilter = setMediaFilter;
 
     function renderDashboard() {
-      const periodData = (dbReportData && dbReportData.months) ? dbReportData.months[currentSelectedPeriod] : null;
-      const filtered = getFilteredRows(currentMedia);
-      const hasActualData = filtered.length > 0;
-      const currentTabLabel = MEDIA_LABEL_MAP[currentMedia] || currentMedia;
+      var periodData = (dbReportData && dbReportData.months) ? dbReportData.months[currentSelectedPeriod] : null;
+      var filtered = getFilteredRows(currentMedia);
+      var hasActualData = hasMediaActualDelivery(currentMedia);
+      var currentTabLabel = MEDIA_LABEL_MAP[currentMedia] || currentMedia;
       
-      // 1. 코멘트 업데이트 (★실제 집행 데이터가 없는 매체는 강제 공란 처리)
-      const strategyBox = document.getElementById('strategy-comment-box');
-      const anomalyBox = document.getElementById('anomaly-comment-box');
+      // 1. 코멘트 업데이트 (실제 집행 데이터가 없는 매체는 강제 공란 처리)
+      var strategyBox = document.getElementById('strategy-comment-box');
+      var anomalyBox = document.getElementById('anomaly-comment-box');
       
-      let stratText = extractComment(periodData, currentMedia, 'strategy');
-      let anomText = extractComment(periodData, currentMedia, 'anomaly');
+      var stratText = extractComment(periodData, currentMedia, 'strategy');
+      var anomText = extractComment(periodData, currentMedia, 'anomaly');
 
       if (!hasActualData) {
         stratText = "";
@@ -1157,11 +1179,7 @@
 
       if (strategyBox) {
         if (!hasActualData) {
-          strategyBox.innerHTML = `
-            <div class="py-8 text-center text-slate-500 font-sans">
-              <span class="text-base font-bold text-slate-400 block mb-1">집행 내역 없음 (공란)</span>
-              해당 기간 내 집행된 <strong class="text-emerald-400">[${currentTabLabel}]</strong> 광고 데이터가 존재하지 않아 공란 처리되었습니다.
-            </div>`;
+          strategyBox.innerHTML = '<div class="py-8 text-center text-slate-500 font-sans"><span class="text-base font-bold text-slate-400 block mb-1">집행 내역 없음 (공란)</span>해당 기간 내 집행된 <strong class="text-emerald-400">[' + currentTabLabel + ']</strong> 광고 데이터가 존재하지 않아 공란 처리되었습니다.</div>';
         } else {
           strategyBox.innerHTML = stratText ? stratText : FALLBACK_STRATEGY_HTML;
         }
@@ -1169,24 +1187,23 @@
 
       if (anomalyBox) {
         if (!hasActualData) {
-          anomalyBox.innerHTML = `
-            <div class="py-6 text-center text-slate-500 font-sans text-xs">
-              해당 기간 내 집행된 <strong class="text-amber-400">[${currentTabLabel}]</strong> 광고가 없으므로 보고 내역이 없습니다.
-            </div>`;
+          anomalyBox.innerHTML = '<div class="py-6 text-center text-slate-500 font-sans text-xs">해당 기간 내 집행된 <strong class="text-amber-400">[' + currentTabLabel + ']</strong> 광고가 없으므로 보고 내역이 없습니다.</div>';
         } else if (anomText) {
           if (anomText.includes('jwy-bm-grid')) {
-            const tempWrap = document.createElement('div');
+            var tempWrap = document.createElement('div');
             tempWrap.innerHTML = anomText;
-            const actionCard = tempWrap.querySelector('div > div');
+            var actionCard = tempWrap.querySelector('div > div');
             anomText = actionCard ? actionCard.outerHTML : FALLBACK_ANOMALY_HTML;
           }
 
           if (anomText.includes('<li>') || anomText.includes('<p>') || anomText.includes('<div')) {
             anomalyBox.innerHTML = anomText;
           } else {
-            const anomalies = anomText.split('\n').filter(t => t.trim() !== '');
-            let html = '<ul class="text-xs leading-relaxed text-slate-300 space-y-2 list-disc list-inside">';
-            anomalies.forEach(a => { html += `<li><strong class="text-slate-100">${a}</strong></li>`; });
+            var anomalies = anomText.split('\n').filter(function(t) { return t.trim() !== ''; });
+            var html = '<ul class="text-xs leading-relaxed text-slate-300 space-y-2 list-disc list-inside">';
+            anomalies.forEach(function(a) {
+              html += '<li><strong class="text-slate-100">' + a + '</strong></li>';
+            });
             html += '</ul>';
             anomalyBox.innerHTML = html;
           }
@@ -1195,41 +1212,23 @@
         }
       }
 
-      // 2. 등록 소재 업데이트 (★집행 데이터 없는 매체는 자동 숨김 처리)
-      const creativeSec = document.getElementById('creative-feedback-section');
-      const creativeCon = document.getElementById('creative-container');
-      const countBadge = document.getElementById('creative-count-badge');
-      const creatives = getCreativesForCurrentTab();
+      // 2. 등록 소재 업데이트 (집행 데이터 없는 매체는 자동 숨김 처리)
+      var creativeSec = document.getElementById('creative-feedback-section');
+      var creativeCon = document.getElementById('creative-container');
+      var countBadge = document.getElementById('creative-count-badge');
+      var creatives = getCreativesForCurrentTab();
 
       if (creativeSec && creativeCon) {
         if (creatives && creatives.length > 0) {
           creativeSec.classList.remove('hidden');
           if (countBadge) countBadge.innerText = creatives.length;
           
-          creativeCon.innerHTML = creatives.map((c, idx) => {
-            const titleText = c.title || '등록된 소재명 없음';
-            const feedbackText = c.feedback || '소재에 대한 피드백이 등록되지 않았습니다.';
-            const imgSrc = c.image || '';
+          creativeCon.innerHTML = creatives.map(function(c, idx) {
+            var titleText = c.title || '등록된 소재명 없음';
+            var feedbackText = c.feedback || '소재에 대한 피드백이 등록되지 않았습니다.';
+            var imgSrc = c.image || '';
             
-            return `
-            <div class="interactive-card cursor-pointer flex flex-col p-0 transition hover:border-slate-700"
-                 data-title="${escapeAttr(titleText)}"
-                 data-badge="CREATIVE #${idx + 1}"
-                 data-image="${escapeAttr(imgSrc)}"
-                 data-feedback="${escapeAttr(feedbackText)}"
-                 onclick="openCreativeCardModal(this)">
-              <div class="h-60 sm:h-64 bg-slate-950 flex items-center justify-center border-b border-slate-800 p-3 relative">
-                <img src="${escapeAttr(imgSrc)}" class="max-w-full max-h-full object-contain rounded-lg shadow-sm" alt="${escapeAttr(titleText)}" loading="lazy">
-                <span class="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-950/80 text-blue-400 border border-blue-800/80 backdrop-blur-sm">소재 #${idx + 1}</span>
-              </div>
-              <div class="p-4 sm:p-5 flex-grow flex flex-col justify-between bg-[#0F172A]">
-                <div>
-                  <h4 class="text-xs sm:text-sm font-bold text-white mb-2 leading-snug">${titleText}</h4>
-                  <p class="text-xs text-slate-300 whitespace-pre-line leading-relaxed font-sans line-clamp-3">${feedbackText}</p>
-                </div>
-              </div>
-            </div>
-          `;
+            return '<div class="interactive-card cursor-pointer flex flex-col p-0 transition hover:border-slate-700" data-title="' + escapeAttr(titleText) + '" data-badge="CREATIVE #' + (idx + 1) + '" data-image="' + escapeAttr(imgSrc) + '" data-feedback="' + escapeAttr(feedbackText) + '" onclick="openCreativeCardModal(this)"><div class="h-60 sm:h-64 bg-slate-950 flex items-center justify-center border-b border-slate-800 p-3 relative"><img src="' + escapeAttr(imgSrc) + '" class="max-w-full max-h-full object-contain rounded-lg shadow-sm" alt="' + escapeAttr(titleText) + '" loading="lazy"><span class="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-950/80 text-blue-400 border border-blue-800/80 backdrop-blur-sm">소재 #' + (idx + 1) + '</span></div><div class="p-4 sm:p-5 flex-grow flex flex-col justify-between bg-[#0F172A]"><div><h4 class="text-xs sm:text-sm font-bold text-white mb-2 leading-snug">' + titleText + '</h4><p class="text-xs text-slate-300 whitespace-pre-line leading-relaxed font-sans line-clamp-3">' + feedbackText + '</p></div></div></div>';
           }).join('');
         } else {
           creativeSec.classList.add('hidden');
@@ -1239,126 +1238,109 @@
       }
 
       // 3. 매체 필터링 및 KPI 카드 렌더링
-      const kpiContainer = document.getElementById('kpi-cards-container');
+      var kpiContainer = document.getElementById('kpi-cards-container');
       kpiContainer.innerHTML = '';
 
-      let hasClicks = false;
-      let hasImpressions = false;
-      const kpiTotals = {};
+      var hasClicks = false;
+      var hasImpressions = false;
+      var kpiTotals = {};
 
-      currentColumns.forEach(c => {
+      currentColumns.forEach(function(c) {
         if (c.key === 'clicks') hasClicks = true;
         if (c.key === 'impressions') hasImpressions = true;
 
         kpiTotals[c.key] = 0;
-        filtered.forEach(d => {
+        filtered.forEach(function(d) {
           kpiTotals[c.key] += toCleanNumber(d[c.key]) || 0;
         });
       });
 
-      currentColumns.forEach(c => {
-        const labelStr = String(c.label || c.key || '');
-        const displayValue = formatNumber(kpiTotals[c.key]);
-        const valColor = c.key === 'clicks' ? "text-emerald-400" : "text-white";
+      currentColumns.forEach(function(c) {
+        var labelStr = String(c.label || c.key || '');
+        var displayValue = formatNumber(kpiTotals[c.key]);
+        var valColor = c.key === 'clicks' ? "text-emerald-400" : "text-white";
         
-        kpiContainer.innerHTML += `
-          <div class="interactive-card p-4 !rounded-xl">
-            <span class="text-[11px] font-semibold text-slate-400 mb-1">총 ${labelStr}</span>
-            <div class="text-base sm:text-xl font-bold font-mono ${valColor} mt-1">${displayValue}</div>
-          </div>
-        `;
+        kpiContainer.innerHTML += '<div class="interactive-card p-4 !rounded-xl"><span class="text-[11px] font-semibold text-slate-400 mb-1">총 ' + labelStr + '</span><div class="text-base sm:text-xl font-bold font-mono ' + valColor + ' mt-1">' + displayValue + '</div></div>';
       });
 
       if (hasClicks && hasImpressions) {
-        const ctr = kpiTotals['impressions'] > 0 ? (kpiTotals['clicks'] / kpiTotals['impressions']) * 100 : 0;
-        kpiContainer.innerHTML += `
-          <div class="interactive-card p-4 !rounded-xl">
-            <span class="text-[11px] font-semibold text-slate-400 mb-1">평균 클릭률 (CTR)</span>
-            <div class="text-base sm:text-xl font-bold font-mono text-cyan-400 mt-1">${ctr.toFixed(2)}%</div>
-          </div>
-        `;
+        var ctr = kpiTotals['impressions'] > 0 ? (kpiTotals['clicks'] / kpiTotals['impressions']) * 100 : 0;
+        kpiContainer.innerHTML += '<div class="interactive-card p-4 !rounded-xl"><span class="text-[11px] font-semibold text-slate-400 mb-1">평균 클릭률 (CTR)</span><div class="text-base sm:text-xl font-bold font-mono text-cyan-400 mt-1">' + ctr.toFixed(2) + '%</div></div>';
       }
 
       // --- 테이블 헤더 생성 ---
-      const theadRow = document.getElementById('table-header-row');
-      let headerHTML = `
-        <th class="py-3 px-4 font-semibold">집행일자</th>
-        <th class="py-3 px-4 font-semibold">매체</th>
-      `;
-      currentColumns.forEach(c => {
-        const labelStr = String(c.label || c.key || '');
-        const colorClass = c.key === 'clicks' ? 'text-emerald-400' : '';
-        headerHTML += `<th class="py-3 px-4 font-semibold text-right ${colorClass}">${labelStr}</th>`;
+      var theadRow = document.getElementById('table-header-row');
+      var headerHTML = '<th class="py-3 px-4 font-semibold">집행일자</th><th class="py-3 px-4 font-semibold">매체</th>';
+      currentColumns.forEach(function(c) {
+        var labelStr = String(c.label || c.key || '');
+        var colorClass = c.key === 'clicks' ? 'text-emerald-400' : '';
+        headerHTML += '<th class="py-3 px-4 font-semibold text-right ' + colorClass + '">' + labelStr + '</th>';
       });
-      if (hasClicks && hasImpressions) headerHTML += `<th class="py-3 px-4 font-semibold text-right text-cyan-400">클릭률 (CTR)</th>`;
+      if (hasClicks && hasImpressions) headerHTML += '<th class="py-3 px-4 font-semibold text-right text-cyan-400">클릭률 (CTR)</th>';
       theadRow.innerHTML = headerHTML;
 
       // --- 일별 데이터 집계 및 표 렌더링 ---
-      const dailyMap = {};
-      filtered.forEach(item => {
-        const cleanDate = String(item.date || '').trim() || '일자미상';
+      var dailyMap = {};
+      filtered.forEach(function(item) {
+        var cleanDate = String(item.date || '').trim() || '일자미상';
         if (!dailyMap[cleanDate]) {
           dailyMap[cleanDate] = { date: cleanDate, media: currentMedia === 'ALL' ? '통합' : (item.media || currentMedia) };
-          currentColumns.forEach(c => dailyMap[cleanDate][c.key] = 0);
+          currentColumns.forEach(function(c) { dailyMap[cleanDate][c.key] = 0; });
         }
-        currentColumns.forEach(c => {
+        currentColumns.forEach(function(c) {
           dailyMap[cleanDate][c.key] += toCleanNumber(item[c.key]) || 0;
         });
       });
 
-      const dailyAggregated = Object.values(dailyMap).sort((a, b) => b.date.localeCompare(a.date));
-      const tbody = document.getElementById('table-body');
+      var dailyAggregated = Object.values(dailyMap).sort(function(a, b) {
+        return b.date.localeCompare(a.date);
+      });
+      var tbody = document.getElementById('table-body');
       tbody.innerHTML = '';
       
       if (dailyAggregated.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="${currentColumns.length + 3}" class="py-8 text-center text-slate-500 font-sans">선택하신 매체(${MEDIA_LABEL_MAP[currentMedia] || currentMedia})에 집행된 데이터가 없습니다.</td></tr>`;
+        tbody.innerHTML = '<tr><td colspan="' + (currentColumns.length + 3) + '" class="py-8 text-center text-slate-500 font-sans">선택하신 매체(' + currentTabLabel + ')에 집행된 데이터가 없습니다.</td></tr>';
       } else {
-        const totalTr = document.createElement('tr');
+        var totalTr = document.createElement('tr');
         totalTr.className = 'bg-slate-800/90 border-b-2 border-slate-700 font-bold';
         
-        let totalCellsHTML = `
-          <td class="py-3 px-4 font-sans text-amber-400">총합계 (평균)</td>
-          <td class="py-3 px-4 font-sans"><span class="px-2 py-0.5 rounded text-[11px] bg-slate-700 text-slate-300 font-semibold">${currentMedia === 'ALL' ? '통합' : currentMedia}</span></td>
-        `;
+        var totalCellsHTML = '<td class="py-3 px-4 font-sans text-amber-400">총합계 (평균)</td><td class="py-3 px-4 font-sans"><span class="px-2 py-0.5 rounded text-[11px] bg-slate-700 text-slate-300 font-semibold">' + (currentMedia === 'ALL' ? '통합' : currentMedia) + '</span></td>';
 
-        currentColumns.forEach(c => {
-          const displayVal = formatNumber(kpiTotals[c.key]);
-          const colorClass = c.key === 'clicks' ? 'text-emerald-400 font-bold' : 'text-slate-300';
-          totalCellsHTML += `<td class="py-3 px-4 text-right ${colorClass}">${displayVal}</td>`;
+        currentColumns.forEach(function(c) {
+          var displayVal = formatNumber(kpiTotals[c.key]);
+          var colorClass = c.key === 'clicks' ? 'text-emerald-400 font-bold' : 'text-slate-300';
+          totalCellsHTML += '<td class="py-3 px-4 text-right ' + colorClass + '">' + displayVal + '</td>';
         });
 
         if (hasClicks && hasImpressions) {
-          const avgCtr = kpiTotals['impressions'] > 0 ? ((kpiTotals['clicks'] / kpiTotals['impressions']) * 100).toFixed(2) : '0.00';
-          totalCellsHTML += `<td class="py-3 px-4 text-right text-cyan-400 font-semibold">${avgCtr}%</td>`;
+          var avgCtr = kpiTotals['impressions'] > 0 ? ((kpiTotals['clicks'] / kpiTotals['impressions']) * 100).toFixed(2) : '0.00';
+          totalCellsHTML += '<td class="py-3 px-4 text-right text-cyan-400 font-semibold">' + avgCtr + '%</td>';
         }
 
         totalTr.innerHTML = totalCellsHTML;
         tbody.appendChild(totalTr);
 
-        dailyAggregated.forEach(row => {
-          const tr = document.createElement('tr');
+        dailyAggregated.forEach(function(row) {
+          var tr = document.createElement('tr');
           tr.className = 'hover:bg-slate-800/40 transition-colors border-b border-slate-800/40';
           
-          let badgeClass = 'bg-slate-800 text-slate-300 border border-slate-700';
-          const isNaver = String(row.media).toLowerCase().includes('naver') || String(row.media).includes('네이버');
-          const isMeta = String(row.media).toLowerCase().includes('meta') || String(row.media).includes('메타');
+          var badgeClass = 'bg-slate-800 text-slate-300 border border-slate-700';
+          var isNaver = String(row.media).toLowerCase().includes('naver') || String(row.media).includes('네이버');
+          var isMeta = String(row.media).toLowerCase().includes('meta') || String(row.media).includes('메타');
           if (isNaver) badgeClass = 'bg-emerald-950 text-emerald-400 border border-emerald-800';
           else if (isMeta) badgeClass = 'bg-blue-950 text-blue-400 border border-blue-800';
 
-          let rowCellsHTML = `
-            <td class="py-3 px-4 font-sans font-medium text-slate-300">${row.date}</td>
-            <td class="py-3 px-4 font-sans"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeClass}">${row.media}</span></td>
-          `;
+          var rowCellsHTML = '<td class="py-3 px-4 font-sans font-medium text-slate-300">' + row.date + '</td><td class="py-3 px-4 font-sans"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + badgeClass + '">' + row.media + '</span></td>';
 
-          currentColumns.forEach(c => {
-            const rowVal = formatNumber(row[c.key]);
-            const fontColor = c.key === 'clicks' ? 'text-emerald-400 font-bold' : 'text-slate-300';
-            rowCellsHTML += `<td class="py-3 px-4 text-right ${fontColor}">${rowVal}</td>`;
+          currentColumns.forEach(function(c) {
+            var rowVal = formatNumber(row[c.key]);
+            var fontColor = c.key === 'clicks' ? 'text-emerald-400 font-bold' : 'text-slate-300';
+            rowCellsHTML += '<td class="py-3 px-4 text-right ' + fontColor + '">' + rowVal + '</td>';
           });
 
           if (hasClicks && hasImpressions) {
-            const rCtr = row['impressions'] > 0 ? ((row['clicks'] / row['impressions']) * 100).toFixed(2) : '0.00';
-            rowCellsHTML += `<td class="py-3 px-4 text-right text-cyan-400 font-semibold">${rCtr}%</td>`;
+            var rCtr = row['impressions'] > 0 ? ((row['clicks'] / row['impressions']) * 100).toFixed(2) : '0.00';
+            rowCellsHTML += '<td class="py-3 px-4 text-right text-cyan-400 font-semibold">' + rCtr + '%</td>';
           }
 
           tr.innerHTML = rowCellsHTML;
@@ -1366,7 +1348,7 @@
         });
       }
       
-      const uniqueDaysCount = new Set(filtered.map(r => String(r.date || '').trim())).size;
+      var uniqueDaysCount = new Set(filtered.map(function(r) { return String(r.date || '').trim(); })).size;
       document.getElementById('table-row-count').innerText = uniqueDaysCount;
 
       if (typeof Chart !== 'undefined') {
@@ -1385,15 +1367,19 @@
       }
 
       if (dailyData.length > 0) {
-        const sortedDailyForChart = [...dailyData].sort((a, b) => a.date.localeCompare(b.date));
-        const labels = sortedDailyForChart.map(d => d.date.length >= 10 ? d.date.slice(5) : d.date);
-        const datasets = [];
+        var sortedDailyForChart = dailyData.slice().sort(function(a, b) {
+          return a.date.localeCompare(b.date);
+        });
+        var labels = sortedDailyForChart.map(function(d) {
+          return d.date.length >= 10 ? d.date.slice(5) : d.date;
+        });
+        var datasets = [];
 
         if (hasClicks) {
           datasets.push({
             type: 'line',
             label: '클릭수 (건)',
-            data: sortedDailyForChart.map(d => d.clicks),
+            data: sortedDailyForChart.map(function(d) { return d.clicks; }),
             borderColor: '#10b981',
             backgroundColor: '#10b981',
             yAxisID: 'yClicks',
@@ -1404,14 +1390,14 @@
           });
         }
 
-        const barColor = currentMedia === 'Naver' ? 'rgba(3, 199, 90, 0.45)' : 'rgba(59, 130, 246, 0.65)';
-        const barHoverColor = currentMedia === 'Naver' ? 'rgba(3, 199, 90, 0.85)' : 'rgba(59, 130, 246, 0.85)';
+        var barColor = currentMedia === 'Naver' ? 'rgba(3, 199, 90, 0.45)' : 'rgba(59, 130, 246, 0.65)';
+        var barHoverColor = currentMedia === 'Naver' ? 'rgba(3, 199, 90, 0.85)' : 'rgba(59, 130, 246, 0.85)';
 
         if (hasImpressions) {
           datasets.push({
             type: 'bar',
             label: '노출수 (회)',
-            data: sortedDailyForChart.map(d => d.impressions),
+            data: sortedDailyForChart.map(function(d) { return d.impressions; }),
             backgroundColor: barColor,
             hoverBackgroundColor: barHoverColor,
             borderRadius: 4,
@@ -1422,7 +1408,7 @@
         
         document.getElementById('chart-legend-text').innerText = "좌축: 노출수(회) / 우축: 클릭수(건)";
 
-        const ctxTrend = document.getElementById('trendChart').getContext('2d');
+        var ctxTrend = document.getElementById('trendChart').getContext('2d');
         trendChartInstance = new Chart(ctxTrend, {
           type: 'bar',
           data: { labels: labels, datasets: datasets },
@@ -1461,19 +1447,20 @@
         shareChartInstance = null;
       }
       
-      const allowedKeys = displayColumns.map(c => c.key);
-      const findValidKey = (keys) => {
-        for (const k of keys) {
+      var allowedKeys = displayColumns.map(function(c) { return c.key; });
+      var findValidKey = function(keys) {
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
           if (!allowedKeys.includes(k)) continue;
-          let sum = 0;
-          rawDataset.forEach(d => { sum += toCleanNumber(d[k]); });
+          var sum = 0;
+          rawDataset.forEach(function(d) { sum += toCleanNumber(d[k]); });
           if (sum > 0) return k;
         }
         return null;
       };
 
-      const shareTargetKey = findValidKey(['impressions', 'clicks']);
-      const msgElem = document.getElementById('no-share-data-msg');
+      var shareTargetKey = findValidKey(['impressions', 'clicks']);
+      var msgElem = document.getElementById('no-share-data-msg');
 
       if (!shareTargetKey) {
         msgElem.classList.remove('hidden');
@@ -1483,30 +1470,30 @@
         msgElem.classList.add('hidden');
       }
 
-      const shareTargetName = shareTargetKey === 'impressions' ? '노출수' : '클릭수';
-      document.getElementById('share-chart-label').innerText = `${shareTargetName} 기준 비중`;
+      var shareTargetName = shareTargetKey === 'impressions' ? '노출수' : '클릭수';
+      document.getElementById('share-chart-label').innerText = shareTargetName + ' 기준 비중';
 
-      let naverTotal = 0;
-      let metaTotal = 0;
-      let googleTotal = 0;
+      var naverTotal = 0;
+      var metaTotal = 0;
+      var googleTotal = 0;
 
-      rawDataset.forEach(d => { 
-        const val = toCleanNumber(d[shareTargetKey]);
-        const m = String(d.media || '').toLowerCase();
+      rawDataset.forEach(function(d) { 
+        var val = toCleanNumber(d[shareTargetKey]);
+        var m = String(d.media || '').toLowerCase();
         if (m.includes('naver') || m.includes('네이버')) naverTotal += val;
         else if (m.includes('meta') || m.includes('메타')) metaTotal += val;
         else if (m.includes('google') || m.includes('구글')) googleTotal += val;
       });
 
-      const totalTarget = naverTotal + metaTotal + googleTotal;
-      const rawTargetData = [metaTotal, naverTotal, googleTotal];
+      var totalTarget = naverTotal + metaTotal + googleTotal;
+      var rawTargetData = [metaTotal, naverTotal, googleTotal];
 
-      const baseColors = ['#1877F2', '#03C75A', '#EA4335'];
-      const dimColors = ['rgba(24, 119, 242, 0.25)', 'rgba(3, 199, 90, 0.25)', 'rgba(234, 67, 53, 0.25)'];
+      var baseColors = ['#1877F2', '#03C75A', '#EA4335'];
+      var dimColors = ['rgba(24, 119, 242, 0.25)', 'rgba(3, 199, 90, 0.25)', 'rgba(234, 67, 53, 0.25)'];
 
-      let glowIndex = -1;
-      let finalColors = [...baseColors];
-      let offsetArray = [0, 0, 0];
+      var glowIndex = -1;
+      var finalColors = baseColors.slice();
+      var offsetArray = [0, 0, 0];
 
       if (currentMedia === 'Naver') {
         glowIndex = 1;
@@ -1522,7 +1509,7 @@
         offsetArray[2] = 12;
       }
 
-      const ctxShare = document.getElementById('shareChart').getContext('2d');
+      var ctxShare = document.getElementById('shareChart').getContext('2d');
       shareChartInstance = new Chart(ctxShare, {
         type: 'doughnut',
         data: {
@@ -1549,10 +1536,10 @@
               borderColor: '#334155',
               borderWidth: 1,
               callbacks: {
-                label: (c) => {
-                  const val = c.raw || 0;
-                  const pct = totalTarget > 0 ? ((val / totalTarget) * 100).toFixed(1) : 0;
-                  return ` ${c.label}: ${val.toLocaleString()} (${pct}%)`;
+                label: function(c) {
+                  var val = c.raw || 0;
+                  var pct = totalTarget > 0 ? ((val / totalTarget) * 100).toFixed(1) : 0;
+                  return ' ' + c.label + ': ' + val.toLocaleString() + ' (' + pct + '%)';
                 }
               }
             }
@@ -1565,10 +1552,10 @@
        [3. 매체 선택형 무결점 A4 PDF 출력 엔진]
        ========================================== */
     function openPdfSelectModal() {
-      document.getElementById('pdf-count-ALL').innerText = `데이터 ${getFilteredRows('ALL').length}건`;
-      document.getElementById('pdf-count-Naver').innerText = `데이터 ${getFilteredRows('Naver').length}건`;
-      document.getElementById('pdf-count-Meta').innerText = `데이터 ${getFilteredRows('Meta').length}건`;
-      document.getElementById('pdf-count-Google').innerText = `데이터 ${getFilteredRows('Google').length}건`;
+      document.getElementById('pdf-count-ALL').innerText = '데이터 ' + getFilteredRows('ALL').length + '건';
+      document.getElementById('pdf-count-Naver').innerText = '데이터 ' + getFilteredRows('Naver').length + '건';
+      document.getElementById('pdf-count-Meta').innerText = '데이터 ' + getFilteredRows('Meta').length + '건';
+      document.getElementById('pdf-count-Google').innerText = '데이터 ' + getFilteredRows('Google').length + '건';
       document.getElementById('pdfSelectModal').classList.add('active');
     }
 
@@ -1580,19 +1567,20 @@
       closePdfSelectModal();
       setMediaFilter(selectedMedia, true);
 
-      const mediaFileLabel = {
+      var mediaFileLabelMap = {
         ALL: '통합전체',
         Naver: '네이버검색',
         Meta: '메타',
         Google: '구글애즈'
-      }[selectedMedia] || selectedMedia;
+      };
+      var mediaFileLabel = mediaFileLabelMap[selectedMedia] || selectedMedia;
 
-      const originalTitle = document.title;
-      const safeClient = String(matchedClientDisplayName || '정원용회계사님').replace(/[\\/:*?"<>|]/g, '_');
-      const safePeriod = String(currentSelectedPeriod || '2차').replace(/[\\/:*?"<>|]/g, '_');
-      document.title = `${safeClient}_${mediaFileLabel}_성과보고서_${safePeriod}`;
+      var originalTitle = document.title;
+      var safeClient = String(matchedClientDisplayName || '정원용회계사님').replace(/[\\/:*?"<>|]/g, '_');
+      var safePeriod = String(currentSelectedPeriod || '2차').replace(/[\\/:*?"<>|]/g, '_');
+      document.title = safeClient + '_' + mediaFileLabel + '_성과보고서_' + safePeriod;
 
-      setTimeout(() => {
+      setTimeout(function() {
         if (trendChartInstance) trendChartInstance.resize();
         if (shareChartInstance) shareChartInstance.resize();
 
@@ -1600,6 +1588,10 @@
         document.title = originalTitle;
       }, 220);
     }
+
+    window.openPdfSelectModal = openPdfSelectModal;
+    window.closePdfSelectModal = closePdfSelectModal;
+    window.startMediaPdfPrint = startMediaPdfPrint;
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initDataLoad);
