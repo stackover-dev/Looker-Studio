@@ -1,1419 +1,1584 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>대행사 관제탑 관리자 시스템 (Admin Control Tower)</title>
-  
-  <link rel="icon" type="image/png" href="favicon.png">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- SheetJS 라이브러리 (XLSX, CSV 통합 파싱 지원) -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN CONTROL TOWER | 통합 매체 관리자 시스템</title>
+    <style>
+        /* =========================================================
+           [1. 글로벌 프리미엄 디자인 시스템 변수]
+           ========================================================= */
+        :root {
+            --bg-primary: #09090b;
+            --bg-surface: #111114;
+            --bg-card: #18181b;
+            --bg-input: #0f0f12;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-focus: rgba(96, 165, 250, 0.5);
+            --text-main: #f4f4f5;
+            --text-sub: #a1a1aa;
+            --text-muted: #71717a;
+            --accent-blue: #60a5fa;
+            --accent-indigo: #6366f1;
+            --accent-purple: #818cf8;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap');
-    body { font-family: 'Pretendard', sans-serif; background-color: #F1F5F9; }
-  </style>
+            /* 하이엔드 글로우 및 쉬머 스펙 */
+            --glow-cyan: rgba(6, 182, 212, 0.18);
+            --glow-cyan-hover: rgba(6, 182, 212, 0.45);
+            --glow-indigo: rgba(99, 102, 241, 0.25);
+            --glow-indigo-hover: rgba(99, 102, 241, 0.65);
+            --shimmer-spec: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0) 100%);
+            --font-premium: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif;
+            --ease-smooth: cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-premium);
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.6;
+            letter-spacing: -0.02em;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* =========================================================
+           [2. 상단 컨트롤 타워 헤더 & 시크릿 모드 경고 배너]
+           ========================================================= */
+        .incognito-warning {
+            display: none;
+            background: linear-gradient(90deg, #7f1d1d, #991b1b);
+            color: #fef2f2;
+            text-align: center;
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .top-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(9, 9, 11, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 14px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .brand-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .badge-tower {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #09090b;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            letter-spacing: 0.04em;
+        }
+
+        .brand-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .sync-status {
+            font-size: 12px;
+            color: var(--accent-emerald);
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* =========================================================
+           [3. 공통 버튼 & 프리미엄 쉬머/글로우 효과]
+           ========================================================= */
+        .btn {
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            color: var(--text-main);
+            padding: 9px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.35s var(--ease-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        /* 핵심 배포 버튼: 절제된 쉬머(Shimmer) 애니메이션 적용 */
+        .btn-deploy {
+            background: linear-gradient(135deg, #3b82f6 0%, #4f46e5 100%);
+            border: 1px solid rgba(129, 140, 248, 0.5);
+            color: #ffffff;
+            box-shadow: 0 0 20px var(--glow-indigo);
+        }
+
+        .btn-deploy:hover {
+            box-shadow: 0 0 32px var(--glow-indigo-hover);
+        }
+
+        .btn-deploy::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 150%;
+            height: 100%;
+            background: var(--shimmer-spec);
+            transform: skewX(-20deg);
+            animation: premium-shimmer 4s infinite ease-in-out;
+        }
+
+        @keyframes premium-shimmer {
+            0% { left: -150%; }
+            28% { left: 150%; }
+            100% { left: 150%; }
+        }
+
+        .btn-preview {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: #34d399;
+        }
+
+        .btn-preview:hover {
+            background: rgba(16, 185, 129, 0.25);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary {
+            background: var(--accent-indigo);
+            border-color: var(--accent-indigo);
+            color: #fff;
+        }
+
+        .btn-danger {
+            background: rgba(244, 63, 94, 0.12);
+            border-color: rgba(244, 63, 94, 0.35);
+            color: #fb7185;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+
+        /* =========================================================
+           [4. 메인 대시보드 가변 그리드 레이아웃]
+           ========================================================= */
+        .main-container {
+            max-width: 1360px;
+            margin: 28px auto 0;
+            padding: 0 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .glass-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 26px;
+            box-shadow: 0 0 24px 0 var(--glow-cyan);
+            transition: border-color 0.4s ease, box-shadow 0.4s var(--ease-smooth);
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(255, 255, 255, 0.16);
+        }
+
+        /* 고객사 & 회차 설정 그리드 */
+        .client-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr 1fr;
+            gap: 18px;
+            align-items: end;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-sub);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        input[type="text"], input[type="password"], select, textarea {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.25s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--border-focus);
+        }
+
+        .client-toolbar {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* 회차 누적 컨트롤 바 */
+        .round-section {
+            margin-top: 22px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .round-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .round-pills {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .round-pill {
+            padding: 9px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-sub);
+            transition: all 0.3s var(--ease-smooth);
+        }
+
+        .round-pill.active {
+            background: var(--text-main);
+            color: var(--bg-primary);
+            border-color: var(--text-main);
+            box-shadow: 0 0 18px rgba(255, 255, 255, 0.25);
+        }
+
+        /* 매체 탭 바 */
+        .media-bar {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .media-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .media-tab {
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .media-tab.active {
+            background: var(--accent-indigo);
+            color: #fff;
+            border-color: var(--accent-indigo);
+            box-shadow: 0 0 16px var(--glow-indigo);
+        }
+
+        /* 에디터 & 프리뷰 2단 그리드 */
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-desc {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-top: 2px;
+        }
+
+        .format-tools {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg-input);
+            padding: 6px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .fmt-btn {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .fmt-highlight { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); }
+        .fmt-green { background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4); }
+
+        .editor-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .editor-textarea {
+            min-height: 190px;
+            resize: vertical;
+            line-height: 1.65;
+        }
+
+        .live-preview-box {
+            min-height: 190px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 14px;
+            color: var(--text-main);
+            overflow-y: auto;
+        }
+
+        /* 하단 2단 운영 이슈 + 소재 관리 그리드 */
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .creative-upload-box {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .img-dropzone {
+            height: 110px;
+            border: 1px dashed rgba(255, 255, 255, 0.25);
+            border-radius: 12px;
+            background: var(--bg-input);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--text-sub);
+            cursor: pointer;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .img-dropzone img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .creative-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .creative-list {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .creative-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            padding: 10px 12px;
+            border-radius: 12px;
+        }
+
+        .creative-thumb {
+            width: 52px;
+            height: 52px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #27272a;
+            flex-shrink: 0;
+        }
+
+        .creative-meta {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .creative-meta h4 {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .creative-meta p {
+            font-size: 12px;
+            color: var(--text-sub);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* =========================================================
+           [5. 스케일 모달(Modal) 확대 인터랙션]
+           ========================================================= */
+        .modal-blur-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+            padding: 20px;
+        }
+
+        .modal-blur-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-scale-content {
+            background: var(--bg-surface);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 24px;
+            padding: 32px;
+            width: 100%;
+            max-width: 560px;
+            max-height: 88vh;
+            overflow-y: auto;
+            transform: scale(0.8);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+        }
+
+        .modal-scale-content.modal-wide {
+            max-width: 960px;
+        }
+
+        .modal-blur-overlay.active .modal-scale-content {
+            transform: scale(1);
+        }
+
+        /* 토스트 알림 */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: #18181b;
+            border: 1px solid rgba(96, 165, 250, 0.5);
+            color: #fff;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.35s var(--ease-smooth);
+            z-index: 2000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* =========================================================
+           [6. 스마트 반응형 중단점]
+           ========================================================= */
+        @media (max-width: 1024px) {
+            .client-grid { grid-template-columns: 1fr; }
+            .editor-split { grid-template-columns: 1fr; }
+            .bottom-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 640px) {
+            .top-navbar { padding: 14px 16px; }
+            .main-container { padding: 0 14px; }
+            .glass-panel { padding: 18px; }
+        }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased">
+<body>
 
-  <!-- 보안 로그인 모달 -->
-  <div id="login-modal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200">
-      <div class="text-center mb-6">
-        <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
-          🔒
-        </div>
-        <h3 class="text-lg font-bold text-slate-900">대행사 관리자 관제탑 로그인</h3>
-        <p class="text-xs text-slate-500 mt-1">고객사 보고서 데이터 등록 및 코멘트 수정을 위해 인증하세요.</p>
-      </div>
-
-      <form onsubmit="handleLogin(event)" class="space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">관리자 ID</label>
-          <input type="text" id="input-admin-id" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900" placeholder="ID 입력" required>
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">비밀번호</label>
-          <input type="password" id="input-admin-pw" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900" placeholder="비밀번호 입력" required>
-        </div>
-        <div id="login-error" class="text-xs text-red-600 font-semibold hidden">아이디 또는 비밀번호가 올바르지 않습니다.</div>
-
-        <button type="submit" class="w-full py-2.5 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition shadow">관제탑 접속하기</button>
-      </form>
+    <!-- 시크릿 모드 감지 경고 배너 -->
+    <div id="incognitoBanner" class="incognito-warning">
+        ⚠️ 현재 브라우저 '시크릿 모드'로 접속 중입니다. 시크릿 모드에서는 창을 닫으면 임시 데이터가 모두 사라지므로, 반드시 일반 브라우저 창을 사용하고 상단 [GitHub 즉시 배포]를 눌러 저장소에 영구 커밋하세요!
     </div>
-  </div>
 
-  <!-- 관리자 대시보드 메인 영역 -->
-  <div id="admin-main-content" class="hidden flex-col min-h-screen">
-    
-    <!-- 어드민 상단 네비게이션 헤더 -->
-    <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <span class="px-2 py-0.5 text-[10px] font-extrabold bg-amber-500 text-slate-950 rounded uppercase">ADMIN CONTROL TOWER</span>
-          <h1 class="text-sm sm:text-base font-bold">통합 매체 관리자 시스템</h1>
+    <!-- 상단 컨트롤 타워 헤더 -->
+    <header class="top-navbar">
+        <div class="brand-wrap">
+            <span class="badge-tower">ADMIN CONTROL TOWER</span>
+            <span class="brand-title">통합 매체 관리자 시스템</span>
+            <span id="dbStatusBadge" class="sync-status">● 로컬 자동백업 활성</span>
         </div>
-
-        <div class="flex items-center space-x-2">
-          <button onclick="setGitHubTokenPrompt()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-lg text-xs font-bold transition flex items-center space-x-1" title="GitHub Personal Access Token 설정">
-            <span>🔑 토큰 설정</span>
-          </button>
-          
-          <button id="btn-gh-deploy" onclick="deployDirectlyToGitHub()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1.5 shadow-sm">
-            <span>🚀 GitHub 즉시 배포 (원클릭 자동 커밋)</span>
-          </button>
-          
-          <a id="preview-client-link" href="#" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm">
-            <span>👁️ <span id="preview-filename-text">noahuniversecompany.html</span> 미리보기</span>
-          </a>
-
-          <button onclick="handleLogout()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-100 rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-sm ml-2">
-            <span>🚪 로그아웃</span>
-          </button>
+        <div class="nav-actions">
+            <button class="btn" onclick="openTokenModal()">🔑 토큰 설정</button>
+            <button class="btn btn-deploy" onclick="deployAllToGitHub()">🚀 GitHub 즉시 배포 (영구 DB + HTML 커밋)</button>
+            <button class="btn btn-preview" onclick="openPreviewModal()">👁️ <span id="previewBtnName">Lumy.html</span> 미리보기</button>
         </div>
-      </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 flex-grow w-full">
-      
-      <!-- 1. 고객사 및 맞춤 집행 기간 관리 바 -->
-      <div class="flex flex-col gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-        
-        <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-100">
-          <div class="flex flex-wrap items-center gap-3">
-            <div>
-              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">고객사 선택</label>
-              <select id="admin-client-select" onchange="changeClient(this.value)" class="bg-slate-50 border border-slate-300 font-bold text-xs text-slate-900 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-slate-900">
-              </select>
+    <!-- 메인 컨트롤 대시보드 -->
+    <main class="main-container">
+
+        <!-- 섹션 1: 고객사 및 누적 회차 컨트롤 -->
+        <section class="glass-panel">
+            <div class="client-grid">
+                <div class="field-group">
+                    <label class="field-label">고객사 선택 (누적 DB 연동)</label>
+                    <select id="clientSelect" onchange="handleClientChange()"></select>
+                </div>
+                <div class="field-group">
+                    <label class="field-label">고객사 상호명 수정 (직접 입력)</label>
+                    <div class="input-row">
+                        <input type="text" id="clientNameInput" placeholder="예: Lumy">
+                        <button class="btn btn-primary" onclick="updateClientName()">상호명 변경</button>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label class="field-label">연동된 HTML 파일명</label>
+                    <div class="input-row">
+                        <input type="text" id="clientFileInput" placeholder="예: Lumy.html">
+                        <button class="btn" onclick="updateClientFile()">수정</button>
+                    </div>
+                </div>
             </div>
 
-            <div>
-              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">고객사 상호명 수정 (직접 입력)</label>
-              <div class="flex items-center space-x-1">
-                <input type="text" id="edit-client-name" class="bg-slate-50 border border-slate-300 font-bold text-xs text-slate-900 rounded-lg px-2.5 py-1.5 w-40 focus:outline-none focus:ring-2 focus:ring-slate-900" placeholder="상호명 입력">
-                <button onclick="updateClientName()" class="px-2.5 py-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition shadow-sm">상호명 변경</button>
-              </div>
+            <div class="client-toolbar">
+                <button class="btn" style="color:#34d399; border-color:rgba(52,211,153,0.35);" onclick="loadDBFromGitHub()">🔄 GitHub 영구 DB 불러오기 (동기화)</button>
+                <button class="btn" style="background:#f4f4f5; color:#09090b;" onclick="addNewClient()">+ 신규 고객사 추가</button>
+                <button class="btn btn-danger" onclick="resetToDefaultSample()">초기화 (샘플 로드)</button>
             </div>
 
-            <div>
-              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">연결된 HTML 파일명</label>
-              <div class="flex items-center space-x-1">
-                <input type="text" id="edit-client-html-file" list="repo-html-datalist" class="bg-slate-50 border border-slate-300 font-mono text-xs text-slate-800 rounded-lg px-2.5 py-1.5 w-48 focus:outline-none focus:ring-2 focus:ring-slate-900" placeholder="noahuniversecompany.html">
-                <datalist id="repo-html-datalist"></datalist>
-                <button onclick="updateClientHtmlFilename()" class="px-2.5 py-1.5 text-xs font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-lg transition">수정</button>
-              </div>
+            <!-- 1차 / 2차 / 3차 누적 회차 관리 -->
+            <div class="round-section">
+                <div class="round-header">
+                    <span class="field-label" style="font-size:13px; color:var(--text-main);">📅 광고 집행 기간 / 회차 선택 (1차·2차·3차 원클릭 전환 및 데이터 지속 누적)</span>
+                    <div class="input-row">
+                        <button class="btn btn-sm" style="color:var(--accent-blue); border-color:rgba(96,165,250,0.4);" onclick="addNewRound()">+ 신규 회차/기간 추가</button>
+                        <button class="btn btn-sm" onclick="renameCurrentRound()">회차명 수정</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteCurrentRound()">현재 회차 삭제</button>
+                    </div>
+                </div>
+                <div id="roundPillsContainer" class="round-pills"></div>
             </div>
-          </div>
+        </section>
 
-          <div class="flex items-center space-x-2">
-            <button onclick="syncRepoHtmlFiles(true)" class="px-3 py-1.5 text-xs font-bold bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200 rounded-lg transition shadow-sm flex items-center space-x-1">
-              <span>🔄 레포 HTML 동기화</span>
-            </button>
-            <button onclick="addNewClientPrompt()" class="px-3 py-1.5 text-xs font-bold bg-slate-800 text-white hover:bg-slate-700 rounded-lg transition shadow-sm">
-              + 신규 고객사 추가
-            </button>
-            <button onclick="resetCurrentClientData()" class="px-3 py-1.5 text-xs font-bold bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 rounded-lg transition">
-              초기화 (샘플 로드)
-            </button>
-          </div>
-        </div>
-
-        <!-- 기간별 지속 관리 및 원클릭 회차 버튼 영역 -->
-        <div>
-          <div class="flex items-center justify-between mb-2">
-            <label class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
-              <span>📅</span> <span>광고 집행 기간 / 회차 선택 (원클릭 전환 및 데이터 지속 누적)</span>
-            </label>
-            <div class="flex items-center space-x-1.5">
-              <button onclick="addNewPeriodPrompt()" class="px-2.5 py-1 text-[11px] font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-md transition">
-                + 신규 회차/기간 추가
-              </button>
-              <button onclick="editCurrentPeriodPrompt()" class="px-2.5 py-1 text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-md transition">
-                회차명 수정
-              </button>
-              <button onclick="deleteCurrentPeriod()" class="px-2.5 py-1 text-[11px] font-bold bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-md transition">
-                현재 회차 삭제
-              </button>
+        <!-- 섹션 2: 매체별 코멘트 분리 탭 -->
+        <section class="media-bar">
+            <span style="font-size:13px; font-weight:700; color:var(--accent-amber);">✍️ 매체별 코멘트 분리 작성:</span>
+            <div class="media-tabs" id="mediaTabsContainer">
+                <button class="media-tab active" data-media="all" onclick="switchMedia('all')">통합(전체)</button>
+                <button class="media-tab" data-media="naver" onclick="switchMedia('naver')">네이버 검색</button>
+                <button class="media-tab" data-media="meta" onclick="switchMedia('meta')">메타 (DA/SA)</button>
+                <button class="media-tab" data-media="google" onclick="switchMedia('google')">구글 애즈</button>
             </div>
-          </div>
+        </section>
 
-          <div id="admin-period-buttons" class="flex flex-wrap items-center gap-2 pt-1">
-          </div>
-        </div>
-
-      </div>
-
-      <!-- 매체별 독립 코멘트 분리 탭 바 -->
-      <div class="flex items-center space-x-3 mb-2">
-        <span class="text-sm font-bold text-slate-800">✍️ 매체별 코멘트 분리 작성:</span>
-        <div id="comment-media-tabs" class="flex space-x-1 border border-slate-300 bg-white p-1 rounded-lg shadow-sm">
-        </div>
-      </div>
-
-      <!-- 2. 최상단 HTML 편집 가능한 전략 코멘트 박스 -->
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-          <div>
-            <h2 class="text-sm font-bold text-slate-900 flex items-center space-x-1.5">
-              <span>📝</span>
-              <span>최상단 전략 HTML 코멘트 박스 (HTML Comment Box)</span>
-            </h2>
-            <p class="text-[11px] text-slate-500 mt-0.5">선택된 회차 및 매체 탭에 독립적으로 연동되는 서식 태그(HTML) 적용 가능 총평 영역입니다.</p>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1.5 rounded-xl border border-slate-200">
-            <span class="text-[10px] font-bold text-slate-400 px-1">빠른 서식:</span>
-            <button type="button" onclick="insertHtmlTag('<b>', '</b>')" class="px-2 py-1 text-[11px] font-bold bg-white border border-slate-300 rounded hover:bg-slate-100" title="진하게"><b>B</b></button>
-            <button type="button" onclick="insertHtmlTag('<mark class=\'bg-yellow-200 px-1 rounded font-semibold\'>', '</mark>')" class="px-2 py-1 text-[11px] bg-yellow-100 text-yellow-800 font-bold border border-yellow-300 rounded hover:bg-yellow-200" title="형광펜">Highlight</button>
-            <button type="button" onclick="insertHtmlTag('<span class=\'text-emerald-600 font-bold\'>', '</span>')" class="px-2 py-1 text-[11px] bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 rounded hover:bg-emerald-100" title="초록 강조">Green</button>
-            <button type="button" onclick="insertHtmlTag('<ul class=\'list-disc list-inside space-y-1 my-2\'>\n  <li>', '</li>\n</ul>')" class="px-2 py-1 text-[11px] bg-white border border-slate-300 rounded hover:bg-slate-100" title="목록">• List</button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">HTML 코드 편집기</label>
-            <textarea id="edit-strategy-comment" rows="7" oninput="handleCommentInput()" class="w-full font-mono text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-slate-50 focus:bg-white"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">클라이언트 실제 노출 프리뷰 (Live Preview)</label>
-            <div id="comment-live-preview" class="w-full h-full min-h-[148px] text-xs p-4 border border-slate-200 rounded-xl bg-slate-50/50 leading-relaxed overflow-y-auto">
+        <!-- 섹션 3: 최상단 전략 HTML 코멘트 박스 & 실시간 프리뷰 -->
+        <section class="glass-panel">
+            <div class="panel-header">
+                <div>
+                    <div class="panel-title">📄 최상단 전략 HTML 코멘트 박스 (HTML Comment Box)</div>
+                    <div class="panel-desc">선택된 회차 및 매체 탭에 독립적으로 누적 저장되는 총평 영역입니다.</div>
+                </div>
+                <div class="format-tools">
+                    <span style="font-size:11px; color:var(--text-muted); margin-right:4px;">빠른 서식:</span>
+                    <button class="fmt-btn" onclick="insertTag('<b>', '</b>')">B</button>
+                    <button class="fmt-btn fmt-highlight" onclick="insertTag('<mark style="background:#fef08a;color:#09090b;padding:1px 5px;border-radius:4px;">', '</mark>')">Highlight</button>
+                    <button class="fmt-btn fmt-green" onclick="insertTag('<span style="color:#10b981;font-weight:700;">', '</span>')">Green</button>
+                    <button class="fmt-btn" onclick="insertTag('<ul>\n  <li>', '</li>\n</ul>')">• List</button>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- 3. 운영 이슈 & 4. 광고 소재 피드백 관리 -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
-          <label class="block text-xs font-bold text-amber-800 mb-1.5">
-            ⚡ 운영 이슈 및 최적화 대응 내역 (선택 회차 및 매체 연동 / HTML 코드 적용 가능)
-          </label>
-          <textarea id="edit-anomaly-comment" rows="4" oninput="handleCommentInput()" class="w-full flex-grow font-mono text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none bg-slate-50 focus:bg-white" placeholder="HTML 태그를 활용하여 운영 이슈 및 최적화 내역을 작성하세요."></textarea>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
-          <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
-            <h2 class="text-sm font-bold text-indigo-700 flex items-center space-x-1.5">
-              <span>🖼️</span><span>광고 소재 성과 피드백 관리</span>
-            </h2>
-            <span class="text-[10px] text-slate-400">이미지는 자동 용량 최적화 저장됩니다.</span>
-          </div>
-          
-          <div class="flex space-x-3 mb-4">
-            <div class="w-24 h-24 bg-slate-100 border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center overflow-hidden relative cursor-pointer hover:bg-slate-50 transition shrink-0" onclick="document.getElementById('creative-upload').click()">
-              <span class="text-xs text-slate-400 font-bold text-center px-1" id="creative-placeholder">+ 이미지<br>선택</span>
-              <img id="creative-preview-img" class="absolute inset-0 w-full h-full object-cover hidden">
-              <input type="file" id="creative-upload" accept="image/*" class="hidden" onchange="processCreativeImage(event)">
+            <div class="editor-split">
+                <div>
+                    <div class="field-label" style="margin-bottom:8px;">HTML 코드 편집기</div>
+                    <textarea id="commentEditor" class="editor-textarea" placeholder="여기에 총평 및 핵심 전략 코멘트를 입력하세요. HTML 태그 사용이 가능합니다." oninput="handleEditorInput()"></textarea>
+                </div>
+                <div>
+                    <div class="field-label" style="margin-bottom:8px;">클라이언트 실제 노출 프리뷰 (Live Preview)</div>
+                    <div id="commentPreview" class="live-preview-box">실시간 프리뷰 영역입니다. 좌측에 코멘트를 입력하세요.</div>
+                </div>
             </div>
-            
-            <div class="flex-grow flex flex-col space-y-2">
-              <input type="text" id="creative-title" placeholder="소재명 (예: 메인 A안 30초)" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-              <textarea id="creative-feedback" rows="2" placeholder="해당 소재에 대한 성과 피드백을 입력하세요." class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
-              <input type="hidden" id="creative-base64">
+        </section>
+
+        <!-- 섹션 4: 하단 2단 그리드 (운영 이슈 + 광고 소재 피드백) -->
+        <section class="bottom-grid">
+            <!-- 좌측: 운영 이슈 및 최적화 대응 내역 -->
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title" style="color:var(--accent-amber);">⚡ 운영 이슈 및 최적화 대응 내역</div>
+                        <div class="panel-desc">선택 회차 및 매체 연동 / HTML 코드 적용 가능</div>
+                    </div>
+                </div>
+                <textarea id="issueEditor" class="editor-textarea" style="min-height:260px;" placeholder="HTML 태그를 활용하여 운영 이슈 및 최적화 대응 내역을 작성하세요." oninput="handleEditorInput()"></textarea>
             </div>
-          </div>
-          
-          <button onclick="addCreative()" class="w-full py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 rounded-lg text-xs font-bold transition mb-3">
-            ↓ 현재 소재 리스트에 등록하기
-          </button>
-          
-          <div class="flex-grow bg-slate-50 rounded-lg border border-slate-200 p-2 overflow-y-auto max-h-40" id="admin-creatives-list">
-          </div>
-        </div>
-      </div>
 
-      <!-- 5. 데이터 업로드 -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-          <div>
-            <h3 class="text-sm font-bold text-blue-700 flex items-center gap-1.5">
-              <span class="text-lg">📁</span> CSV / Excel 매체 보고서 자동 업로드 (기간 자동인식 AI)
-            </h3>
-            <p class="text-[11px] text-slate-500 mt-0.5">메타(페이스북), 네이버 검색광고(다차원), 구글 관리자 원본 CSV/엑셀을 올리면 1행 메타데이터 및 다차원 키워드 데이터를 일별로 자동 통합 정제합니다.</p>
-          </div>
-          
-          <div class="relative w-full sm:w-auto flex-shrink-0">
-            <input type="file" id="excel-upload-input" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" class="hidden" onchange="handleFileUpload(event)">
-            <label for="excel-upload-input" class="cursor-pointer w-full flex items-center justify-center space-x-1.5 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition shadow-md">
-              <span class="text-base leading-none">📥</span> <span>보고서 파일 업로드 (.csv, .xlsx)</span>
-            </label>
-          </div>
-        </div>
+            <!-- 우측: 광고 소재 성과 피드백 관리 -->
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title" style="color:var(--accent-purple);">🖼️ 광고 소재 성과 피드백 관리</div>
+                        <div class="panel-desc">이미지는 자동 압축·최적화되어 회차별 DB에 영구 보존됩니다.</div>
+                    </div>
+                </div>
 
-        <div class="pt-2">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-            <div>
-              <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1">
-                <span>📋</span> 수동 텍스트 복사-붙여넣기 (Bulk Paste)
-              </h3>
-              <p class="text-[11px] text-slate-500">열 순서: [ 날짜 | 매체 | 노출수 | 도달수 | 클릭수 | 비용 | 전환수 ]</p>
+                <div class="creative-upload-box">
+                    <label class="img-dropzone" id="imgDropzone">
+                        <input type="file" id="creativeImgInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+                        <span id="dropzoneText">+ 이미지<br>선택</span>
+                    </label>
+                    <div class="creative-inputs">
+                        <input type="text" id="creativeTitleInput" placeholder="소재명 (예: 메인 A안 30초)">
+                        <textarea id="creativeDescInput" style="min-height:64px; resize:none;" placeholder="해당 소재에 대한 성과 피드백을 입력하세요."></textarea>
+                    </div>
+                </div>
+
+                <button class="btn" style="width:100%; justify-content:center; border-color:rgba(129,140,248,0.4); color:var(--accent-purple);" onclick="addCreativeItem()">↓ 현재 소재 리스트에 등록하기</button>
+
+                <div id="creativeListContainer" class="creative-list"></div>
             </div>
-            <button onclick="parseBulkPasteData()" class="px-3 py-1.5 text-[11px] font-bold bg-slate-700 hover:bg-slate-800 text-white rounded-lg transition shadow-sm self-start sm:self-auto">
-              붙여넣은 텍스트 적용하기
-            </button>
-          </div>
-          <textarea id="bulk-paste-area" rows="2" class="w-full font-mono text-[10px] p-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900" placeholder="2026-09-14 Meta 28636 14125 1086 222229 1109"></textarea>
-        </div>
-      </div>
-
-      <!-- 6. 등록된 일별 매체 데이터 -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50">
-          <div class="flex items-center space-x-2">
-            <h3 class="text-xs font-bold text-slate-900">등록된 일별 매체 데이터 (<span id="active-period-label" class="text-blue-600 font-bold"></span>)</h3>
-            <span class="text-[10px] text-slate-400">| 컬럼명 우측 ✕ 클릭 시 해당 열이 즉시 삭제됩니다</span>
-          </div>
-          
-          <div class="flex items-center space-x-2">
-            <button onclick="addNewColumnPrompt()" class="px-2.5 py-1.5 text-xs font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 rounded-lg transition shadow-sm flex items-center space-x-1">
-              <span>+ 새 지표(열) 추가</span>
-            </button>
-            <button onclick="addEmptyDataRow()" class="px-3 py-1.5 text-xs font-bold bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition shadow-sm">
-              + 빈 행 수동 추가
-            </button>
-            
-            <span class="text-slate-300">|</span>
-
-            <button onclick="clearCurrentPeriodData()" class="px-2.5 py-1.5 text-[11px] font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition" title="현재 회차의 등록된 모든 데이터를 삭제합니다">
-              🗑️ 데이터 전체 삭제
-            </button>
-          </div>
-        </div>
-
-        <div class="max-h-96 overflow-y-auto overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-100 text-slate-600 sticky top-0 border-b border-slate-200 z-10 shadow-sm">
-              <tr id="admin-table-header-row">
-              </tr>
-            </thead>
-            <tbody id="admin-table-body" class="divide-y divide-slate-100 font-mono">
-            </tbody>
-          </table>
-        </div>
-      </div>
+        </section>
 
     </main>
-  </div>
 
-  <script>
-    const GITHUB_CONFIG = {
-      owner: "stackover-dev",
-      repo: "Looker-Studio",
-      path: "database.json",
-      branch: "main"
-    };
-
-    const standardColumns = [
-      { key: 'impressions', label: '노출수', width: 'w-24', isConv: false },
-      { key: 'reach', label: '도달수', width: 'w-24', isConv: false },
-      { key: 'clicks', label: '클릭수', width: 'w-20', isConv: false },
-      { key: 'cost', label: '비용 (VAT포함)', width: 'w-28', isConv: false },
-      { key: 'conv', label: '전환수(CV)', width: 'w-20', isConv: true }
-    ];
-
-    const defaultDatabase = {
-      "노아유니버스컴퍼니": {
-        htmlFilename: "noahuniversecompany.html",
-        months: {}
-      }
-    };
-
-    let db = {};
-    let currentClient = "노아유니버스컴퍼니";
-    let currentPeriod = "";
-    let currentCommentMedia = 'ALL';
-    let repoHtmlFiles = [];
-
-    document.addEventListener('DOMContentLoaded', () => {
-      if (localStorage.getItem('IS_ADMIN_LOGGED_IN') === 'true') {
-        showAdminPanel();
-      }
-    });
-
-    async function showAdminPanel() {
-      document.getElementById('login-modal').classList.add('hidden');
-      document.getElementById('admin-main-content').classList.remove('hidden');
-      document.getElementById('admin-main-content').classList.add('flex');
-      
-      await loadDatabase();
-
-      const clientKeys = Object.keys(db);
-      if (clientKeys.length > 0) {
-        const matchedKey = clientKeys.find(k => (db[k].htmlFilename || '').toLowerCase() === 'noahuniversecompany.html')
-                        || clientKeys.find(k => k.includes('노아'))
-                        || clientKeys[0];
-        currentClient = matchedKey;
-      }
-      
-      renderClientSelect();
-      renderPeriodNav();
-      renderAdminPanel();
-      
-      syncRepoHtmlFiles(false);
-    }
-
-    async function loadDatabase() {
-      let remoteDb = null;
-      const token = localStorage.getItem('GH_PAT_TOKEN');
-
-      try {
-        // [핵심 해결] 토큰이 있을 경우 CDN 캐시를 거치지 않고 GitHub REST API를 통해 실시간 최신 원본을 즉시 호출
-        if (token && GITHUB_CONFIG.owner) {
-          const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}?ref=${GITHUB_CONFIG.branch}`;
-          const apiRes = await fetch(url, {
-            headers: { 
-              "Authorization": `Bearer ${token}`, 
-              "Accept": "application/vnd.github.v3+json" 
-            },
-            cache: "no-store"
-          });
-          
-          if (apiRes.ok) {
-            const fileData = await apiRes.json();
-            // UTF-8 한글 깨짐 방지 디코딩
-            const bin = atob(fileData.content.replace(/\s/g, ''));
-            const bytes = new Uint8Array(bin.length);
-            for (let i = 0; i < bin.length; i++) {
-              bytes[i] = bin.charCodeAt(i);
-            }
-            const jsonStr = new TextDecoder('utf-8').decode(bytes);
-            remoteDb = JSON.parse(jsonStr);
-          }
-        }
-        
-        // 토큰이 없거나 API 실패 시 일반 fetch (no-store 캐시 방지)
-        if (!remoteDb) {
-          let response = await fetch('../database.json?t=' + new Date().getTime(), { cache: 'no-store' });
-          if (!response.ok) {
-            response = await fetch('./database.json?t=' + new Date().getTime(), { cache: 'no-store' });
-          }
-          if (response.ok) {
-            remoteDb = await response.json();
-          }
-        }
-      } catch (e) {
-        console.warn("⚠️ 원격 database.json 로드 실패, 로컬 캐시를 조회합니다.", e);
-      }
-
-      // 로컬 스토리지 역덮어쓰기 방지
-      if (remoteDb) {
-        db = remoteDb;
-        localStorage.setItem('MEDIA_REPORT_DB', JSON.stringify(db));
-      } else {
-        const saved = localStorage.getItem('MEDIA_REPORT_DB');
-        if (saved) {
-          try { db = JSON.parse(saved); } catch(e) { db = defaultDatabase; }
-        } else {
-          db = defaultDatabase;
-          saveDatabase();
-        }
-      }
-
-      Object.keys(db).forEach(client => {
-        if (!db[client].months) {
-          const oldMonths = { ...db[client] };
-          delete oldMonths.htmlFilename;
-          db[client] = {
-            htmlFilename: `${client.toLowerCase()}.html`,
-            months: oldMonths
-          };
-        }
-        Object.keys(db[client].months).forEach(periodKey => {
-          let month = db[client].months[periodKey];
-          
-          if (!month.creatives || Array.isArray(month.creatives)) {
-            const oldCreatives = Array.isArray(month.creatives) ? month.creatives : [];
-            month.creatives = { ALL: oldCreatives, Naver: [], Meta: [], Google: [] };
-          } else {
-            if (!month.creatives.ALL) month.creatives.ALL = [];
-            if (!month.creatives.Naver) month.creatives.Naver = [];
-            if (!month.creatives.Meta) month.creatives.Meta = [];
-            if (!month.creatives.Google) month.creatives.Google = [];
-          }
-
-          if (!month.columns) month.columns = standardColumns.map(c => ({ ...c }));
-          
-          if (!month.comments) {
-            month.comments = {
-              ALL: { strategy: month.strategyComment || '', anomaly: month.anomalyComment || '' },
-              Naver: { strategy: '', anomaly: '' },
-              Meta: { strategy: '', anomaly: '' },
-              Google: { strategy: '', anomaly: '' }
-            };
-          }
-        });
-      });
-    }
-
-    function renderPeriodNav() {
-      const container = document.getElementById('admin-period-buttons');
-      container.innerHTML = '';
-
-      if (!db[currentClient]) db[currentClient] = { htmlFilename: `${currentClient}.html`, months: {} };
-      if (!db[currentClient].months) db[currentClient].months = {};
-
-      let periods = Object.keys(db[currentClient].months);
-      if (periods.length === 0) {
-        const initialPeriod = "1차 (집행 기간)";
-        db[currentClient].months[initialPeriod] = { 
-          comments: {
-            ALL: { strategy: '', anomaly: '' },
-            Naver: { strategy: '', anomaly: '' },
-            Meta: { strategy: '', anomaly: '' },
-            Google: { strategy: '', anomaly: '' }
-          },
-          creatives: {
-            ALL: [],
-            Naver: [],
-            Meta: [],
-            Google: []
-          },
-          rawDataset: [], columns: standardColumns.map(c => ({ ...c })) 
-        };
-        periods.push(initialPeriod);
-        saveDatabase();
-      }
-
-      if (!currentPeriod || !periods.includes(currentPeriod)) {
-        currentPeriod = periods.find(p => p !== "신규 집행 기간") || periods[0];
-      }
-
-      document.getElementById('active-period-label').innerText = currentPeriod;
-
-      periods.forEach(p => {
-        const btn = document.createElement('button');
-        btn.onclick = () => { 
-          saveCommentsFromAdmin(); 
-          currentPeriod = p; 
-          renderPeriodNav(); 
-          renderAdminPanel(); 
-        };
-        
-        if (p === currentPeriod) {
-          btn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg bg-slate-900 text-white shadow-sm shrink-0 transition-colors border border-slate-900";
-          btn.innerHTML = `<span>✓</span> <span>${p}</span>`;
-        } else {
-          btn.className = "px-3.5 py-1.5 text-xs font-medium rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shrink-0 border border-slate-200";
-          btn.innerText = p;
-        }
-        container.appendChild(btn);
-      });
-    }
-
-    function addNewPeriodPrompt() {
-      const periodName = prompt('추가할 회차명 또는 집행 기간을 입력하세요:\n(예: 1차, 2차, 3차 또는 2026.09.17 ~ 2026.10.16)');
-      if (periodName && periodName.trim()) {
-        const trimmed = periodName.trim();
-        if (!db[currentClient].months[trimmed]) {
-          saveCommentsFromAdmin();
-          db[currentClient].months[trimmed] = { 
-            comments: {
-              ALL: { strategy: '', anomaly: '' },
-              Naver: { strategy: '', anomaly: '' },
-              Meta: { strategy: '', anomaly: '' },
-              Google: { strategy: '', anomaly: '' }
-            },
-            creatives: {
-              ALL: [],
-              Naver: [],
-              Meta: [],
-              Google: []
-            },
-            rawDataset: [], columns: standardColumns.map(c => ({ ...c })) 
-          };
-          saveDatabase();
-          currentPeriod = trimmed;
-          renderPeriodNav();
-          renderAdminPanel();
-          alert(`✅ [${trimmed}] 회차가 성공적으로 생성되었습니다.`);
-        } else {
-          alert('이미 존재하는 회차/기간명입니다.');
-        }
-      }
-    }
-
-    function editCurrentPeriodPrompt() {
-      const newName = prompt('현재 회차/기간명을 수정하세요:', currentPeriod);
-      if (newName && newName.trim() && newName.trim() !== currentPeriod) {
-        const trimmed = newName.trim();
-        const data = db[currentClient].months[currentPeriod];
-        delete db[currentClient].months[currentPeriod];
-        db[currentClient].months[trimmed] = data;
-        currentPeriod = trimmed;
-        saveDatabase();
-        renderPeriodNav();
-        renderAdminPanel();
-      }
-    }
-
-    function deleteCurrentPeriod() {
-      const periods = Object.keys(db[currentClient].months);
-      if (periods.length <= 1) {
-        alert('최소 1개의 회차/기간은 유지되어야 합니다.');
-        return;
-      }
-      if (confirm(`정말 [${currentPeriod}] 회차와 해당 기간의 모든 데이터를 삭제하시겠습니까?`)) {
-        delete db[currentClient].months[currentPeriod];
-        currentPeriod = Object.keys(db[currentClient].months)[0];
-        saveDatabase();
-        renderPeriodNav();
-        renderAdminPanel();
-      }
-    }
-
-    function renderCommentTabs() {
-      const tabs = ['ALL', 'Naver', 'Meta', 'Google'];
-      const labels = { ALL: '통합(전체)', Naver: '네이버 검색', Meta: '메타 (DA/SA)', Google: '구글 애즈' };
-      const container = document.getElementById('comment-media-tabs');
-      if (!container) return;
-      
-      container.innerHTML = tabs.map(t => {
-        const isActive = t === currentCommentMedia;
-        const btnClass = isActive 
-          ? "px-3 py-1.5 text-xs font-bold bg-slate-900 text-white rounded-md shadow-sm transition"
-          : "px-3 py-1.5 text-xs font-bold bg-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-200 rounded-md transition";
-        return `<button onclick="changeCommentMedia('${t}')" class="${btnClass}">${labels[t]}</button>`;
-      }).join('');
-    }
-
-    function changeCommentMedia(media) {
-      saveCommentsFromAdmin();
-      currentCommentMedia = media;
-      renderCommentTabs();
-      
-      const periodData = db[currentClient].months[currentPeriod] || {};
-      const activeData = periodData.comments && periodData.comments[currentCommentMedia] 
-                       ? periodData.comments[currentCommentMedia] 
-                       : { strategy: '', anomaly: '' };
-                       
-      document.getElementById('edit-strategy-comment').value = activeData.strategy || '';
-      document.getElementById('edit-anomaly-comment').value = activeData.anomaly || '';
-      updateLiveCommentPreview();
-      
-      renderCreativesList();
-
-      renderAdminDataTable(periodData.rawDataset || []);
-    }
-
-    function renderAdminPanel() {
-      document.getElementById('active-period-label').innerText = currentPeriod;
-      renderCommentTabs();
-
-      const periodData = db[currentClient].months[currentPeriod] || {};
-      const activeComments = periodData.comments && periodData.comments[currentCommentMedia] 
-                             ? periodData.comments[currentCommentMedia] 
-                             : { strategy: '', anomaly: '' };
-
-      document.getElementById('edit-strategy-comment').value = activeComments.strategy || '';
-      document.getElementById('edit-anomaly-comment').value = activeComments.anomaly || '';
-
-      updateLiveCommentPreview();
-      renderAdminDataTable(periodData.rawDataset || []);
-      renderCreativesList();
-    }
-
-    function handleCommentInput() {
-      updateLiveCommentPreview();
-      saveCommentsFromAdmin();
-    }
-
-    function updateLiveCommentPreview() {
-      const htmlVal = document.getElementById('edit-strategy-comment').value;
-      const previewBox = document.getElementById('comment-live-preview');
-      previewBox.innerHTML = htmlVal || '<span class="text-slate-400 font-sans">실시간 프리뷰 영역입니다. 상단에 코멘트를 입력하세요.</span>';
-    }
-
-    function insertHtmlTag(startTag, endTag) {
-      const textarea = document.getElementById('edit-strategy-comment');
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const text = textarea.value;
-      const selectedText = text.substring(start, end) || '강조 문구';
-      const replacement = startTag + selectedText + endTag;
-
-      textarea.value = text.substring(0, start) + replacement + text.substring(end);
-      textarea.focus();
-      textarea.selectionStart = start + startTag.length;
-      textarea.selectionEnd = start + startTag.length + selectedText.length;
-
-      handleCommentInput();
-    }
-
-    function saveCommentsFromAdmin() {
-      if (!db[currentClient] || !db[currentClient].months[currentPeriod]) return;
-      
-      if (!db[currentClient].months[currentPeriod].comments) {
-        db[currentClient].months[currentPeriod].comments = {
-          ALL: { strategy: '', anomaly: '' },
-          Naver: { strategy: '', anomaly: '' },
-          Meta: { strategy: '', anomaly: '' },
-          Google: { strategy: '', anomaly: '' }
-        };
-      }
-      
-      const stratVal = document.getElementById('edit-strategy-comment').value;
-      const anomVal = document.getElementById('edit-anomaly-comment').value;
-
-      db[currentClient].months[currentPeriod].comments[currentCommentMedia].strategy = stratVal;
-      db[currentClient].months[currentPeriod].comments[currentCommentMedia].anomaly = anomVal;
-
-      if (currentCommentMedia === 'ALL') {
-        db[currentClient].months[currentPeriod].strategyComment = stratVal;
-        db[currentClient].months[currentPeriod].anomalyComment = anomVal;
-      }
-
-      saveDatabase();
-    }
-
-    function saveDatabase() {
-      localStorage.setItem('MEDIA_REPORT_DB', JSON.stringify(db));
-    }
-
-    function getActiveColumns() {
-      if (!db[currentClient] || !db[currentClient].months[currentPeriod]) {
-        return standardColumns.map(c => ({ ...c }));
-      }
-      if (!db[currentClient].months[currentPeriod].columns || db[currentClient].months[currentPeriod].columns.length === 0) {
-        db[currentClient].months[currentPeriod].columns = standardColumns.map(c => ({ ...c }));
-      }
-      return db[currentClient].months[currentPeriod].columns;
-    }
-
-    function deleteColumn(colKey) {
-      const cols = getActiveColumns();
-      if (cols.length <= 1) {
-        alert('최소 1개의 지표 열은 테이블에 유지되어야 합니다.');
-        return;
-      }
-      const targetCol = cols.find(c => c.key === colKey);
-      const colLabel = targetCol ? targetCol.label : colKey;
-
-      if (confirm(`'${colLabel}' 열을 테이블에서 삭제하시겠습니까?\n삭제 후 [🚀 GitHub 즉시 배포]를 누르면 저장소에 영구 반영됩니다.`)) {
-        db[currentClient].months[currentPeriod].columns = cols.filter(c => c.key !== colKey);
-        saveDatabase();
-        renderAdminPanel();
-      }
-    }
-
-    function addNewColumnPrompt() {
-      const colName = prompt('추가할 새 지표(열) 이름을 입력하세요:\n(예: 문의수, 상담신청, 회원가입, ROAS 등)');
-      if (colName && colName.trim()) {
-        const trimmed = colName.trim();
-        const cols = getActiveColumns();
-
-        if (cols.some(c => c.label === trimmed)) {
-          alert('이미 동일한 이름의 열이 존재합니다.');
-          return;
-        }
-
-        const newKey = 'col_' + Date.now();
-        cols.push({
-          key: newKey,
-          label: trimmed,
-          width: 'w-24',
-          isConv: false
-        });
-
-        db[currentClient].months[currentPeriod].columns = cols;
-        saveDatabase();
-        renderAdminPanel();
-        alert(`'${trimmed}' 열이 테이블에 성공적으로 추가되었습니다!`);
-      }
-    }
-
-    function clearCurrentPeriodData() {
-      const warningMessage = `⚠️ [안내] 현재 선택된 [${currentClient}] - [${currentPeriod}] 회차의 엑셀 데이터표만 삭제합니다.\n\n(참고: 타 회차나 코멘트, 소재 이미지는 보존됩니다. 잘못 올린 파일을 초기화할 때 유용합니다.)\n\n계속 진행하시려면 [확인]을 누르세요.`;
-      if (confirm(warningMessage)) {
-        db[currentClient].months[currentPeriod].rawDataset = [];
-        saveDatabase();
-        renderAdminPanel();
-        alert(`✅ [${currentPeriod}] 회차의 데이터 표가 모두 초기화되었습니다.`);
-      }
-    }
-
-    async function syncRepoHtmlFiles(showNotice = false) {
-      try {
-        const headers = { "Accept": "application/vnd.github.v3+json" };
-        const token = localStorage.getItem('GH_PAT_TOKEN');
-        if (token) headers["Authorization"] = `Bearer ${token}`;
-
-        const res = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/`, { headers });
-        if (res.ok) {
-          const items = await res.json();
-          repoHtmlFiles = items
-            .filter(item => item.type === 'file' && item.name.endsWith('.html') && item.name.toLowerCase() !== 'index.html')
-            .map(item => item.name);
-
-          updateRepoHtmlDatalist();
-
-          let addedCount = 0;
-          repoHtmlFiles.forEach(file => {
-            const exists = Object.values(db).some(c => (c.htmlFilename || '').toLowerCase() === file.toLowerCase());
-            if (!exists) {
-              const defaultName = file.replace(/\.html$/i, '');
-              let finalName = defaultName;
-              let counter = 1;
-              while (db[finalName]) {
-                finalName = `${defaultName}_${counter++}`;
-              }
-              db[finalName] = {
-                htmlFilename: file,
-                months: {}
-              };
-              addedCount++;
-            }
-          });
-
-          if (addedCount > 0) {
-            saveDatabase();
-            renderClientSelect();
-          }
-
-          if (showNotice) {
-            alert(`✅ stackover-dev 레포지토리 HTML 연동 완료!\n\n발견된 HTML 파일 (${repoHtmlFiles.length}개): ${repoHtmlFiles.join(', ')}\n새로 감지되어 등록된 고객사: ${addedCount}개`);
-          }
-        }
-      } catch (e) {
-        console.warn("GitHub 레포 HTML 파일 목록 조회 실패:", e);
-        if (showNotice) alert("레포지토리 HTML 파일 목록을 가져오지 못했습니다. 인터넷 연결 또는 토큰 설정을 확인하세요.");
-      }
-    }
-
-    function updateRepoHtmlDatalist() {
-      const datalist = document.getElementById('repo-html-datalist');
-      if (!datalist) return;
-      datalist.innerHTML = repoHtmlFiles.map(f => `<option value="${f}">`).join('');
-    }
-
-    function updateClientName() {
-      const newName = document.getElementById('edit-client-name').value.trim();
-      if (!newName) return alert('고객사 상호명을 입력해주세요.');
-      if (newName === currentClient) return alert('기존 상호명과 동일합니다.');
-      if (db[newName]) return alert('이미 존재하는 고객사 상호명입니다. 다른 이름을 사용해주세요.');
-
-      db[newName] = db[currentClient];
-      delete db[currentClient];
-      currentClient = newName;
-      saveDatabase();
-      renderClientSelect();
-      renderPeriodNav();
-      renderAdminPanel();
-      alert(`고객사 상호명이 [${newName}]으로 성공적으로 변경되었습니다.`);
-    }
-
-    function handleLogout() {
-      localStorage.removeItem('IS_ADMIN_LOGGED_IN');
-      window.location.href = 'https://admin.placepartner.cloud/reports';
-    }
-
-    function handleLogin(e) {
-      e.preventDefault();
-      const id = document.getElementById('input-admin-id').value.trim();
-      const pw = document.getElementById('input-admin-pw').value.trim();
-
-      if (id === 'admina' && pw === '12341') {
-        localStorage.setItem('IS_ADMIN_LOGGED_IN', 'true');
-        showAdminPanel();
-      } else {
-        document.getElementById('login-error').classList.remove('hidden');
-      }
-    }
-
-    function setGitHubTokenPrompt() {
-      const currentToken = localStorage.getItem('GH_PAT_TOKEN') || '';
-      const input = prompt('GitHub Personal Access Token (classic)을 입력하세요:\n(권한: repo 체크 필수)', currentToken);
-      if (input !== null) {
-        const trimmed = input.trim();
-        if (trimmed) {
-          localStorage.setItem('GH_PAT_TOKEN', trimmed);
-          alert('✅ GitHub 토큰이 브라우저에 안전하게 저장되었습니다!');
-          syncRepoHtmlFiles(false);
-        } else {
-          localStorage.removeItem('GH_PAT_TOKEN');
-          alert('토큰이 제거되었습니다.');
-        }
-      }
-    }
-
-    async function deployDirectlyToGitHub() {
-      const token = localStorage.getItem('GH_PAT_TOKEN');
-      if (!token) {
-        alert('GitHub 토큰이 설정되지 않았습니다.\n먼저 상단의 [🔑 토큰 설정] 버튼을 눌러 발급받은 PAT 토큰을 입력해주세요.');
-        setGitHubTokenPrompt();
-        return;
-      }
-
-      saveDatabase();
-
-      const btn = document.getElementById('btn-gh-deploy');
-      const originalText = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = `<span>⏳ 깃허브 배포 중...</span>`;
-
-      try {
-        const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
-
-        let sha = null;
-        const getRes = await fetch(url, {
-          headers: { "Authorization": `Bearer ${token}`, "Accept": "application/vnd.github.v3+json" }
-        });
-        if (getRes.ok) {
-          const fileData = await getRes.json();
-          sha = fileData.sha;
-        }
-
-        const jsonString = JSON.stringify(db, null, 2);
-        const utf8Bytes = new TextEncoder().encode(jsonString);
-        let binaryStr = "";
-        for (let i = 0; i < utf8Bytes.length; i++) {
-          binaryStr += String.fromCharCode(utf8Bytes[i]);
-        }
-        const base64Content = btoa(binaryStr);
-
-        const putBody = {
-          message: `Auto-deploy report database: ${currentClient} (${currentPeriod})`,
-          content: base64Content,
-          branch: GITHUB_CONFIG.branch
-        };
-        if (sha) putBody.sha = sha;
-
-        const putRes = await fetch(url, {
-          method: "PUT",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-            "Accept": "application/vnd.github.v3+json"
-          },
-          body: JSON.stringify(putBody)
-        });
-
-        if (putRes.ok) {
-          alert(`🎉 [${currentClient}] 보고서가 GitHub 저장소에 즉시 커밋되었습니다!\n\n약 1분 후 고객사 페이지를 새로고침하면 최신 데이터가 표시됩니다.`);
-        } else {
-          const errData = await putRes.json();
-          throw new Error(errData.message || 'GitHub API 전송 실패');
-        }
-      } catch (err) {
-        console.error(err);
-        alert(`❌ 배포 실패: ${err.message}\n토큰 권한(repo 체크 여부) 또는 레포지토리 이름을 확인해주세요.`);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-      }
-    }
-
-    function renderClientSelect() {
-      const select = document.getElementById('admin-client-select');
-      select.innerHTML = '';
-      Object.keys(db).forEach(client => {
-        const opt = document.createElement('option');
-        opt.value = client;
-        const filename = db[client].htmlFilename || `${client}.html`;
-        opt.innerText = `${client} (${filename})`;
-        if (client === currentClient) opt.selected = true;
-        select.appendChild(opt);
-      });
-      updateClientHtmlLinkDisplay();
-    }
-
-    function updateClientHtmlLinkDisplay() {
-      const clientData = db[currentClient] || {};
-      const filename = clientData.htmlFilename || `${currentClient}.html`;
-      
-      document.getElementById('edit-client-name').value = currentClient;
-      document.getElementById('edit-client-html-file').value = filename;
-      document.getElementById('preview-filename-text').innerText = filename;
-      
-      document.getElementById('preview-client-link').href = `https://stackover-dev.github.io/Looker-Studio/${filename}`;
-    }
-
-    function updateClientHtmlFilename() {
-      const newFilename = document.getElementById('edit-client-html-file').value.trim();
-      if (newFilename) {
-        if (!db[currentClient]) db[currentClient] = { htmlFilename: newFilename, months: {} };
-        db[currentClient].htmlFilename = newFilename;
-        saveDatabase();
-        renderClientSelect();
-        alert(`고객사 [${currentClient}]의 연동 파일명이 [${newFilename}]으로 업데이트되었습니다.`);
-      }
-    }
-
-    function changeClient(clientName) {
-      currentClient = clientName;
-      currentPeriod = "";
-      currentCommentMedia = 'ALL';
-      updateClientHtmlLinkDisplay();
-      renderPeriodNav();
-      renderAdminPanel();
-    }
-
-    function addNewClientPrompt() {
-      const name = prompt('신규 고객사 상호명을 입력하세요:');
-      if (name && name.trim()) {
-        const trimmed = name.trim();
-        if (!db[trimmed]) {
-          const defaultFilename = `${trimmed.toLowerCase()}.html`;
-          db[trimmed] = {
-            htmlFilename: defaultFilename,
-            months: {}
-          };
-          saveDatabase();
-          renderClientSelect();
-          changeClient(trimmed);
-        }
-      }
-    }
-
-    function processCreativeImage(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 500; 
-          let width = img.width;
-          let height = img.height;
-
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-
-          document.getElementById('creative-preview-img').src = dataUrl;
-          document.getElementById('creative-preview-img').classList.remove('hidden');
-          document.getElementById('creative-placeholder').classList.add('hidden');
-          document.getElementById('creative-base64').value = dataUrl;
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function addCreative() {
-      const base64Str = document.getElementById('creative-base64').value;
-      const title = document.getElementById('creative-title').value.trim();
-      const feedback = document.getElementById('creative-feedback').value.trim();
-      
-      if (!base64Str) return alert('광고 소재 이미지를 먼저 선택해주세요.');
-      if (!title) return alert('소재명을 입력해주세요.');
-      
-      if (!db[currentClient].months[currentPeriod].creatives) {
-        db[currentClient].months[currentPeriod].creatives = { ALL: [], Naver: [], Meta: [], Google: [] };
-      }
-      
-      db[currentClient].months[currentPeriod].creatives[currentCommentMedia].push({
-        image: base64Str,
-        title: title,
-        feedback: feedback
-      });
-      saveDatabase();
-      
-      document.getElementById('creative-preview-img').src = '';
-      document.getElementById('creative-preview-img').classList.add('hidden');
-      document.getElementById('creative-placeholder').classList.remove('hidden');
-      document.getElementById('creative-base64').value = '';
-      document.getElementById('creative-title').value = '';
-      document.getElementById('creative-feedback').value = '';
-      document.getElementById('creative-upload').value = '';
-      
-      renderCreativesList();
-    }
-
-    function deleteCreative(index) {
-      db[currentClient].months[currentPeriod].creatives[currentCommentMedia].splice(index, 1);
-      saveDatabase();
-      renderCreativesList();
-    }
-
-    function renderCreativesList() {
-      const listContainer = document.getElementById('admin-creatives-list');
-      const creatives = db[currentClient].months[currentPeriod].creatives[currentCommentMedia] || [];
-      
-      if (creatives.length === 0) {
-        listContainer.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">등록된 소재가 없습니다.</p>';
-        return;
-      }
-      
-      listContainer.innerHTML = creatives.map((item, index) => `
-        <div class="flex items-start space-x-2 bg-white p-2 rounded border border-slate-200 mb-2 shadow-sm">
-          <img src="${item.image}" class="w-12 h-12 object-cover rounded bg-slate-100 shrink-0 border border-slate-200">
-          <div class="flex-grow min-w-0">
-            <h4 class="text-xs font-bold text-slate-800 truncate">${item.title}</h4>
-            <p class="text-[10px] text-slate-500 line-clamp-2 mt-0.5">${item.feedback || '피드백 없음'}</p>
-          </div>
-          <button onclick="deleteCreative(${index})" class="text-xs text-red-500 hover:text-red-700 font-bold px-2 py-1 shrink-0">삭제</button>
+    <!-- 모달 1: GitHub 토큰 및 저장소 설정 -->
+    <div id="tokenModal" class="modal-blur-overlay" onclick="closeModal('tokenModal')">
+        <div class="modal-scale-content" onclick="event.stopPropagation()">
+            <h2 style="font-size:20px; margin-bottom:8px;">🔑 GitHub 영구 저장소 & 토큰 설정</h2>
+            <p style="font-size:13px; color:var(--text-sub); margin-bottom:20px;">
+                입력된 데이터는 브라우저 임시 캐시가 아닌 GitHub 레포지토리의 <b>data/reports-db.json</b>과 고객사 HTML 파일로 직접 커밋되어 영구 보존됩니다.
+            </p>
+            <div class="field-group" style="margin-bottom:14px;">
+                <label class="field-label">GitHub 사용자명 / 조직명 (Owner)</label>
+                <input type="text" id="ghOwnerInput" placeholder="예: stackover-dev">
+            </div>
+            <div class="field-group" style="margin-bottom:14px;">
+                <label class="field-label">저장소 이름 (Repository)</label>
+                <input type="text" id="ghRepoInput" placeholder="예: Looker-Studio">
+            </div>
+            <div class="field-group" style="margin-bottom:14px;">
+                <label class="field-label">브랜치 (Branch)</label>
+                <input type="text" id="ghBranchInput" placeholder="예: main">
+            </div>
+            <div class="field-group" style="margin-bottom:22px;">
+                <label class="field-label">GitHub Personal Access Token (repo 권한 필수)</label>
+                <input type="password" id="ghTokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button class="btn" onclick="closeModal('tokenModal')">닫기</button>
+                <button class="btn btn-primary" onclick="saveGitHubConfig()">설정 저장 후 DB 동기화</button>
+            </div>
         </div>
-      `).join('');
-    }
+    </div>
 
-    function renderAdminDataTable(dataset) {
-      const cols = getActiveColumns();
-      const headerRow = document.getElementById('admin-table-header-row');
-
-      headerRow.innerHTML = `
-        <th class="py-2.5 px-3 min-w-[130px]">날짜</th>
-        <th class="py-2.5 px-3 min-w-[100px]">매체</th>
-        ${cols.map(c => `
-          <th class="py-2.5 px-3 text-right ${c.isConv ? 'text-blue-600' : ''}">
-            <div class="inline-flex items-center justify-end space-x-1">
-              <span>${c.label}</span>
-              <button type="button" onclick="deleteColumn('${c.key}')" class="text-slate-400 hover:text-rose-600 font-bold px-1 rounded hover:bg-rose-50 transition text-[11px]" title="'${c.label}' 열 삭제">✕</button>
+    <!-- 모달 2: 클라이언트 HTML 보고서 실시간 미리보기 -->
+    <div id="previewModal" class="modal-blur-overlay" onclick="closeModal('previewModal')">
+        <div class="modal-scale-content modal-wide" onclick="event.stopPropagation()">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h2 style="font-size:18px;">👁️ 클라이언트 배포 보고서 미리보기 (1차~최신 회차 누적 뷰)</h2>
+                <button class="btn btn-sm" onclick="closeModal('previewModal')">✕ 닫기</button>
             </div>
-          </th>
-        `).join('')}
-        <th class="py-2.5 px-3 text-center min-w-[60px]">작업</th>
-      `;
+            <iframe id="previewIframe" style="width:100%; height:68vh; border:1px solid var(--border-subtle); border-radius:14px; background:#09090b;"></iframe>
+        </div>
+    </div>
 
-      const tbody = document.getElementById('admin-table-body');
-      tbody.innerHTML = '';
+    <!-- 상태 알림 토스트 -->
+    <div id="toastBox" class="toast"></div>
 
-      const filteredDataset = (currentCommentMedia === 'ALL') 
-        ? dataset 
-        : dataset.filter(row => row.media === currentCommentMedia);
+    <script>
+        /* =========================================================
+           [1. 상태 관리 & 영구 DB 데이터 구조]
+           ========================================================= */
+        const LOCAL_STORAGE_KEY = 'ADMIN_TOWER_REPORTS_DB_V2';
+        const GH_CONFIG_KEY = 'ADMIN_TOWER_GH_CONFIG_V2';
+        const DB_FILE_PATH = 'data/reports-db.json';
 
-      if (filteredDataset.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="${cols.length + 3}" class="py-6 text-center text-slate-400 font-sans">[${currentCommentMedia === 'ALL' ? '전체' : currentCommentMedia}] 탭에 등록된 데이터가 없습니다. 보고서 파일 업로드를 이용하세요.</td></tr>`;
-        return;
-      }
+        let appState = {
+            currentClientId: 'client_lumy',
+            currentMedia: 'all',
+            clients: []
+        };
 
-      filteredDataset.forEach((row) => {
-        const originalIdx = dataset.indexOf(row);
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50 transition-colors';
+        let pendingCreativeImageBase64 = '';
 
-        const dynamicCells = cols.map(c => {
-          const val = row[c.key] !== undefined ? row[c.key] : (c.key === 'conv' ? (row.result || 0) : 0);
-          const isBlue = c.isConv;
-          return `
-            <td class="py-2 px-3">
-              <input type="number" value="${val}" onchange="updateRowData(${originalIdx}, '${c.key}', this.value)" class="border ${isBlue ? 'border-blue-300 bg-blue-50 text-blue-700 font-bold' : 'border-slate-300 bg-white'} px-2 py-1.5 rounded-lg text-xs ${c.width || 'w-24'} text-right focus:ring-1 focus:ring-blue-500 outline-none">
-            </td>
-          `;
-        }).join('');
-        
-        tr.innerHTML = `
-          <td class="py-2 px-3"><input type="date" value="${row.date}" onchange="updateRowData(${originalIdx}, 'date', this.value)" class="border border-slate-300 px-2 py-1.5 rounded-lg text-xs font-sans focus:ring-1 focus:ring-blue-500 w-full outline-none"></td>
-          <td class="py-2 px-3">
-            <div class="flex items-center space-x-1.5">
-              <select onchange="updateRowData(${originalIdx}, 'media', this.value)" class="border border-slate-300 px-2 py-1.5 rounded-lg text-xs font-sans focus:ring-1 focus:ring-blue-500 outline-none bg-white font-bold ${row.media==='Naver'?'text-emerald-600': row.media==='Meta'?'text-blue-600':'text-slate-600'}">
-                <option value="Naver" ${row.media==='Naver'?'selected':''}>Naver</option>
-                <option value="Meta" ${row.media==='Meta'?'selected':''}>Meta</option>
-                <option value="Google" ${row.media==='Google'?'selected':''}>Google</option>
-              </select>
-              <button onclick="applyMediaToBelow(${originalIdx})" class="px-1.5 py-1 text-[10px] font-bold bg-slate-200 text-slate-600 hover:bg-slate-300 hover:text-slate-900 rounded transition whitespace-nowrap shadow-sm" title="이 행부터 아래 모든 데이터의 매체를 동일하게 일괄 변경">↓ 일괄</button>
-            </div>
-          </td>
-          ${dynamicCells}
-          <td class="py-2 px-3 text-center">
-            <button onclick="deleteRowData(${originalIdx})" class="text-slate-400 hover:text-red-600 font-bold text-xs bg-slate-100 hover:bg-red-50 px-2 py-1.5 rounded-lg transition-colors">삭제</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function updateRowData(idx, field, val) {
-      const dataset = db[currentClient].months[currentPeriod].rawDataset;
-      if (field === 'media' || field === 'date') {
-        dataset[idx][field] = val;
-      } else {
-        dataset[idx][field] = Number(val) || 0;
-      }
-      saveDatabase();
-      renderPeriodNav();
-      renderAdminPanel();
-    }
-
-    function applyMediaToBelow(startIdx) {
-      const dataset = db[currentClient].months[currentPeriod].rawDataset;
-      const targetMedia = dataset[startIdx].media; 
-      
-      if(confirm(`해당 행을 포함하여 아래쪽에 있는 모든 행의 매체를 [${targetMedia}](으)로 일괄 변경하시겠습니까?`)) {
-        for(let i = startIdx; i < dataset.length; i++) {
-          dataset[i].media = targetMedia;
+        // 기본 초기 샘플 구조 생성기
+        function createDefaultState() {
+            return {
+                currentClientId: 'client_lumy',
+                currentMedia: 'all',
+                clients: [
+                    {
+                        id: 'client_lumy',
+                        name: 'Lumy',
+                        fileName: 'Lumy.html',
+                        currentRoundId: 'round_1',
+                        rounds: [
+                            {
+                                id: 'round_1',
+                                name: '1차 (집행 기간)',
+                                mediaData: {
+                                    all: { comment: '', issue: '', creatives: [] },
+                                    naver: { comment: '', issue: '', creatives: [] },
+                                    meta: { comment: '', issue: '', creatives: [] },
+                                    google: { comment: '', issue: '', creatives: [] }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            };
         }
-        saveDatabase();
-        renderAdminPanel();
-      }
-    }
 
-    function deleteRowData(idx) {
-      db[currentClient].months[currentPeriod].rawDataset.splice(idx, 1);
-      saveDatabase();
-      renderPeriodNav();
-      renderAdminPanel();
-    }
-
-    function addEmptyDataRow() {
-      if (!db[currentClient].months[currentPeriod].rawDataset) db[currentClient].months[currentPeriod].rawDataset = [];
-      const today = new Date().toISOString().split('T')[0];
-      const newRow = { date: today, media: currentCommentMedia !== 'ALL' ? currentCommentMedia : 'Meta' };
-      
-      const cols = getActiveColumns();
-      cols.forEach(c => { newRow[c.key] = 0; });
-
-      db[currentClient].months[currentPeriod].rawDataset.push(newRow);
-      saveDatabase();
-      renderPeriodNav();
-      renderAdminPanel();
-    }
-
-    function handleFileUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-
-      reader.onload = function(e) {
-        try {
-          const data = new Uint8Array(e.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          const sheet = workbook.Sheets[workbook.SheetNames[0]];
-
-          let rawMatrix = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false });
-          let headerRowIndex = -1;
-          
-          const fileNameLower = file.name.toLowerCase();
-          let detectedMediaByFile = null;
-          if (fileNameLower.includes('naver') || fileNameLower.includes('네이버') || fileNameLower.includes('다차원')) {
-            detectedMediaByFile = 'Naver';
-          } else if (fileNameLower.includes('google') || fileNameLower.includes('구글') || fileNameLower.includes('ads')) {
-            detectedMediaByFile = 'Google';
-          } else if (fileNameLower.includes('meta') || fileNameLower.includes('메타') || fileNameLower.includes('facebook') || fileNameLower.includes('페이스북')) {
-            detectedMediaByFile = 'Meta';
-          }
-          
-          const headerKeywords = ['노출', '클릭', '비용', '지출', '결과', '전환', '일별', '시작일', '보고 시작', '캠페인', 'date', 'day', 'impressions', 'clicks', 'cost', 'amount', 'campaign'];
-
-          let maxScore = 0;
-          for (let i = 0; i < Math.min(15, rawMatrix.length); i++) {
-            const rowArr = (rawMatrix[i] || []).map(c => String(c).toLowerCase().trim());
-            
-            let score = 0;
-            rowArr.forEach(cell => {
-              if (!cell) return;
-              headerKeywords.forEach(kw => {
-                if (cell.includes(kw)) score++;
-              });
-            });
-
-            if (score > maxScore && score >= 2) { 
-              maxScore = score;
-              headerRowIndex = i;
-            }
-          }
-          
-          if(headerRowIndex === -1) {
-            alert('데이터 헤더(노출수, 클릭수, 일별 등)를 찾을 수 없습니다. 양식을 확인해주세요.');
-            return;
-          }
-          
-          const rowsData = XLSX.utils.sheet_to_json(sheet, { range: headerRowIndex, raw: false });
-
-          if (rowsData.length === 0) {
-            alert('데이터가 비어있는 파일입니다.');
-            return;
-          }
-
-          const parseNum = (val) => {
-            const num = Number(String(val || 0).replace(/[^0-9.-]+/g, ''));
-            return isNaN(num) ? 0 : num;
-          };
-
-          const headerStr = Object.keys(rowsData[0] || {}).join(' ').toLowerCase();
-          const isNaverReport = headerStr.includes('일별') || headerStr.includes('검색어') || headerStr.includes('평균노출순위') || headerStr.includes('확장소재') || headerStr.includes('그룹');
-          const isGoogleReport = headerStr.includes('통화') || headerStr.includes('상호작용') || headerStr.includes('동영상');
-
-          let defaultMediaForFile = 'Meta'; 
-          if (currentCommentMedia === 'Naver' || currentCommentMedia === 'Meta' || currentCommentMedia === 'Google') {
-            defaultMediaForFile = currentCommentMedia;
-          } else {
-            if (detectedMediaByFile) {
-              defaultMediaForFile = detectedMediaByFile;
-            } else if (isNaverReport) {
-              defaultMediaForFile = 'Naver';
-            } else if (isGoogleReport) {
-              defaultMediaForFile = 'Google';
-            }
-          }
-
-          const dailyAggMap = {};
-
-          rowsData.forEach(row => {
-            let dateVal = '';
-            let mediaVal = defaultMediaForFile; 
-            let imp = 0, reach = 0, clicks = 0, cost = 0, conv = 0;
-
-            Object.keys(row).forEach(key => {
-              const lk = key.toLowerCase().trim();
-              const val = row[key];
-
-              if (currentCommentMedia === 'ALL') {
-                if (lk.includes('캠페인') || lk.includes('매체') || lk.includes('광고 세트') || lk.includes('광고 이름') || lk.includes('campaign')) {
-                  const sv = String(val).toLowerCase();
-                  if (sv.includes('naver') || sv.includes('네이버')) mediaVal = 'Naver';
-                  else if (sv.includes('google') || sv.includes('구글') || sv.includes('youtube')) mediaVal = 'Google';
-                  else if (sv.includes('meta') || sv.includes('페이스북') || sv.includes('인스타그램')) mediaVal = 'Meta';
+        /* =========================================================
+           [2. 시크릿 모드 감지 및 초기화 실행]
+           ========================================================= */
+        async function detectIncognitoMode() {
+            if ('storage' in navigator && 'estimate' in navigator.storage) {
+                const { quota } = await navigator.storage.estimate();
+                // 크롬 기반 시크릿 모드는 일반적으로 할당량이 120MB~500MB 미만으로 제한됨
+                if (quota && quota < 600000000) {
+                    document.getElementById('incognitoBanner').style.display = 'block';
                 }
-              }
+            }
+        }
 
-              if (lk === '보고 시작' || lk === '시작일' || lk === 'date' || lk === 'day' || lk === '날짜' || lk === '일자' || lk === '일별' || lk === '일' || lk === 'reporting starts') {
-                if (!dateVal && val) {
-                  dateVal = String(val).trim();
+        window.addEventListener('DOMContentLoaded', async () => {
+            await detectIncognitoMode();
+
+            // 1. 로컬 스토리지 백업 로드
+            const savedLocal = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (savedLocal) {
+                try {
+                    appState = JSON.parse(savedLocal);
+                } catch (e) {
+                    appState = createDefaultState();
                 }
-              }
-
-              if (lk === '노출' || lk === '노출수' || lk === 'impressions' || lk === 'impr.') imp = parseNum(val);
-              else if (lk === '도달' || lk === '도달수' || lk === 'reach') reach = parseNum(val);
-              else if (lk === '클릭(전체)' || lk === '링크 클릭' || lk === '클릭수' || lk === '클릭' || lk === 'clicks') {
-                if (clicks === 0 || lk === '클릭수' || lk === '클릭(전체)' || lk === '링크 클릭') clicks = parseNum(val);
-              }
-              else if (lk === '총비용' || lk === '총 비용' || lk.startsWith('지출 금액') || lk === '지출액' || lk === 'amount spent' || lk === '비용' || lk === 'cost' || (lk.includes('비용') && !lk.includes('당') && !lk.includes('cpc'))) {
-                cost = parseNum(val);
-              }
-              else if (lk === '결과' || lk === '전환' || lk === '전환수' || lk === 'results' || lk === 'conversions' || lk.includes('전환수')) {
-                conv = parseNum(val);
-              }
-            });
-
-            if (dateVal && (imp > 0 || clicks > 0 || cost > 0)) {
-              let cleanDate = dateVal.trim();
-              if (cleanDate.length === 8 && !cleanDate.includes('-') && !cleanDate.includes('.')) {
-                cleanDate = cleanDate.substring(0, 4) + '-' + cleanDate.substring(4, 6) + '-' + cleanDate.substring(6, 8);
-              } else {
-                cleanDate = cleanDate.substring(0, 10).replace(/[\./]/g, '-');
-              }
-
-              const aggKey = cleanDate + '_' + mediaVal;
-              if (!dailyAggMap[aggKey]) {
-                dailyAggMap[aggKey] = {
-                  date: cleanDate,
-                  media: mediaVal,
-                  impressions: 0,
-                  reach: 0,
-                  clicks: 0,
-                  cost: 0,
-                  conv: 0
-                };
-              }
-              dailyAggMap[aggKey].impressions += imp;
-              dailyAggMap[aggKey].reach += reach;
-              dailyAggMap[aggKey].clicks += clicks;
-              dailyAggMap[aggKey].cost += cost;
-              dailyAggMap[aggKey].conv += conv;
-            }
-          });
-
-          const newRows = Object.values(dailyAggMap);
-
-          if (newRows.length > 0) {
-            if (!db[currentClient].months[currentPeriod].rawDataset) {
-              db[currentClient].months[currentPeriod].rawDataset = [];
-            }
-            
-            let targetDataset = db[currentClient].months[currentPeriod].rawDataset;
-            newRows.forEach(nr => {
-              const existIdx = targetDataset.findIndex(r => r.date === nr.date && r.media === nr.media);
-              if (existIdx >= 0) {
-                targetDataset[existIdx] = nr;
-              } else {
-                targetDataset.push(nr);
-              }
-            });
-
-            targetDataset.sort((a, b) => a.date.localeCompare(b.date) || a.media.localeCompare(b.media));
-            db[currentClient].months[currentPeriod].rawDataset = targetDataset;
-
-            saveDatabase();
-            
-            const uploadedMedia = newRows[0].media;
-            if (uploadedMedia === 'Meta' || uploadedMedia === 'Naver' || uploadedMedia === 'Google') {
-              changeCommentMedia(uploadedMedia);
             } else {
-              renderPeriodNav();
-              renderAdminPanel();
+                appState = createDefaultState();
             }
 
-            alert(`🎉 [${uploadedMedia}] 데이터 ${newRows.length}일치가 [${currentPeriod}] 회차에 정상 통합 적재되었으며, 해당 탭으로 이동했습니다!`);
-          } else {
-            alert('유효한 데이터(날짜 및 노출/클릭/비용 지표)를 찾지 못했습니다. 매체사 보고서 양식이 맞는지 확인해주세요.');
-          }
-        } catch (err) {
-          console.error(err);
-          alert('파일 처리 오류: ' + err.message);
+            renderAll();
+
+            // 2. GitHub 설정이 이미 저장되어 있다면 원격 영구 DB 자동 동기화
+            const ghConfig = getGitHubConfig();
+            if (ghConfig.token && ghConfig.owner && ghConfig.repo) {
+                await loadDBFromGitHub(true);
+            }
+        });
+
+        function saveToLocalBackup() {
+            try {
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(appState));
+                const badge = document.getElementById('dbStatusBadge');
+                badge.textContent = '● 임시 저장됨 (영구 보존을 위해 배포 필요)';
+                badge.style.color = '#fbbf24';
+                badge.style.borderColor = 'rgba(251, 191, 36, 0.35)';
+                badge.style.background = 'rgba(251, 191, 36, 0.1)';
+            } catch (e) {
+                showToast('⚠️ 브라우저 저장 용량 초과: 불필요한 고화질 이미지를 줄여주세요.');
+            }
         }
-        event.target.value = '';
-      };
 
-      reader.readAsArrayBuffer(file);
-    }
-
-    function parseBulkPasteData() {
-      const pasteText = document.getElementById('bulk-paste-area').value.trim();
-      if (!pasteText) return alert('붙여넣을 텍스트 데이터를 입력해주세요.');
-
-      const lines = pasteText.split('\n');
-      const parsedRows = [];
-
-      lines.forEach(line => {
-        const cols = line.split('\t').map(c => c.trim());
-        if (cols.length >= 6) {
-          const date = cols[0];
-          const media = cols[1];
-          const impressions = Number(cols[2].replace(/,/g, '')) || 0;
-          const reach = Number(cols[3].replace(/,/g, '')) || 0;
-          const clicks = Number(cols[4].replace(/,/g, '')) || 0;
-          const cost = Number(cols[5].replace(/,/g, '')) || 0;
-          const conv = cols[6] ? (Number(cols[6].replace(/,/g, '')) || 0) : 0;
-
-          if (date && media) parsedRows.push({ date, media, impressions, reach, clicks, cost, conv });
+        /* =========================================================
+           [3. 헬퍼 함수: 현재 고객사 / 현재 회차 / 현재 매체 데이터 접근]
+           ========================================================= */
+        function getCurrentClient() {
+            let client = appState.clients.find(c => c.id === appState.currentClientId);
+            if (!client && appState.clients.length > 0) {
+                client = appState.clients[0];
+                appState.currentClientId = client.id;
+            }
+            return client;
         }
-      });
 
-      if (parsedRows.length > 0) {
-        if (!db[currentClient].months[currentPeriod].rawDataset) db[currentClient].months[currentPeriod].rawDataset = [];
-        db[currentClient].months[currentPeriod].rawDataset.push(...parsedRows);
-        saveDatabase();
-        document.getElementById('bulk-paste-area').value = '';
-        
-        const pastedMedia = parsedRows[0].media;
-        if (pastedMedia === 'Meta' || pastedMedia === 'Naver' || pastedMedia === 'Google') {
-          changeCommentMedia(pastedMedia);
-        } else {
-          renderPeriodNav();
-          renderAdminPanel();
+        function getCurrentRound(client) {
+            if (!client) return null;
+            let round = client.rounds.find(r => r.id === client.currentRoundId);
+            if (!round && client.rounds.length > 0) {
+                round = client.rounds[0];
+                client.currentRoundId = round.id;
+            }
+            return round;
         }
-        
-        alert(`${parsedRows.length}건의 데이터가 [${currentPeriod}] 회차에 정상 반영되었습니다.`);
-      } else {
-        alert('올바른 데이터 형식이 아닙니다. 탭으로 구분된 형식을 확인하세요.');
-      }
-    }
 
-    function resetCurrentClientData() {
-      if(confirm('현재 데이터를 초기화 하시겠습니까? (불필요한 탭을 완전히 지우고 백지 상태로 시작합니다)')) {
-        db = JSON.parse(JSON.stringify(defaultDatabase));
-        saveDatabase();
-        currentClient = Object.keys(db)[0]; 
-        renderClientSelect();
-        renderPeriodNav();
-        renderAdminPanel();
-        alert('모든 테스트 기간이 삭제되고 초기화되었습니다.');
-      }
-    }
-  </script>
+        function getCurrentMediaBucket() {
+            const client = getCurrentClient();
+            const round = getCurrentRound(client);
+            if (!round.mediaData[appState.currentMedia]) {
+                round.mediaData[appState.currentMedia] = { comment: '', issue: '', creatives: [] };
+            }
+            return round.mediaData[appState.currentMedia];
+        }
+
+        /* =========================================================
+           [4. 전체 UI 렌더링]
+           ========================================================= */
+        function renderAll() {
+            const client = getCurrentClient();
+            if (!client) return;
+
+            // 고객사 드롭다운 렌더링
+            const selectEl = document.getElementById('clientSelect');
+            selectEl.innerHTML = appState.clients.map(c =>
+                `<option value="${c.id}" ${c.id === client.id ? 'selected' : ''}>${c.name} (${c.fileName})</option>`
+            ).join('');
+
+            document.getElementById('clientNameInput').value = client.name;
+            document.getElementById('clientFileInput').value = client.fileName;
+            document.getElementById('previewBtnName').textContent = client.fileName;
+
+            // 회차 버튼 렌더링
+            const roundContainer = document.getElementById('roundPillsContainer');
+            roundContainer.innerHTML = client.rounds.map(r => {
+                const isActive = r.id === client.currentRoundId;
+                return `<button class="round-pill ${isActive ? 'active' : ''}" onclick="switchRound('${r.id}')">${isActive ? '✓ ' : ''}${r.name}</button>`;
+            }).join('');
+
+            // 매체 탭 활성화 표시
+            document.querySelectorAll('.media-tab').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.media === appState.currentMedia);
+            });
+
+            // 에디터 및 프리뷰 데이터 바인딩
+            const bucket = getCurrentMediaBucket();
+            document.getElementById('commentEditor').value = bucket.comment || '';
+            document.getElementById('commentPreview').innerHTML = bucket.comment
+                ? bucket.comment
+                : '<span style="color:var(--text-muted);">실시간 프리뷰 영역입니다. 좌측에 코멘트를 입력하세요.</span>';
+            document.getElementById('issueEditor').value = bucket.issue || '';
+
+            // 소재 리스트 렌더링
+            renderCreatives(bucket.creatives || []);
+        }
+
+        function renderCreatives(creatives) {
+            const listEl = document.getElementById('creativeListContainer');
+            if (!creatives || creatives.length === 0) {
+                listEl.innerHTML = '<div style="text-align:center; padding:24px; font-size:13px; color:var(--text-muted); border:1px dashed var(--border-subtle); border-radius:12px;">등록된 소재가 없습니다.</div>';
+                return;
+            }
+
+            listEl.innerHTML = creatives.map((item, idx) => `
+                <div class="creative-item">
+                    ${item.image ? `<img src="${item.image}" class="creative-thumb" alt="소재">` : `<div class="creative-thumb" style="display:flex;align-items:center;justify-content:center;font-size:11px;color:#71717a;">NO IMG</div>`}
+                    <div class="creative-meta">
+                        <h4>${escapeHtml(item.title)}</h4>
+                        <p>${escapeHtml(item.desc)}</p>
+                    </div>
+                    <button class="btn btn-sm btn-danger" onclick="deleteCreativeItem(${idx})">삭제</button>
+                </div>
+            `).join('');
+        }
+
+        /* =========================================================
+           [5. 고객사 및 1차·2차·3차 회차 누적 관리 핸들러]
+           ========================================================= */
+        function handleClientChange() {
+            appState.currentClientId = document.getElementById('clientSelect').value;
+            saveToLocalBackup();
+            renderAll();
+        }
+
+        function updateClientName() {
+            const newName = document.getElementById('clientNameInput').value.trim();
+            if (!newName) return showToast('상호명을 입력하세요.');
+            const client = getCurrentClient();
+            client.name = newName;
+            saveToLocalBackup();
+            renderAll();
+            showToast('상호명이 변경되었습니다.');
+        }
+
+        function updateClientFile() {
+            let newFile = document.getElementById('clientFileInput').value.trim();
+            if (!newFile) return showToast('HTML 파일명을 입력하세요.');
+            if (!newFile.endsWith('.html')) newFile += '.html';
+            const client = getCurrentClient();
+            client.fileName = newFile;
+            saveToLocalBackup();
+            renderAll();
+            showToast('연동 HTML 파일명이 수정되었습니다.');
+        }
+
+        function addNewClient() {
+            const name = prompt('신규 고객사 상호명을 입력하세요 (예: BrandX):');
+            if (!name || !name.trim()) return;
+            const cleanName = name.trim();
+            const fileName = prompt('생성할 HTML 파일명을 입력하세요:', `${cleanName}.html`) || `${cleanName}.html`;
+
+            const newClient = {
+                id: 'client_' + Date.now(),
+                name: cleanName,
+                fileName: fileName.endsWith('.html') ? fileName : fileName + '.html',
+                currentRoundId: 'round_' + Date.now(),
+                rounds: [
+                    {
+                        id: 'round_' + Date.now(),
+                        name: '1차 (집행 기간)',
+                        mediaData: {
+                            all: { comment: '', issue: '', creatives: [] },
+                            naver: { comment: '', issue: '', creatives: [] },
+                            meta: { comment: '', issue: '', creatives: [] },
+                            google: { comment: '', issue: '', creatives: [] }
+                        }
+                    }
+                ]
+            };
+
+            appState.clients.push(newClient);
+            appState.currentClientId = newClient.id;
+            saveToLocalBackup();
+            renderAll();
+            showToast(`신규 고객사 [${cleanName}]가 추가되었습니다.`);
+        }
+
+        function addNewRound() {
+            const client = getCurrentClient();
+            const nextNum = client.rounds.length + 1;
+            const defaultLabel = `${nextNum}차 (집행 기간)`;
+            const roundName = prompt('새로 누적할 회차/기간 명칭을 입력하세요:', defaultLabel);
+            if (!roundName || !roundName.trim()) return;
+
+            const newRound = {
+                id: 'round_' + Date.now(),
+                name: roundName.trim(),
+                mediaData: {
+                    all: { comment: '', issue: '', creatives: [] },
+                    naver: { comment: '', issue: '', creatives: [] },
+                    meta: { comment: '', issue: '', creatives: [] },
+                    google: { comment: '', issue: '', creatives: [] }
+                }
+            };
+
+            client.rounds.push(newRound);
+            client.currentRoundId = newRound.id;
+            saveToLocalBackup();
+            renderAll();
+            showToast(`[${roundName.trim()}] 회차가 누적 추가되었습니다.`);
+        }
+
+        function switchRound(roundId) {
+            const client = getCurrentClient();
+            client.currentRoundId = roundId;
+            saveToLocalBackup();
+            renderAll();
+        }
+
+        function renameCurrentRound() {
+            const client = getCurrentClient();
+            const round = getCurrentRound(client);
+            const newName = prompt('수정할 회차명을 입력하세요:', round.name);
+            if (!newName || !newName.trim()) return;
+            round.name = newName.trim();
+            saveToLocalBackup();
+            renderAll();
+            showToast('회차명이 수정되었습니다.');
+        }
+
+        function deleteCurrentRound() {
+            const client = getCurrentClient();
+            if (client.rounds.length <= 1) {
+                return showToast('최소 1개 이상의 회차는 유지해야 합니다.');
+            }
+            const round = getCurrentRound(client);
+            if (!confirm(`정말 [${round.name}] 데이터를 삭제하시겠습니까?`)) return;
+
+            client.rounds = client.rounds.filter(r => r.id !== round.id);
+            client.currentRoundId = client.rounds[client.rounds.length - 1].id;
+            saveToLocalBackup();
+            renderAll();
+            showToast('선택한 회차가 삭제되었습니다.');
+        }
+
+        function resetToDefaultSample() {
+            if (!confirm('현재 로컬 작업을 초기화하고 기본 샘플 상태로 되돌리시겠습니까?')) return;
+            appState = createDefaultState();
+            saveToLocalBackup();
+            renderAll();
+            showToast('초기 샘플 상태로 복원되었습니다.');
+        }
+
+        /* =========================================================
+           [6. 매체 탭 & HTML 에디터 & 이미지 압축 업로드]
+           ========================================================= */
+        function switchMedia(mediaKey) {
+            appState.currentMedia = mediaKey;
+            saveToLocalBackup();
+            renderAll();
+        }
+
+        function handleEditorInput() {
+            const bucket = getCurrentMediaBucket();
+            bucket.comment = document.getElementById('commentEditor').value;
+            bucket.issue = document.getElementById('issueEditor').value;
+
+            document.getElementById('commentPreview').innerHTML = bucket.comment
+                ? bucket.comment
+                : '<span style="color:var(--text-muted);">실시간 프리뷰 영역입니다. 좌측에 코멘트를 입력하세요.</span>';
+
+            saveToLocalBackup();
+        }
+
+        function insertTag(openTag, closeTag) {
+            const textarea = document.getElementById('commentEditor');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selected = textarea.value.substring(start, end) || '텍스트 입력';
+            const replacement = openTag + selected + closeTag;
+
+            textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+            textarea.focus();
+            handleEditorInput();
+        }
+
+        // 이미지 자동 리사이즈 및 WebP/JPEG 압축 (JSON DB 용량 최적화)
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 640;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > MAX_WIDTH) {
+                        height = Math.round((height * MAX_WIDTH) / width);
+                        width = MAX_WIDTH;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    pendingCreativeImageBase64 = canvas.toDataURL('image/jpeg', 0.78);
+                    const dropzone = document.getElementById('imgDropzone');
+                    dropzone.innerHTML = `<input type="file" id="creativeImgInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)"><img src="${pendingCreativeImageBase64}" alt="미리보기">`;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function addCreativeItem() {
+            const title = document.getElementById('creativeTitleInput').value.trim();
+            const desc = document.getElementById('creativeDescInput').value.trim();
+
+            if (!title) return showToast('소재명을 입력하세요.');
+
+            const bucket = getCurrentMediaBucket();
+            bucket.creatives.push({
+                title,
+                desc: desc || '성과 분석 코멘트 없음',
+                image: pendingCreativeImageBase64
+            });
+
+            // 입력창 초기화
+            document.getElementById('creativeTitleInput').value = '';
+            document.getElementById('creativeDescInput').value = '';
+            pendingCreativeImageBase64 = '';
+            document.getElementById('imgDropzone').innerHTML = `<input type="file" id="creativeImgInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)"><span id="dropzoneText">+ 이미지<br>선택</span>`;
+
+            saveToLocalBackup();
+            renderAll();
+            showToast('소재가 현재 회차 리스트에 등록되었습니다.');
+        }
+
+        function deleteCreativeItem(index) {
+            const bucket = getCurrentMediaBucket();
+            bucket.creatives.splice(index, 1);
+            saveToLocalBackup();
+            renderAll();
+        }
+
+        /* =========================================================
+           [7. GitHub API 연동 (영구 JSON DB + 고객사 HTML 동시 커밋)]
+           ========================================================= */
+        function getGitHubConfig() {
+            try {
+                return JSON.parse(localStorage.getItem(GH_CONFIG_KEY)) || {
+                    owner: 'stackover-dev',
+                    repo: 'Looker-Studio',
+                    branch: 'main',
+                    token: ''
+                };
+            } catch {
+                return { owner: 'stackover-dev', repo: 'Looker-Studio', branch: 'main', token: '' };
+            }
+        }
+
+        function openTokenModal() {
+            const cfg = getGitHubConfig();
+            document.getElementById('ghOwnerInput').value = cfg.owner || 'stackover-dev';
+            document.getElementById('ghRepoInput').value = cfg.repo || 'Looker-Studio';
+            document.getElementById('ghBranchInput').value = cfg.branch || 'main';
+            document.getElementById('ghTokenInput').value = cfg.token || '';
+            document.getElementById('tokenModal').classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        async function saveGitHubConfig() {
+            const cfg = {
+                owner: document.getElementById('ghOwnerInput').value.trim(),
+                repo: document.getElementById('ghRepoInput').value.trim(),
+                branch: document.getElementById('ghBranchInput').value.trim() || 'main',
+                token: document.getElementById('ghTokenInput').value.trim()
+            };
+
+            if (!cfg.owner || !cfg.repo || !cfg.token) {
+                return showToast('Owner, Repository, Token을 모두 입력하세요.');
+            }
+
+            localStorage.setItem(GH_CONFIG_KEY, JSON.stringify(cfg));
+            closeModal('tokenModal');
+            showToast('GitHub 설정이 저장되었습니다. 원격 DB를 동기화합니다...');
+            await loadDBFromGitHub(false);
+        }
+
+        // UTF-8 문자열 안전 Base64 인코딩/디코딩
+        function utf8ToBase64(str) {
+            return btoa(unescape(encodeURIComponent(str)));
+        }
+
+        function base64ToUtf8(b64) {
+            return decodeURIComponent(escape(atob(b64.replace(/\n/g, ''))));
+        }
+
+        // GitHub 저장소에서 영구 DB(data/reports-db.json) 불러오기
+        async function loadDBFromGitHub(silent = false) {
+            const cfg = getGitHubConfig();
+            if (!cfg.token) {
+                if (!silent) openTokenModal();
+                return;
+            }
+
+            try {
+                const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${DB_FILE_PATH}?ref=${cfg.branch}&t=${Date.now()}`;
+                const res = await fetch(url, {
+                    headers: {
+                        'Authorization': `token ${cfg.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (res.status === 404) {
+                    if (!silent) showToast('저장소에 아직 DB 파일이 없습니다. [GitHub 즉시 배포]를 누르면 자동 생성됩니다.');
+                    return;
+                }
+
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+                const data = await res.json();
+                const decodedJson = base64ToUtf8(data.content);
+                const parsedDB = JSON.parse(decodedJson);
+
+                if (parsedDB && Array.isArray(parsedDB.clients) && parsedDB.clients.length > 0) {
+                    appState = parsedDB;
+                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(appState));
+                    renderAll();
+
+                    const badge = document.getElementById('dbStatusBadge');
+                    badge.textContent = '● GitHub 영구 DB 동기화 완료';
+                    badge.style.color = '#34d399';
+                    badge.style.borderColor = 'rgba(16, 185, 129, 0.35)';
+                    badge.style.background = 'rgba(16, 185, 129, 0.12)';
+
+                    if (!silent) showToast('✅ GitHub 저장소에서 1차~최신 누적 데이터를 성공적으로 불러왔습니다!');
+                }
+            } catch (err) {
+                if (!silent) showToast(`❌ DB 동기화 실패: ${err.message} (토큰 권한 확인 필요)`);
+            }
+        }
+
+        // 단일 파일 GitHub 커밋 함수 (SHA 조회 후 PUT)
+        async function commitFileToGitHub(filePath, contentString, commitMessage) {
+            const cfg = getGitHubConfig();
+            const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${filePath}`;
+
+            let existingSha = null;
+            const getRes = await fetch(`${apiUrl}?ref=${cfg.branch}&t=${Date.now()}`, {
+                headers: {
+                    'Authorization': `token ${cfg.token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (getRes.ok) {
+                const fileData = await getRes.json();
+                existingSha = fileData.sha;
+            }
+
+            const bodyPayload = {
+                message: commitMessage,
+                content: utf8ToBase64(contentString),
+                branch: cfg.branch
+            };
+
+            if (existingSha) {
+                bodyPayload.sha = existingSha;
+            }
+
+            const putRes = await fetch(apiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${cfg.token}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bodyPayload)
+            });
+
+            if (!putRes.ok) {
+                const errJson = await putRes.json();
+                throw new Error(errJson.message || `커밋 실패 (${putRes.status})`);
+            }
+        }
+
+        // 핵심: 영구 JSON DB + 고객사 HTML 보고서 동시 배포
+        async function deployAllToGitHub() {
+            const cfg = getGitHubConfig();
+            if (!cfg.token) {
+                showToast('먼저 GitHub 토큰을 설정해 주세요.');
+                return openTokenModal();
+            }
+
+            const client = getCurrentClient();
+            showToast('🚀 GitHub 영구 DB 및 고객사 보고서 커밋 중...');
+
+            try {
+                // 1. 전체 누적 데이터(1차, 2차, 3차...)를 data/reports-db.json에 영구 저장
+                const dbJsonString = JSON.stringify(appState, null, 2);
+                await commitFileToGitHub(
+                    DB_FILE_PATH,
+                    dbJsonString,
+                    `[Admin Tower] Update persistent reports DB (${client.name})`
+                );
+
+                // 2. 고객사 보고서 HTML 파일(예: Lumy.html) 생성 및 커밋
+                const reportHtml = generateClientReportHTML(client);
+                await commitFileToGitHub(
+                    client.fileName,
+                    reportHtml,
+                    `[Admin Tower] Deploy client report: ${client.fileName}`
+                );
+
+                localStorage.setItem(LOCAL_STORAGE_KEY, dbJsonString);
+
+                const badge = document.getElementById('dbStatusBadge');
+                badge.textContent = '● GitHub 영구 저장 완료';
+                badge.style.color = '#34d399';
+                badge.style.borderColor = 'rgba(16, 185, 129, 0.35)';
+                badge.style.background = 'rgba(16, 185, 129, 0.12)';
+
+                showToast(`✅ 배포 완료! [${DB_FILE_PATH}]와 [${client.fileName}]가 GitHub에 영구 보존되었습니다.`);
+            } catch (err) {
+                showToast(`❌ 배포 오류: ${err.message}`);
+            }
+        }
+
+        /* =========================================================
+           [8. 고객사 배포용 프리미엄 HTML 보고서 생성기 (회차 전환 내장)]
+           ========================================================= */
+        function generateClientReportHTML(client) {
+            const serializedClient = JSON.stringify(client).replace(/<\/script>/gi, '<\\/script>');
+            return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${escapeHtml(client.name)} | 통합 마케팅 성과 보고서</title>
+    <style>
+        :root {
+            --bg-primary: #09090b;
+            --bg-card: #18181b;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --text-main: #f4f4f5;
+            --text-sub: #a1a1aa;
+            --accent-blue: #60a5fa;
+            --accent-purple: #818cf8;
+            --glow-cyan: rgba(6, 182, 212, 0.22);
+            --glow-indigo: rgba(99, 102, 241, 0.3);
+            --shimmer-spec: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0) 100%);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.65;
+            padding: 48px 20px 80px;
+        }
+        .container { max-width: 1120px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+        .hero-card {
+            position: relative;
+            background: linear-gradient(135deg, #1e1b4b 0%, #09090b 100%);
+            border: 1px solid rgba(129, 140, 248, 0.25);
+            border-radius: 24px;
+            padding: 40px;
+            overflow: hidden;
+            box-shadow: 0 0 30px var(--glow-indigo);
+        }
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -150%; width: 150%; height: 100%;
+            background: var(--shimmer-spec);
+            transform: skewX(-20deg);
+            animation: shimmer 4.5s infinite ease-in-out;
+        }
+        @keyframes shimmer { 0% { left: -150%; } 30% { left: 150%; } 100% { left: 150%; } }
+        .pill-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; position: relative; z-index: 2; }
+        .pill-btn {
+            padding: 9px 18px; border-radius: 12px; font-size: 13px; font-weight: 700;
+            background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle);
+            color: var(--text-sub); cursor: pointer; transition: all 0.3s ease;
+        }
+        .pill-btn.active { background: #f4f4f5; color: #09090b; border-color: #f4f4f5; }
+        .media-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+        .media-btn {
+            padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600;
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            color: var(--text-sub); cursor: pointer;
+        }
+        .media-btn.active { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 22px var(--glow-cyan);
+        }
+        .card h2 { font-size: 18px; margin-bottom: 14px; color: var(--accent-blue); }
+        .creative-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 16px;
+        }
+        .creative-card {
+            background: #111114;
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.35s ease;
+        }
+        .creative-card:hover { transform: translateY(-6px); }
+        .creative-card img { width: 100%; height: 190px; object-fit: cover; display: block; }
+        .creative-body { padding: 16px; }
+        .creative-body h3 { font-size: 15px; margin-bottom: 6px; }
+        .creative-body p { font-size: 13px; color: var(--text-sub); }
+        @media (max-width: 900px) { .creative-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .creative-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero-card">
+            <span style="color:var(--accent-purple); font-size:12px; font-weight:800; letter-spacing:0.06em;">PERFORMANCE INSIGHT REPORT</span>
+            <h1 style="font-size:32px; margin-top:6px;">${escapeHtml(client.name)} 통합 광고 운영 보고서</h1>
+            <p style="color:var(--text-sub); font-size:14px; margin-top:6px;">집행 회차별 전략 인사이트 및 매체별 최적화 리포트</p>
+            <div id="roundSelector" class="pill-bar"></div>
+        </div>
+
+        <div id="mediaSelector" class="media-tabs">
+            <button class="media-btn active" onclick="selectMedia('all', this)">통합(전체)</button>
+            <button class="media-btn" onclick="selectMedia('naver', this)">네이버 검색</button>
+            <button class="media-btn" onclick="selectMedia('meta', this)">메타 (DA/SA)</button>
+            <button class="media-btn" onclick="selectMedia('google', this)">구글 애즈</button>
+        </div>
+
+        <div class="card">
+            <h2>📌 핵심 전략 및 총평</h2>
+            <div id="commentBox" style="font-size:15px;"></div>
+        </div>
+
+        <div class="card">
+            <h2>⚡ 운영 이슈 및 최적화 대응 내역</h2>
+            <div id="issueBox" style="font-size:14px; white-space:pre-wrap;"></div>
+        </div>
+
+        <div class="card">
+            <h2>🖼️ 광고 소재 성과 피드백</h2>
+            <div id="creativeGrid" class="creative-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        const REPORT_DATA = ${serializedClient};
+        let activeRoundId = REPORT_DATA.currentRoundId || (REPORT_DATA.rounds[0] && REPORT_DATA.rounds[0].id);
+        let activeMedia = 'all';
+
+        function renderReport() {
+            const roundBar = document.getElementById('roundSelector');
+            roundBar.innerHTML = REPORT_DATA.rounds.map(r =>
+                '<button class="pill-btn ' + (r.id === activeRoundId ? 'active' : '') + '" onclick="selectRound(\\'' + r.id + '\\')">' + r.name + '</button>'
+            ).join('');
+
+            const round = REPORT_DATA.rounds.find(r => r.id === activeRoundId) || REPORT_DATA.rounds[0];
+            const bucket = (round && round.mediaData && round.mediaData[activeMedia]) || { comment: '', issue: '', creatives: [] };
+
+            document.getElementById('commentBox').innerHTML = bucket.comment || '<span style="color:#71717a;">등록된 총평 코멘트가 없습니다.</span>';
+            document.getElementById('issueBox').innerHTML = bucket.issue || '<span style="color:#71717a;">등록된 운영 이슈 내역이 없습니다.</span>';
+
+            const grid = document.getElementById('creativeGrid');
+            if (!bucket.creatives || bucket.creatives.length === 0) {
+                grid.innerHTML = '<p style="color:#71717a; font-size:13px;">등록된 소재 피드백이 없습니다.</p>';
+            } else {
+                grid.innerHTML = bucket.creatives.map(c =>
+                    '<div class="creative-card">' +
+                        (c.image ? '<img src="' + c.image + '" alt="소재">' : '') +
+                        '<div class="creative-body"><h3>' + c.title + '</h3><p>' + c.desc + '</p></div>' +
+                    '</div>'
+                ).join('');
+            }
+        }
+
+        function selectRound(id) { activeRoundId = id; renderReport(); }
+        function selectMedia(m, btn) {
+            activeMedia = m;
+            document.querySelectorAll('.media-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderReport();
+        }
+        renderReport();
+    <\/script>
+</body>
+</html>`;
+        }
+
+        function openPreviewModal() {
+            const client = getCurrentClient();
+            const htmlCode = generateClientReportHTML(client);
+            const iframe = document.getElementById('previewIframe');
+            iframe.srcdoc = htmlCode;
+            document.getElementById('previewModal').classList.add('active');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&')
+                .replace(/</g, '<')
+                .replace(/>/g, '>')
+                .replace(/"/g, '"');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastBox');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(window.__toastTimer);
+            window.__toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3800);
+        }
+    </script>
 </body>
 </html>
