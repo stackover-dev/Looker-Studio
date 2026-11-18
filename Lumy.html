@@ -3,42 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>루미-밀리언파이 - 퍼포먼스 마케팅 통합 보고서</title>
+  
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="루미-밀리언파이 - 월간 퍼포먼스 광고 성과 보고서">
+  <meta property="og:description" content="루미-밀리언파이 디지털 매체 결산 보고서입니다.">
+  <meta property="og:image" content="./og-imageg.png">
+  <link rel="icon" type="image/png" href="./favicon-497.png">
 
+  <title>루미-밀리언파이 - 월간 퍼포먼스 광고 성과 보고서</title>
+  
   <!-- Tailwind CSS & Chart.js CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
-    
+
     /* ==========================================
        [1. 글로벌 프리미엄 디자인 시스템 변수]
        ========================================== */
     :root {
-      --bg-primary: #0B1120;
+      --bg-primary: #020617;
       --bg-card: #0F172A;
       --border-subtle: rgba(255, 255, 255, 0.08);
-      --glow-cyan: rgba(6, 182, 212, 0.16);
-      --glow-cyan-hover: rgba(6, 182, 212, 0.55);
-      --glow-indigo: rgba(99, 102, 241, 0.18);
-      --glow-indigo-hover: rgba(99, 102, 241, 0.6);
-      --shimmer-spec: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0) 100%);
+      --glow-cyan: rgba(6, 182, 212, 0.3);
+      --glow-cyan-hover: rgba(6, 182, 212, 0.75);
+      --glow-indigo: rgba(99, 102, 241, 0.3);
+      --glow-indigo-hover: rgba(99, 102, 241, 0.8);
+      --shimmer-spec: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0) 100%);
     }
 
     body {
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg-primary);
       color: #F8FAFC;
-      -webkit-font-smoothing: antialiased;
       word-break: keep-all;
-      overflow-wrap: break-word;
     }
 
-    ::-webkit-scrollbar { height: 6px; width: 6px; }
-    ::-webkit-scrollbar-track { background: #0F172A; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    @font-face {
+      font-family: 'Binggrae';
+      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Binggrae.woff') format('woff');
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    /* 전략 코멘트 및 운영 이슈 영역 전용 타이포그래피 스펙 */
+    [id*="strategy-comment-box"],
+    [id*="anomaly-comment-box"] {
+      font-family: 'Binggrae', sans-serif !important;
+      font-size: 16px !important;
+      line-height: 1.8 !important;
+      word-break: keep-all !important;
+    }
+
+    [id*="strategy-comment-box"] p,
+    [id*="strategy-comment-box"] h4,
+    [id*="strategy-comment-box"] li,
+    [id*="anomaly-comment-box"] p,
+    [id*="anomaly-comment-box"] li {
+      color: #F8FAFC !important;
+      font-family: 'Binggrae', sans-serif !important;
+      font-size: 16px !important;
+    }
+
+    [id*="strategy-comment-box"] b,
+    [id*="strategy-comment-box"] strong,
+    [id*="anomaly-comment-box"] b,
+    [id*="anomaly-comment-box"] strong {
+      color: #FDE047 !important;
+      font-weight: bold !important;
+      font-size: 17px !important;
+    }
+
+    [id*="strategy-comment-box"] mark,
+    [id*="anomaly-comment-box"] mark {
+      background-color: rgba(253, 224, 71, 0.2) !important;
+      color: #FDE047 !important;
+      padding: 2px 6px !important;
+      border-radius: 4px !important;
+    }
 
     /* ==========================================
        [2. 프리미엄 인터랙션 카드 & 절제된 쉬머 스펙]
@@ -48,28 +91,31 @@
       background-color: var(--bg-card);
       border: 1px solid var(--border-subtle);
       border-radius: 20px;
-      padding: 24px;
       overflow: hidden;
-      box-shadow: 0 0 18px 0 var(--glow-cyan);
-      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
-                  box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+      box-shadow: 0 0 20px 0 var(--glow-cyan);
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                  box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1),
                   border-color 0.4s ease;
     }
-    
+
     .interactive-card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 0 30px 4px var(--glow-cyan-hover);
+      transform: translateY(-8px);
+      border-color: rgba(255, 255, 255, 0.22);
+      box-shadow: 0 0 35px 5px var(--glow-cyan-hover);
     }
 
-    /* 대표 소재(BEST PERFORMING) 전용 절제된 쉬머 애니메이션 */
+    /* 핵심 벤치마크 배너(1번) 전용 절제된 쉬머 애니메이션 */
     .interactive-card.featured-shimmer {
-      background: linear-gradient(135deg, #1e1b4b 0%, #0F172A 100%);
-      box-shadow: 0 0 22px 2px var(--glow-indigo);
+      background: linear-gradient(135deg, #1e1b4b 0%, #09090b 100%);
+      border-color: rgba(129, 140, 248, 0.28);
+      box-shadow: 0 0 25px 2px var(--glow-indigo);
     }
+
     .interactive-card.featured-shimmer:hover {
-      box-shadow: 0 0 36px 6px var(--glow-indigo-hover);
+      border-color: rgba(129, 140, 248, 0.65);
+      box-shadow: 0 0 40px 8px var(--glow-indigo-hover);
     }
+
     .interactive-card.featured-shimmer::before {
       content: '';
       position: absolute;
@@ -80,25 +126,36 @@
       background: var(--shimmer-spec);
       transform: skewX(-20deg);
       animation: premium-shimmer 4.0s infinite ease-in-out;
+      z-index: 10;
       pointer-events: none;
     }
+
     @keyframes premium-shimmer {
       0% { left: -150%; }
       25% { left: 150%; }
       100% { left: 150%; }
     }
 
-    /* 3단 매거진 그리드 레이아웃 */
+    /* 3단 가변 그리드 레이아웃 */
+    .layout-benchmark-grid,
     .layout-magazine-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      gap: 20px;
     }
+
     @media (max-width: 1024px) {
-      .layout-magazine-grid { grid-template-columns: repeat(2, 1fr); }
+      .layout-benchmark-grid,
+      .layout-magazine-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
+
     @media (max-width: 640px) {
-      .layout-magazine-grid { grid-template-columns: 1fr; }
+      .layout-benchmark-grid,
+      .layout-magazine-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* ==========================================
@@ -110,33 +167,48 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(11, 17, 32, 0.85);
+      background-color: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 1000;
+      padding: 20px;
+      z-index: 9999;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.35s ease;
-      padding: 16px;
     }
-    .modal-blur-overlay.active { opacity: 1; pointer-events: auto; }
+
+    .modal-blur-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     .modal-scale-content {
-      background-color: #0F172A;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background-color: #111113;
+      border: 1px solid rgba(255, 255, 255, 0.18);
       padding: 28px;
-      border-radius: 24px;
-      max-width: 600px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
+      border-radius: 28px;
+      max-width: 860px;
+      width: 94%;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9);
       transform: scale(0.75);
       transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
     }
-    .modal-blur-overlay.active .modal-scale-content { transform: scale(1); }
-    .modal-scale-content::-webkit-scrollbar { width: 4px; }
+
+    .modal-blur-overlay.active .modal-scale-content {
+      transform: scale(1);
+    }
+
+    ::-webkit-scrollbar { height: 6px; width: 6px; }
+    ::-webkit-scrollbar-track { background: #0F172A; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
     /* ==========================================
        [4. 좌우 잘림 0% 무결점 A4 PDF 출력 전용 엔진]
@@ -153,12 +225,12 @@
       }
 
       html {
-        background-color: #0B1120 !important;
+        background-color: #020617 !important;
         width: 100% !important;
       }
 
       body {
-        background-color: #0B1120 !important;
+        background-color: #020617 !important;
         color: #F8FAFC !important;
         width: 1120px !important;
         max-width: 1120px !important;
@@ -198,14 +270,21 @@
         display: none !important;
       }
 
-      .layout-magazine-grid {
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 16px !important;
+      .print-kpi-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 12px !important;
       }
 
       .print-chart-grid {
         display: grid !important;
         grid-template-columns: 2fr 1fr !important;
+        gap: 16px !important;
+      }
+
+      .layout-benchmark-grid,
+      .layout-magazine-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
         gap: 16px !important;
       }
 
@@ -225,162 +304,137 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col pb-12">
+<body class="bg-slate-950 text-slate-100 min-h-screen">
 
-  <!-- 1. 상단 네비게이션 헤더 -->
-  <header class="bg-[#0F172A] border-b border-slate-800 sticky top-0 z-40 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-      <div class="flex items-center space-x-2.5">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-        <h1 class="text-xs sm:text-sm font-bold tracking-wider text-slate-100 uppercase">
-          PERFORMANCE AD REPOSITORY <span class="text-slate-400 font-normal">| 고객사: 루미-밀리언파이</span>
-        </h1>
+  <!-- 상단 고정 네비게이션 헤더 -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
+        <h1 class="text-base font-bold tracking-tight text-white">PERFORMANCE AD REPOSITORY <span id="client-name-display" class="text-xs text-slate-400 font-normal ml-1">| 고객사: 루미-밀리언파이</span></h1>
       </div>
 
-      <div class="flex items-center flex-wrap gap-2 w-full sm:w-auto">
-        <div id="period-selector-wrap" class="flex items-center gap-1.5 shrink-0">
-          <div id="badge-period" class="px-3 py-1.5 bg-slate-900 border border-emerald-500/40 text-emerald-400 rounded-lg text-xs font-semibold tracking-tight shrink-0">
-            집행 기간 로드 중...
-          </div>
-        </div>
+      <!-- 우측 통합 액션 그룹 (상단 기간 배지: 시작 날짜 ~ 마지막 날짜 자동 표기) -->
+      <div class="flex items-center justify-end gap-2 ml-auto">
+        <nav id="dynamic-period-nav" class="flex items-center gap-1.5 overflow-x-auto py-1"></nav>
 
-        <button type="button" onclick="openPdfSelectModal()" class="no-print flex-grow sm:flex-grow-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-md shadow-indigo-950/60 cursor-pointer">
+        <button type="button" onclick="openPdfSelectModal()" class="no-print flex items-center space-x-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-1.5 rounded-lg transition shadow-md shadow-indigo-950/60 cursor-pointer shrink-0">
           <span>📄 PDF 리포트 다운로드</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- 메인 대시보드 컨테이너 -->
-  <main class="max-w-7xl mx-auto px-3 sm:px-6 py-6 space-y-6 flex-grow w-full">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
-    <!-- 2. 매체 탭 네비게이션 -->
-    <div class="bg-[#0F172A] p-1.5 rounded-xl border border-slate-800 shadow-md">
-      <div class="grid grid-cols-2 sm:flex sm:space-x-1 gap-1" id="media-tab-container">
-        <button type="button" onclick="switchTab('ALL')" id="tab-ALL" class="tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">통합(전체)</button>
-        <button type="button" onclick="switchTab('Naver')" id="tab-Naver" class="tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">네이버 검색</button>
-        <button type="button" onclick="switchTab('Meta')" id="tab-Meta" class="tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">메타 (DA/SA)</button>
-        <button type="button" onclick="switchTab('Google')" id="tab-Google" class="tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">구글 애즈</button>
+    <!-- 상단 타이틀 및 매체 탭 필터 -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6 relative z-20">
+      <div>
+        <p class="text-xs font-medium uppercase tracking-wider text-emerald-400">Monthly Performance Media Audit</p>
+        <h2 class="text-2xl font-bold text-white mt-1"><span id="report-period-title">결산</span> 디지털 매체 결산 보고서</h2>
+      </div>
+
+      <div class="flex flex-wrap bg-slate-900 border border-slate-800 rounded-xl p-1 shadow-inner gap-1" id="media-filter-container">
+        <button type="button" onclick="setMediaFilter('ALL')" data-media="ALL" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow cursor-pointer">통합(전체)</button>
+        <button type="button" onclick="setMediaFilter('Naver')" data-media="Naver" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white cursor-pointer">네이버 검색</button>
+        <button type="button" onclick="setMediaFilter('Meta')" data-media="Meta" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white cursor-pointer">메타 (DA/SA)</button>
+        <button type="button" onclick="setMediaFilter('Google')" data-media="Google" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white cursor-pointer">구글 애즈</button>
       </div>
     </div>
 
-    <!-- 3. 최상단 전략 코멘트 영역 (STRATEGY COMMENT) -->
-    <section class="interactive-card border-l-4 border-l-blue-500">
-      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-4">
+    <!-- 1. 최상단 전략 코멘트 영역 -->
+    <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+      <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
+      <div class="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-3">
         <h2 class="text-xs font-extrabold tracking-wider text-blue-400 uppercase flex items-center gap-1.5">
           <span>STRATEGY COMMENT</span>
+          <span id="active-media-badge" class="ml-1 px-2 py-0.5 rounded bg-blue-950/80 text-blue-300 border border-blue-800/60 text-[10px]">통합(전체)</span>
         </h2>
-        <span class="text-[11px] text-slate-400 font-mono" id="strategy-period-label">결산 데이터 조회 중</span>
+        <span id="strategy-date-display" class="text-xs text-slate-400 font-normal">기간 로딩 중...</span>
       </div>
-      <div id="strategy-comment-body" class="text-xs sm:text-sm text-slate-200 leading-relaxed overflow-x-auto w-full"></div>
+      <div id="strategy-comment-box" class="text-sm leading-relaxed text-slate-300 w-full overflow-x-auto"></div>
     </section>
 
-    <!-- 4. 운영 이슈 분석 및 사후 대응 내역 -->
-    <section class="interactive-card border-l-4 border-l-amber-500">
+    <!-- 2. 운영 이슈 분석 및 사후 대응 내역 -->
+    <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden mt-6">
+      <div class="absolute top-0 left-0 w-1.5 h-full bg-amber-500"></div>
       <div class="border-b border-slate-800/80 pb-3 mb-4">
         <h2 class="text-xs font-extrabold tracking-wider text-amber-400 uppercase">
           ANOMALIES & OPERATIONAL ACTIONS
         </h2>
-        <h3 class="text-sm font-bold text-slate-100 mt-1">운영 이슈 분석 및 사후 대응 내역</h3>
+        <h3 class="text-base font-bold text-white mt-1">운영 이슈 분석 및 사후 대응 내역</h3>
       </div>
-      <div id="anomaly-comment-body" class="text-xs sm:text-sm leading-relaxed overflow-x-auto w-full"></div>
+
+      <div id="anomaly-comment-box" class="w-full overflow-x-auto"></div>
     </section>
 
-    <!-- 5. 광고 소재 성과 피드백 갤러리 (3단 매거진 레이아웃) -->
-    <section id="creatives-section" class="bg-[#0F172A] rounded-2xl border border-slate-800 p-4 sm:p-6 shadow-xl border-l-4 border-l-purple-500 hidden">
-      <div class="border-b border-slate-800/80 pb-3 mb-6">
-        <h2 class="text-xs font-extrabold tracking-wider text-purple-400 uppercase">
-          CREATIVE PERFORMANCE FEEDBACK
-        </h2>
-        <h3 class="text-sm font-bold text-slate-100 mt-1">광고 소재 성과 분석 및 피드백</h3>
-      </div>
-      <div class="layout-magazine-grid" id="creatives-grid"></div>
-    </section>
-
-    <!-- 6. 핵심 지표 KPI 카드 -->
-    <section class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      <div class="interactive-card !p-4 !rounded-xl">
-        <p class="text-[11px] font-semibold text-slate-400 mb-1">총 노출수 (Impressions)</p>
-        <p class="text-base sm:text-xl font-bold font-mono text-white" id="kpi-impressions">0</p>
-      </div>
-      <div class="interactive-card !p-4 !rounded-xl">
-        <p class="text-[11px] font-semibold text-slate-400 mb-1">총 도달수 (Reach)</p>
-        <p class="text-base sm:text-xl font-bold font-mono text-white" id="kpi-reach">0</p>
-      </div>
-      <div class="interactive-card !p-4 !rounded-xl">
-        <p class="text-[11px] font-semibold text-slate-400 mb-1">총 클릭수 (Clicks)</p>
-        <p class="text-base sm:text-xl font-bold font-mono text-emerald-400" id="kpi-clicks">0</p>
-      </div>
-      <div class="interactive-card !p-4 !rounded-xl">
-        <p class="text-[11px] font-semibold text-slate-400 mb-1">평균 클릭률 (CTR)</p>
-        <p class="text-base sm:text-xl font-bold font-mono text-cyan-400" id="kpi-ctr">0.00%</p>
-      </div>
-    </section>
-
-    <!-- 7. 차트 영역 -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 print-chart-grid">
-      <!-- 좌측: 일별 주요 지표 추이 -->
-      <div class="lg:col-span-2 bg-[#0F172A] p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-xl flex flex-col">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
-            <span>일별 주요 지표 추이</span>
+    <!-- 3. 등록된 자사 크리에이티브(소재) 피드백 갤러리 섹션 (프리미엄 3단 매거진 그리드) -->
+    <section id="creative-feedback-section" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden mt-6 hidden">
+      <div class="absolute top-0 left-0 w-1.5 h-full bg-purple-500"></div>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-800/80 pb-3 mb-6">
+        <div>
+          <h2 class="text-xs font-extrabold tracking-wider text-purple-400 uppercase">
+            CREATIVE PERFORMANCE FEEDBACK
+          </h2>
+          <h3 class="text-base font-bold text-white mt-1 flex items-center gap-1.5">
+            <span>🖼️</span> 광고 소재 성과 분석 및 피드백
           </h3>
-          <span class="text-[11px] text-slate-400 font-mono">좌측: 노출수(회) / 우측: 클릭수(건)</span>
         </div>
-        <div class="relative w-full h-64 sm:h-72">
+        <span class="no-print text-xs font-mono font-bold px-2.5 py-1 rounded bg-slate-900 text-purple-400 border border-slate-800 self-start sm:self-auto">
+          등록 소재: <span id="creative-count-badge">0</span>건
+        </span>
+      </div>
+      <div id="creative-container" class="layout-magazine-grid"></div>
+    </section>
+
+    <!-- 4. KPI 상단 요약 카드 -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 print-kpi-grid" id="kpi-cards-container"></section>
+
+    <!-- 5. 차트 영역 -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 print-chart-grid">
+      <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold text-white">일별 주요 지표 추이</h3>
+          <span class="text-[11px] text-slate-400 font-mono" id="chart-legend-text">좌축: 노출수(회) / 우축: 클릭수(건)</span>
+        </div>
+        <div class="relative h-72 w-full">
           <canvas id="trendChart"></canvas>
         </div>
       </div>
 
-      <!-- 우측: 매체별 핵심 지표 비중 (클릭수 기준) -->
-      <div class="bg-[#0F172A] p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-xl flex flex-col justify-between">
-        <div>
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-xs sm:text-sm font-bold text-white">매체별 핵심 지표 비중</h3>
-            <span class="text-[11px] text-emerald-400 font-semibold">클릭수 기준</span>
-          </div>
-          <p class="text-[11px] text-slate-400 mb-3" id="donut-guide-text">
-            선택된 매체의 파이가 두각되어 표시됩니다.
-          </p>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold text-white">매체별 핵심 지표 비중</h3>
+          <span class="text-[11px] text-emerald-400 font-semibold" id="share-chart-label">기준 지표 비율</span>
         </div>
-
-        <div class="relative w-full h-48 sm:h-52 flex items-center justify-center my-auto">
-          <canvas id="donutChart"></canvas>
+        <div class="relative h-64 w-full flex items-center justify-center">
+          <div id="no-share-data-msg" class="hidden absolute inset-0 flex items-center justify-center text-xs text-slate-500">등록된 지표 데이터가 없습니다.</div>
+          <canvas id="shareChart"></canvas>
         </div>
-
-        <p class="text-[10.5px] text-rose-400/90 text-center my-2 leading-relaxed px-1">
-          ※ 본 지표는 단순 수치 비교이며, 매체별 광고 특성과 그에 따른 고객 의도(Intent) 반영 수준 등의 차이가 존재합니다.
+        <p class="text-[10.5px] text-rose-400/90 text-center mt-4 leading-relaxed px-1">
+          ※ 상단 매체 필터 클릭 시 피벗 집계와 즉각 연동됩니다.
         </p>
-
-        <div class="pt-2.5 border-t border-slate-800/80 flex items-center justify-around text-xs font-semibold" id="donut-legend-info"></div>
       </div>
     </section>
 
-    <!-- 8. 일별 성과 상세 집계 내역 (6열 구성) -->
-    <section class="bg-[#0F172A] rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
+    <!-- 6. 일별 성과 상세 집계 내역 (우측 배지: 시작 날짜 ~ 마지막 날짜 동일 표기) -->
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
       <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 bg-slate-900/60">
         <div>
           <h3 class="text-xs sm:text-sm font-bold text-white">일별 성과 상세 집계 내역</h3>
-          <p class="text-[11px] text-slate-400 mt-0.5">상단 선택 매체 기준 테이블 (최신순)</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">상단 선택 매체 기준 자동 피벗 연산 테이블</p>
         </div>
-        <div class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-slate-800 text-blue-400 border border-slate-700">
-          집계 일수: <span id="table-row-count">0</span>일
+        <div class="text-xs font-mono font-semibold px-2.5 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700" id="table-row-count-badge">
+          집계 일자 로딩 중
         </div>
       </div>
 
       <div class="overflow-x-auto w-full">
-        <table class="w-full text-left text-xs whitespace-nowrap min-w-[520px]">
-          <thead class="bg-slate-900/90 text-slate-400 border-b border-slate-800 font-medium">
-            <tr>
-              <th class="py-3 px-4">집행일자</th>
-              <th class="py-3 px-4">매체</th>
-              <th class="py-3 px-4 text-right">노출수</th>
-              <th class="py-3 px-4 text-right">도달수</th>
-              <th class="py-3 px-4 text-right text-emerald-400">클릭수</th>
-              <th class="py-3 px-4 text-right text-cyan-400">클릭률 (CTR)</th>
-            </tr>
+        <table class="w-full text-left text-xs whitespace-nowrap min-w-[520px]" id="performance-table">
+          <thead class="bg-slate-900/90 text-slate-400 border-b border-slate-800 font-medium tracking-wider">
+            <tr id="table-header-row"></tr>
           </thead>
-          <tbody id="pivot-table-body" class="divide-y divide-slate-800/60 font-mono text-slate-200"></tbody>
+          <tbody class="divide-y divide-slate-800/60 font-mono text-slate-300" id="table-body"></tbody>
         </table>
       </div>
     </section>
@@ -389,21 +443,21 @@
 
   <!-- 모달 1: 매체 선택형 PDF 리포트 다운로드 팝업 -->
   <div class="modal-blur-overlay no-print" id="pdfSelectModal" onclick="closePdfSelectModal()">
-    <div class="modal-scale-content" onclick="event.stopPropagation()">
+    <div class="modal-scale-content !max-w-[600px]" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
         <div>
           <span class="text-[11px] font-extrabold tracking-wider text-indigo-400 uppercase block mb-1">EXPORT REPORT TO PDF</span>
           <h2 class="text-lg sm:text-xl font-bold text-white">다운로드할 보고서 매체 선택</h2>
         </div>
-        <button type="button" onclick="closePdfSelectModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold transition">✕</button>
+        <button type="button" onclick="closePdfSelectModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold transition cursor-pointer">✕</button>
       </div>
 
       <p class="text-xs text-slate-400 mb-5 leading-relaxed">
-        선택하신 매체 탭의 전략 코멘트·소재 피드백·차트·일별 데이터 전체가 A4 규격에 맞춰 좌우 잘림 없이 고해상도 PDF로 출력됩니다.
+        선택하신 매체 탭의 전략 코멘트·운영 이슈·소재 피드백·KPI·차트·일별 데이터 전체가 A4 규격에 맞춰 좌우 잘림 없이 고해상도 PDF로 출력됩니다.
       </p>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6" id="pdf-media-options">
-        <button type="button" onclick="startMediaPdfPrint('ALL')" class="interactive-card !p-4 !rounded-2xl text-left flex flex-col justify-between group cursor-pointer border-indigo-500/30">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6">
+        <button type="button" onclick="startMediaPdfPrint('ALL')" class="interactive-card p-4 text-left flex flex-col justify-between group cursor-pointer border-indigo-500/30">
           <div class="flex items-center justify-between mb-2">
             <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">ALL CHANNELS</span>
             <span id="pdf-count-ALL" class="text-[11px] font-mono text-slate-400">0건</span>
@@ -412,7 +466,7 @@
           <p class="text-[11px] text-slate-400 mt-1">전체 매체 통합 성과 및 종합 전략</p>
         </button>
 
-        <button type="button" onclick="startMediaPdfPrint('Naver')" class="interactive-card !p-4 !rounded-2xl text-left flex flex-col justify-between group cursor-pointer">
+        <button type="button" onclick="startMediaPdfPrint('Naver')" class="interactive-card p-4 text-left flex flex-col justify-between group cursor-pointer">
           <div class="flex items-center justify-between mb-2">
             <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-950 text-emerald-400 border border-emerald-800">NAVER</span>
             <span id="pdf-count-Naver" class="text-[11px] font-mono text-slate-400">0건</span>
@@ -421,7 +475,7 @@
           <p class="text-[11px] text-slate-400 mt-1">네이버 검색광고 단독 지표 및 코멘트</p>
         </button>
 
-        <button type="button" onclick="startMediaPdfPrint('Meta')" class="interactive-card !p-4 !rounded-2xl text-left flex flex-col justify-between group cursor-pointer">
+        <button type="button" onclick="startMediaPdfPrint('Meta')" class="interactive-card p-4 text-left flex flex-col justify-between group cursor-pointer">
           <div class="flex items-center justify-between mb-2">
             <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-blue-950 text-blue-400 border border-blue-800">META</span>
             <span id="pdf-count-Meta" class="text-[11px] font-mono text-slate-400">0건</span>
@@ -430,7 +484,7 @@
           <p class="text-[11px] text-slate-400 mt-1">인스타그램·페이스북 성과 및 소재 리포트</p>
         </button>
 
-        <button type="button" onclick="startMediaPdfPrint('Google')" class="interactive-card !p-4 !rounded-2xl text-left flex flex-col justify-between group cursor-pointer">
+        <button type="button" onclick="startMediaPdfPrint('Google')" class="interactive-card p-4 text-left flex flex-col justify-between group cursor-pointer">
           <div class="flex items-center justify-between mb-2">
             <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-rose-950 text-rose-400 border border-rose-800">GOOGLE</span>
             <span id="pdf-count-Google" class="text-[11px] font-mono text-slate-400">0건</span>
@@ -447,30 +501,98 @@
     </div>
   </div>
 
-  <!-- 모달 2: 광고 소재 상세 확대 모달 -->
-  <div class="modal-blur-overlay no-print" id="creativeModal" onclick="closeCreativeModal()">
+  <!-- 모달 2: 광고 소재 이미지 확대 스케일 모달 -->
+  <div class="modal-blur-overlay no-print" id="sysModal" onclick="closeSystemModal()">
     <div class="modal-scale-content" onclick="event.stopPropagation()">
-      <div class="w-full bg-[#0B1120] rounded-xl mb-4 border border-slate-800/80 p-2 flex justify-center items-center overflow-hidden">
-        <img id="modal-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="max-w-full max-h-[60vh] object-contain rounded-lg" alt="소재 이미지">
+      <div class="flex items-start justify-between gap-4 pb-4 border-b border-slate-800 shrink-0">
+        <div>
+          <span id="sysModalBadge" class="text-[11px] font-extrabold tracking-wider text-cyan-400 uppercase block mb-1">CREATIVE REFERENCE</span>
+          <h2 id="sysModalTitle" style="font-size: 20px; font-weight: bold; color: white; line-height: 1.35;"></h2>
+        </div>
+        <button type="button" onclick="closeSystemModal()" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold shrink-0 transition border border-slate-700 cursor-pointer">
+          ✕ 닫기
+        </button>
       </div>
-      <h2 id="modal-title" class="text-lg font-bold text-white mb-2"></h2>
-      <p id="modal-feedback" class="text-slate-300 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap bg-slate-900/50 p-3.5 rounded-xl border border-slate-800"></p>
-      <button type="button" onclick="closeCreativeModal()" class="mt-5 w-full py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-lg text-xs font-bold transition shadow-md">닫기</button>
+
+      <div id="sysModalImgWrap" class="hidden my-4 bg-slate-950 rounded-xl border border-slate-800 p-3 overflow-y-auto max-h-[64vh] text-center">
+        <img id="sysModalImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="확대 미리보기" class="w-full max-w-2xl h-auto rounded-lg mx-auto shadow-2xl object-contain">
+      </div>
+
+      <div class="pt-2 shrink-0">
+        <p id="sysModalDesc" style="color: #cbd5e1; font-size: 14.5px; line-height: 1.7; white-space: pre-line;"></p>
+      </div>
     </div>
   </div>
 
   <script>
-    // 1. 도넛 차트 네온 글로우 플러그인
-    const neonGlowPlugin = {
+    /* ==========================================
+       [1. 모달 확대 인터랙션 함수]
+       ========================================== */
+    function openSystemModal(t, d, imgSrc, badgeText) {
+      var modal = document.getElementById('sysModal');
+      var modalBadge = document.getElementById('sysModalBadge');
+      var title = document.getElementById('sysModalTitle');
+      var desc = document.getElementById('sysModalDesc');
+      var imgWrap = document.getElementById('sysModalImgWrap');
+      var imgEl = document.getElementById('sysModalImg');
+
+      if (!modal) return;
+      if (title) title.innerText = t || '';
+      if (desc) desc.innerText = d || '';
+      if (modalBadge) modalBadge.innerText = badgeText || 'CREATIVE REFERENCE';
+
+      if (imgSrc && imgEl && imgWrap) {
+        imgEl.src = imgSrc;
+        imgWrap.classList.remove('hidden');
+        imgWrap.scrollTop = 0;
+      } else if (imgWrap) {
+        if (imgEl) imgEl.src = '';
+        imgWrap.classList.add('hidden');
+      }
+
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function openCreativeCardModal(cardEl) {
+      if (!cardEl) return;
+      var t = cardEl.getAttribute('data-title') || '';
+      var d = cardEl.getAttribute('data-feedback') || '';
+      var imgSrc = cardEl.getAttribute('data-image') || '';
+      var badgeText = cardEl.getAttribute('data-badge') || 'CREATIVE REFERENCE';
+      openSystemModal(t, d, imgSrc, badgeText);
+    }
+
+    function closeSystemModal() {
+      var modal = document.getElementById('sysModal');
+      if (modal) modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    window.openSystemModal = openSystemModal;
+    window.openCreativeCardModal = openCreativeCardModal;
+    window.closeSystemModal = closeSystemModal;
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeSystemModal();
+        closePdfSelectModal();
+      }
+    });
+
+    /* ==========================================
+       [2. 대시보드 데이터 정규화 및 로드/차트 로직]
+       ========================================== */
+    var neonGlowPlugin = {
       id: 'neonGlowPlugin',
-      beforeDraw: (chart) => {
+      beforeDraw: function(chart) {
         if (chart.config.type !== 'doughnut') return;
-        const ctx = chart.ctx;
-        const glowIdx = chart.config.data.activeGlowIndex;
+        var ctx = chart.ctx;
+        var glowIdx = chart.config.data.activeGlowIndex;
 
         if (glowIdx !== undefined && glowIdx !== null && glowIdx !== -1) {
-          const meta = chart.getDatasetMeta(0);
-          const arc = meta.data[glowIdx];
+          var meta = chart.getDatasetMeta(0);
+          var arc = meta.data[glowIdx];
           if (arc) {
             ctx.save();
             ctx.shadowColor = chart.config.data.datasets[0].backgroundColor[glowIdx];
@@ -483,491 +605,875 @@
         }
       }
     };
-    Chart.register(neonGlowPlugin);
+    if (typeof Chart !== 'undefined') {
+      try { Chart.register(neonGlowPlugin); } catch (e) {}
+    }
 
-    // 2. 전역 상태 (루미-밀리언파이 전용)
-    const TARGET_CLIENT_KEYWORDS = ["루미-밀리언파이", "루미", "LUMY", "밀리언파이"];
-    let matchedClientKey = "루미-밀리언파이";
-    let activeTab = 'ALL';
-    let currentPeriod = "";
-    let allPeriods = [];
-    let clientDb = null;
-    let actualRawDataset = [];
-    let disableChartAnimOnce = false;
+    var dbReportData = null;
+    var matchedClientDisplayName = "루미-밀리언파이";
+    var currentSelectedPeriod = "결산";
+    var rawDataset = [];
+    var currentMedia = 'ALL';
+    var trendChartInstance = null;
+    var shareChartInstance = null;
+    var currentColumns = [];
+    var disableChartAnimOnce = false;
 
-    let trendChartInstance = null;
-    let donutChartInstance = null;
+    var MEDIA_LABEL_MAP = {
+      ALL: '통합(전체)',
+      Naver: '네이버 검색',
+      Meta: '메타 (DA/SA)',
+      Google: '구글 애즈'
+    };
 
-    // 3. 비동기 원본 database.json 실시간 호출 로직
-    document.addEventListener('DOMContentLoaded', async () => {
-      await loadLiveDatabase();
-      renderDashboard();
-    });
+    function formatNumber(num) {
+      return new Intl.NumberFormat('ko-KR').format(Math.round(num || 0));
+    }
 
-    // ESC 키로 모달 닫기 지원
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closePdfSelectModal();
-        closeCreativeModal();
+    function toCleanNumber(val) {
+      if (typeof val === 'number') return Number.isFinite(val) ? val : 0;
+      if (val === null || val === undefined) return 0;
+      var cleaned = String(val).replace(/[^0-9.-]/g, '');
+      var parsed = parseFloat(cleaned);
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function normalizeMediaName(rawMedia) {
+      var m = String(rawMedia || '').trim();
+      var lower = m.toLowerCase();
+      if (!m) return 'Meta';
+      if (lower.includes('naver') || lower.includes('네이버')) return 'Naver';
+      if (lower.includes('meta') || lower.includes('메타') || lower.includes('facebook') || lower.includes('instagram')) return 'Meta';
+      if (lower.includes('google') || lower.includes('구글')) return 'Google';
+      return m;
+    }
+
+    function normalizeDateString(rawDate) {
+      var s = String(rawDate || '').trim();
+      if (!s || s === '일자미상') return '일자미상';
+      var match = s.match(/(\d{4})[.\-\/\s]+(\d{1,2})[.\-\/\s]+(\d{1,2})/);
+      if (match) {
+        var yyyy = match[1];
+        var mm = match[2].length === 1 ? '0' + match[2] : match[2];
+        var dd = match[3].length === 1 ? '0' + match[3] : match[3];
+        return yyyy + '-' + mm + '-' + dd;
       }
-    });
+      return s;
+    }
 
-    async function loadLiveDatabase() {
+    function normalizeDataset(rows) {
+      if (!Array.isArray(rows)) return [];
+      return rows.map(function(row) {
+        if (!row || typeof row !== 'object') return null;
+        var normalized = Object.assign({}, row);
+        var rawD = row.date || row.Date || row['집행일자'] || row['일자'] || row['날짜'] || '';
+        normalized.date = normalizeDateString(rawD);
+        normalized.media = normalizeMediaName(row.media || row.Media || row.platform || row.channel || row['매체'] || row['플랫폼']);
+        normalized.impressions = toCleanNumber(row.impressions !== undefined ? row.impressions : (row.Impressions !== undefined ? row.Impressions : (row['노출수'] !== undefined ? row['노출수'] : row['노출'])));
+        normalized.reach = toCleanNumber(row.reach !== undefined ? row.reach : (row.Reach !== undefined ? row.Reach : (row['도달수'] !== undefined ? row['도달수'] : row['도달'])));
+        normalized.clicks = toCleanNumber(row.clicks !== undefined ? row.clicks : (row.Clicks !== undefined ? row.Clicks : (row['클릭수'] !== undefined ? row['클릭수'] : row['클릭'])));
+        return normalized;
+      }).filter(Boolean);
+    }
+
+    function normalizeColumns(cols) {
+      var defaultCols = [
+        { key: 'impressions', label: '노출수', isConv: false },
+        { key: 'reach', label: '도달수', isConv: false },
+        { key: 'clicks', label: '클릭수', isConv: false }
+      ];
+
+      if (!Array.isArray(cols) || cols.length === 0) return defaultCols;
+
+      var labelFallbackMap = {
+        impressions: '노출수',
+        reach: '도달수',
+        clicks: '클릭수'
+      };
+
+      var mapped = cols.map(function(c) {
+        if (!c) return null;
+        var key = typeof c === 'string' ? c : String(c.key || c.field || c.id || '').trim();
+        if (!key || key === 'cost' || key === 'conv' || key === 'result') return null;
+        var label = typeof c === 'string' ? (labelFallbackMap[key] || key) : String(c.label || c.name || c.title || labelFallbackMap[key] || key).trim();
+        if (label.includes('비용') || label.includes('전환')) return null;
+        return { key: key, label: label, isConv: false };
+      }).filter(Boolean);
+
+      return mapped.length > 0 ? mapped : defaultCols;
+    }
+
+    var FALLBACK_RAW_DATASET = [
+      { date: "2026-10-15", media: "Meta", impressions: 5018, reach: 4797, clicks: 155 },
+      { date: "2026-10-16", media: "Meta", impressions: 5307, reach: 5106, clicks: 158 },
+      { date: "2026-10-17", media: "Naver", impressions: 3195, reach: 3000, clicks: 120 }
+    ];
+
+    var FALLBACK_STRATEGY_HTML = [
+      '<div style="line-height: 1.8; color: #F8FAFC;">',
+      '  <p style="font-weight: bold; color: #60A5FA !important; margin-bottom: 10px;">',
+      '    📌 [루미-밀리언파이] 퍼포먼스 광고 캠페인 성과 요약 및 전략 총평',
+      '  </p>',
+      '  <div style="background-color: #1E293B; border-left: 4px solid #3B82F6; padding: 12px 16px; margin-bottom: 14px; border-radius: 8px;">',
+      '    <strong style="color: #38BDF8 !important;">📊 집행 핵심 종합 데이터 요약</strong><br>',
+      '    • 전반적인 캠페인 효율 및 타겟 도달 성과가 안정적으로 집계되었습니다.',
+      '  </div>',
+      '  <ul style="margin: 0; padding-left: 20px; list-style-type: disc;">',
+      '    <li style="margin-bottom: 6px;">',
+      '      광고 데이터 기준 클릭률(CTR)과 유입 반응이 긍정적이며, 추가적인 최적화 작업이 진행 중입니다.',
+      '    </li>',
+      '    <li>',
+      '      전환 효율을 극대화하기 위해 <mark>핵심 성과 소재에 예산을 집중 증액하고, A/B 테스트를 지속</mark>합니다.',
+      '    </li>',
+      '  </ul>',
+      '</div>'
+    ].join('\n');
+
+    var FALLBACK_ANOMALY_HTML = [
+      '<ul class="text-xs leading-relaxed text-slate-300 space-y-2 list-disc list-inside">',
+      '  <li><strong class="text-slate-100">현재 등록된 특이사항 및 이슈가 없습니다. 정상 송출 및 최적화가 유지되고 있습니다.</strong></li>',
+      '</ul>'
+    ].join('\n');
+
+    /* ==========================================
+       [핵심] 일일 데이터 보고서 기준 시작 날짜 ~ 마지막 날짜 계산 함수
+       ========================================== */
+    function getReportDateRangeLabel(targetRows, periodObj) {
+      var rows = (Array.isArray(targetRows) && targetRows.length > 0) ? targetRows : rawDataset;
+      var validDates = [];
+
+      if (Array.isArray(rows) && rows.length > 0) {
+        rows.forEach(function(item) {
+          var d = normalizeDateString(item && item.date ? item.date : '');
+          if (d && d !== '일자미상' && validDates.indexOf(d) === -1) {
+            validDates.push(d);
+          }
+        });
+      }
+
+      if (validDates.length > 0) {
+        validDates.sort(function(a, b) {
+          return a.localeCompare(b);
+        });
+        return validDates[0] + ' ~ ' + validDates[validDates.length - 1];
+      }
+
+      if (periodObj) {
+        if (periodObj.startDate && periodObj.endDate) {
+          return normalizeDateString(periodObj.startDate) + ' ~ ' + normalizeDateString(periodObj.endDate);
+        }
+        if (periodObj.dateRange) {
+          return String(periodObj.dateRange).trim();
+        }
+      }
+
+      return '집계 기간 산정 중';
+    }
+
+    function getPeriodNavDateRange(periodKey) {
+      if (dbReportData && dbReportData.months && dbReportData.months[periodKey]) {
+        var pObj = dbReportData.months[periodKey];
+        var norm = normalizeDataset(pObj.rawDataset);
+        var hasValid = norm.some(function(d) {
+          return (d.impressions + d.reach + d.clicks) > 0;
+        });
+        if (norm.length > 0 && hasValid) {
+          return getReportDateRangeLabel(norm, pObj);
+        }
+        if (periodKey === currentSelectedPeriod) {
+          return getReportDateRangeLabel(rawDataset.length > 0 ? rawDataset : FALLBACK_RAW_DATASET, pObj);
+        }
+        return getReportDateRangeLabel([], pObj);
+      }
+      return getReportDateRangeLabel(rawDataset.length > 0 ? rawDataset : FALLBACK_RAW_DATASET, null);
+    }
+
+    function findClientRecord(db, currentFilename) {
+      if (!db || typeof db !== 'object') return null;
+      var targetKeywords = ["루미-밀리언파이", "루미", "LUMY", "밀리언파이"];
+      
+      for (var key in db) {
+        if (!Object.prototype.hasOwnProperty.call(db, key)) continue;
+        var item = db[key];
+        if (!item) continue;
+        
+        var isMatch = targetKeywords.some(function(kw) {
+          return key.toLowerCase().includes(kw.toLowerCase()) || 
+                 (item.name && item.name.toLowerCase().includes(kw.toLowerCase()));
+        });
+
+        if (isMatch) {
+          return { name: item.name || key, record: item };
+        }
+      }
+      return null;
+    }
+
+    function mergeClientRecords(remoteRec, localRec) {
+      if (!remoteRec) return localRec;
+      if (!localRec) return remoteRec;
+
+      var merged = Object.assign({}, remoteRec, localRec);
+      merged.months = Object.assign({}, remoteRec.months || {});
+
+      if (localRec.months && typeof localRec.months === 'object') {
+        Object.keys(localRec.months).forEach(function(periodKey) {
+          var rMonth = (remoteRec.months && remoteRec.months[periodKey]) || {};
+          var lMonth = localRec.months[periodKey] || {};
+
+          var useLocalDataset = Array.isArray(lMonth.rawDataset) && lMonth.rawDataset.length > 0 &&
+                                (!Array.isArray(rMonth.rawDataset) || lMonth.rawDataset.length >= rMonth.rawDataset.length);
+
+          merged.months[periodKey] = Object.assign({}, rMonth, lMonth, {
+            rawDataset: useLocalDataset ? lMonth.rawDataset : (rMonth.rawDataset || lMonth.rawDataset || []),
+            columns: (lMonth.columns && lMonth.columns.length > 0) ? lMonth.columns : (rMonth.columns || []),
+            comments: Object.assign({}, rMonth.comments || {}, lMonth.comments || {}),
+            creatives: (lMonth.creatives && Object.keys(lMonth.creatives).length > 0) ? lMonth.creatives : (rMonth.creatives || {})
+          });
+        });
+      }
+      return merged;
+    }
+
+    async function initDataLoad() {
+      var clientName = "루미-밀리언파이";
+      var currentFilename = window.location.pathname.split('/').pop() || '';
+      
+      var remoteDb = null;
+      var localDb = null;
+
+      var candidatePaths = [
+        './database.json?t=' + Date.now(),
+        '../database.json?t=' + Date.now(),
+        '/Looker-Studio/database.json?t=' + Date.now(),
+        '/adplanters/database.json?t=' + Date.now()
+      ];
+
+      for (var i = 0; i < candidatePaths.length; i++) {
+        try {
+          var response = await fetch(candidatePaths[i], { cache: 'no-store' });
+          if (response.ok) {
+            remoteDb = await response.json();
+            break;
+          }
+        } catch (e) {}
+      }
+
       try {
-        let res = await fetch('./database.json?t=' + Date.now());
-        if (!res.ok) res = await fetch('../database.json?t=' + Date.now());
-        if (res.ok) {
-          clientDb = await res.json();
-        }
-      } catch (e) {
-        console.warn("원격 database.json 로드 실패, 로컬 캐시 조회", e);
+        var savedDb = localStorage.getItem('MEDIA_REPORT_DB');
+        if (savedDb) localDb = JSON.parse(savedDb);
+      } catch (e) {}
+
+      var remoteMatch = findClientRecord(remoteDb, currentFilename);
+      var localMatch = findClientRecord(localDb, currentFilename);
+
+      if (remoteMatch && localMatch) {
+        clientName = localMatch.name || remoteMatch.name;
+        dbReportData = mergeClientRecords(remoteMatch.record, localMatch.record);
+      } else if (remoteMatch) {
+        clientName = remoteMatch.name;
+        dbReportData = remoteMatch.record;
+      } else if (localMatch) {
+        clientName = localMatch.name;
+        dbReportData = localMatch.record;
       }
 
-      if (!clientDb) {
-        const local = localStorage.getItem('MEDIA_REPORT_DB');
-        if (local) {
-          try {
-            clientDb = JSON.parse(local);
-          } catch (e) {
-            console.warn("로컬 캐시 JSON 파싱 오류", e);
-          }
-        }
-      }
+      matchedClientDisplayName = clientName;
+      var clientDisplayEl = document.getElementById('client-name-display');
+      if (clientDisplayEl) clientDisplayEl.innerText = '| 고객사: ' + clientName;
 
-      if (clientDb) {
-        const keys = Object.keys(clientDb);
-        const foundKey = keys.find(k => TARGET_CLIENT_KEYWORDS.some(kw => k.toLowerCase().includes(kw.toLowerCase()))) || keys[0];
-        if (foundKey && clientDb[foundKey]) {
-          matchedClientKey = foundKey;
-          const clientObj = clientDb[matchedClientKey];
-          if (clientObj && clientObj.months) {
-            allPeriods = Object.keys(clientObj.months);
-            currentPeriod = allPeriods[allPeriods.length - 1] || "집행 결산 회차";
-            applyPeriodDataset();
-          }
+      if (dbReportData && dbReportData.months) {
+        var availablePeriods = Object.keys(dbReportData.months);
+        if (availablePeriods.length > 0) {
+          currentSelectedPeriod = availablePeriods[availablePeriods.length - 1];
         }
       }
 
-      if (!currentPeriod) currentPeriod = "최신 집행 결산";
-      renderPeriodControls();
+      loadPeriodDataAndRender();
+      renderPeriodNavigation();
     }
 
-    function applyPeriodDataset() {
-      const clientObj = clientDb ? (clientDb[matchedClientKey] || Object.values(clientDb)[0]) : null;
-      const periodData = (clientObj && clientObj.months) ? clientObj.months[currentPeriod] : null;
-      actualRawDataset = (periodData && periodData.rawDataset) ? periodData.rawDataset : [];
+    function renderPeriodNavigation() {
+      var navContainer = document.getElementById('dynamic-period-nav');
+      if (!navContainer) return;
+      navContainer.innerHTML = '';
+
+      if (!dbReportData || !dbReportData.months || Object.keys(dbReportData.months).length === 0) {
+        var aTag = document.createElement('a');
+        aTag.href = "javascript:void(0);";
+        aTag.className = "px-3 py-1.5 text-xs font-semibold rounded-md border border-emerald-500/60 bg-emerald-500/10 text-emerald-400 shrink-0 font-mono";
+        aTag.innerText = getPeriodNavDateRange(currentSelectedPeriod);
+        navContainer.appendChild(aTag);
+        return;
+      }
+
+      var periods = Object.keys(dbReportData.months);
+      periods.forEach(function(p) {
+        var aTag = document.createElement('a');
+        aTag.href = "javascript:void(0);";
+        var labelRange = getPeriodNavDateRange(p);
+        
+        if (p === currentSelectedPeriod) {
+          aTag.className = "px-3 py-1.5 text-xs font-semibold rounded-md border border-emerald-500/60 bg-emerald-500/10 text-emerald-400 shrink-0 font-mono";
+          aTag.innerText = labelRange;
+        } else {
+          aTag.className = "no-print px-3 py-1.5 text-xs font-semibold rounded-md border border-slate-700 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition shrink-0 font-mono";
+          aTag.innerText = labelRange;
+          aTag.onclick = function() {
+            currentSelectedPeriod = p;
+            loadPeriodDataAndRender();
+            renderPeriodNavigation();
+          };
+        }
+        navContainer.appendChild(aTag);
+      });
     }
 
-    function switchPeriod(periodName) {
-      currentPeriod = periodName;
-      applyPeriodDataset();
-      renderPeriodControls();
+    function cleanText(txt) {
+      if (!txt) return "";
+      var rawStr = String(txt).trim();
+      var plainText = rawStr
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/\u0026nbsp;/gi, ' ')
+        .replace(/\u00A0/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      if (
+        !plainText ||
+        plainText === "전략 총평을 입력하세요." || 
+        plainText === "특이사항을 입력하세요." || 
+        plainText === "관리자 데이터 로딩 중..." || 
+        plainText.includes("HTML 태그를 활용하여") ||
+        plainText.includes("실시간 프리뷰 영역입니다")
+      ) return "";
+      return rawStr;
+    }
+
+    function extractComment(periodObj, mediaTab, type) {
+      if (!periodObj) return "";
+      var comments = periodObj.comments || {};
+      var checkKeys = function(keys) {
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
+          if (comments[k] && cleanText(comments[k][type])) return cleanText(comments[k][type]);
+        }
+        return "";
+      };
+
+      var result = "";
+      if (mediaTab === 'Meta') result = checkKeys(['Meta', 'meta', '메타', '메타 (DA/SA)']);
+      else if (mediaTab === 'Naver') result = checkKeys(['Naver', 'naver', '네이버', '네이버 검색']);
+      else if (mediaTab === 'Google') result = checkKeys(['Google', 'google', '구글', '구글 애즈']);
+      else if (mediaTab === 'ALL') {
+        result = checkKeys(['ALL', 'all', '통합', '통합(전체)']);
+        if (!result) result = checkKeys(['Meta', 'meta', '메타', '메타 (DA/SA)', 'Naver', 'naver', '네이버', '네이버 검색', 'Google', 'google', '구글', '구글 애즈']);
+      }
+
+      if (!result && (mediaTab === 'ALL' || mediaTab === 'Meta')) {
+        var rootKey = type === 'strategy' ? 'strategyComment' : 'anomalyComment';
+        result = cleanText(periodObj[rootKey]);
+      }
+      return result;
+    }
+
+    function matchMediaKey(keyName, tabKey) {
+      var k = String(keyName || '').trim().toLowerCase();
+      var t = String(tabKey || '').trim().toLowerCase();
+      if (t === 'all') return k === 'all' || k === '통합' || k === '통합(전체)';
+      if (t === 'meta') return k.includes('meta') || k.includes('메타') || k.includes('facebook') || k.includes('instagram');
+      if (t === 'naver') return k.includes('naver') || k.includes('네이버');
+      if (t === 'google') return k.includes('google') || k.includes('구글');
+      return k === t;
+    }
+
+    function hasMediaActualDelivery(targetTab) {
+      var rows = getFilteredRows(targetTab);
+      if (!rows || rows.length === 0) return false;
+      return rows.some(function(r) {
+        return (toCleanNumber(r.impressions) + toCleanNumber(r.reach) + toCleanNumber(r.clicks)) > 0;
+      });
+    }
+
+    function getCreativesForCurrentTab() {
+      if (!hasMediaActualDelivery(currentMedia)) return [];
+
+      if (!dbReportData || !dbReportData.months || !dbReportData.months[currentSelectedPeriod]) return [];
+      var periodData = dbReportData.months[currentSelectedPeriod];
+      if (!periodData.creatives) return [];
+      var raw = periodData.creatives;
+
+      if (Array.isArray(raw)) {
+        if (currentMedia === 'ALL') return raw;
+        var filteredArr = raw.filter(function(item) {
+          return !item.media || matchMediaKey(item.media, currentMedia);
+        });
+        return filteredArr.length > 0 ? filteredArr : raw;
+      }
+
+      if (typeof raw === 'object') {
+        if (currentMedia === 'ALL') {
+          var allList = [];
+          var otherLists = [];
+          Object.keys(raw).forEach(function(k) {
+            var arr = Array.isArray(raw[k]) ? raw[k] : [];
+            if (matchMediaKey(k, 'ALL')) allList = allList.concat(arr);
+            else otherLists = otherLists.concat(arr);
+          });
+          return allList.length > 0 ? allList : otherLists;
+        } else {
+          var list = [];
+          Object.keys(raw).forEach(function(k) {
+            if (matchMediaKey(k, currentMedia) && Array.isArray(raw[k])) {
+              list = list.concat(raw[k]);
+            }
+          });
+          if (list.length === 0) {
+            Object.keys(raw).forEach(function(k) {
+              if (matchMediaKey(k, 'ALL') && Array.isArray(raw[k])) {
+                list = list.concat(raw[k]);
+              }
+            });
+          }
+          return list;
+        }
+      }
+      return [];
+    }
+
+    function escapeAttr(str) {
+      return String(str || '')
+        .replace(/&/g, '\u0026amp;')
+        .replace(/"/g, '\u0026quot;')
+        .replace(/'/g, '\u0026#39;')
+        .replace(/</g, '\u0026lt;')
+        .replace(/>/g, '\u0026gt;');
+    }
+
+    function loadPeriodDataAndRender() {
+      var periodData = (dbReportData && dbReportData.months) ? dbReportData.months[currentSelectedPeriod] : null;
+      if (periodData) {
+        var normalized = normalizeDataset(periodData.rawDataset);
+        var hasValidMetrics = normalized.some(function(d) {
+          return (d.impressions + d.reach + d.clicks) > 0;
+        });
+
+        rawDataset = (normalized.length > 0 && hasValidMetrics) ? normalized : normalizeDataset(FALLBACK_RAW_DATASET);
+        currentColumns = normalizeColumns(periodData.columns);
+      } else {
+        rawDataset = normalizeDataset(FALLBACK_RAW_DATASET);
+        currentColumns = normalizeColumns(null);
+      }
+
+      var periodTitleEl = document.getElementById('report-period-title');
+      if (periodTitleEl) periodTitleEl.innerText = currentSelectedPeriod || "결산";
+      
       renderDashboard();
     }
 
-    function renderPeriodControls() {
-      const wrap = document.getElementById('period-selector-wrap');
-      if (allPeriods.length > 1) {
-        wrap.innerHTML = allPeriods.map(p => {
-          const isCurrent = p === currentPeriod;
-          const escapedP = String(p).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
-          const cls = isCurrent
-            ? "px-3 py-1.5 bg-emerald-500 text-slate-950 rounded-lg text-xs font-bold tracking-tight shrink-0 shadow-sm cursor-pointer"
-            : "px-3 py-1.5 bg-slate-900 border border-slate-700 hover:border-emerald-500/50 text-slate-300 rounded-lg text-xs font-semibold tracking-tight shrink-0 cursor-pointer transition";
-          return `<button type="button" onclick="switchPeriod('${escapedP}')" class="${cls}">${p}${isCurrent ? ' (현재)' : ''}</button>`;
-        }).join('');
-      } else {
-        wrap.innerHTML = `
-          <div id="badge-period" class="px-3 py-1.5 bg-slate-900 border border-emerald-500/40 text-emerald-400 rounded-lg text-xs font-semibold tracking-tight shrink-0">
-            ${currentPeriod} (현재)
-          </div>`;
-      }
-      document.getElementById('strategy-period-label').innerText = `기준: ${currentPeriod} 결산`;
+    function getFilteredRows(targetTab) {
+      var tab = targetTab || currentMedia;
+      if (tab === 'ALL') return rawDataset;
+      return rawDataset.filter(function(item) {
+        var m = String(item.media || '').trim().toLowerCase();
+        var t = tab.toLowerCase();
+        if (t === 'naver') return m.includes('naver') || m.includes('네이버');
+        if (t === 'meta') return m.includes('meta') || m.includes('메타') || m.includes('facebook') || m.includes('instagram');
+        if (t === 'google') return m.includes('google') || m.includes('구글');
+        return m === t;
+      });
     }
 
-    // 4. 탭 전환 및 전체 대시보드 렌더링
-    function switchTab(mediaKey, instantMode = false) {
-      activeTab = mediaKey;
-      disableChartAnimOnce = instantMode;
+    function setMediaFilter(media, instantMode) {
+      currentMedia = media || 'ALL';
+      disableChartAnimOnce = Boolean(instantMode);
+
+      document.querySelectorAll('.media-btn').forEach(function(btn) {
+        if (btn.dataset.media === currentMedia) {
+          btn.className = 'media-btn px-4 py-2 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow cursor-pointer';
+        } else {
+          btn.className = 'media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer';
+        }
+      });
+
+      var badgeEl = document.getElementById('active-media-badge');
+      if (badgeEl) badgeEl.innerText = MEDIA_LABEL_MAP[currentMedia] || currentMedia;
+
       renderDashboard();
       disableChartAnimOnce = false;
     }
 
+    window.setMediaFilter = setMediaFilter;
+
     function renderDashboard() {
-      const tabs = ['ALL', 'Naver', 'Meta', 'Google'];
-      tabs.forEach(t => {
-        const btn = document.getElementById(`tab-${t}`);
-        if (!btn) return;
-        if (t === activeTab) {
-          btn.className = "tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all bg-emerald-500 text-slate-950 shadow-md";
-        } else {
-          btn.className = "tab-btn w-full py-2.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800";
-        }
-      });
+      var periodData = (dbReportData && dbReportData.months) ? dbReportData.months[currentSelectedPeriod] : null;
+      var filtered = getFilteredRows(currentMedia);
+      var hasActualData = hasMediaActualDelivery(currentMedia);
+      var currentTabLabel = MEDIA_LABEL_MAP[currentMedia] || currentMedia;
+      var dateRangeText = getReportDateRangeLabel(filtered, periodData);
 
-      renderComments();
-      renderCreatives();
-      renderKPIsAndTable();
-      renderTrendChart();
-      renderDonutChart();
-    }
-
-    // 5. 코멘트 박스 렌더링 (★데이터 미존재 시 강제 공란 처리 반영)
-    function renderComments() {
-      let stratText = "";
-      let anomText = "";
-
-      const clientObj = clientDb ? (clientDb[matchedClientKey] || Object.values(clientDb)[0]) : null;
-      const monthData = (clientObj && clientObj.months) ? clientObj.months[currentPeriod] : null;
-
-      if (monthData && monthData.comments && monthData.comments[activeTab]) {
-        stratText = (monthData.comments[activeTab].strategy || "").trim();
-        anomText = (monthData.comments[activeTab].anomaly || "").trim();
+      // 상단 STRATEGY COMMENT 우측 날짜 표기 업데이트
+      var stratDateEl = document.getElementById('strategy-date-display');
+      if (stratDateEl) {
+        stratDateEl.innerText = dateRangeText;
       }
 
-      // [핵심 수정]: 실제 집행된 로우(row) 데이터가 없는 경우, DB에 잘못 기입된 텍스트가 있어도 강제로 초기화하여 노출 차단
-      const currentTabRows = getFilteredRows(activeTab);
-      const hasActualData = currentTabRows.length > 0;
+      // 하단 일별 성과 상세 집계 내역 우측 배지 날짜 표기 업데이트
+      var tableBadgeEl = document.getElementById('table-row-count-badge');
+      if (tableBadgeEl) {
+        tableBadgeEl.innerText = dateRangeText;
+      }
+      
+      // 1. 코멘트 업데이트 (실제 집행 데이터가 없는 매체는 강제 공란 처리)
+      var strategyBox = document.getElementById('strategy-comment-box');
+      var anomalyBox = document.getElementById('anomaly-comment-box');
+      
+      var stratText = extractComment(periodData, currentMedia, 'strategy');
+      var anomText = extractComment(periodData, currentMedia, 'anomaly');
 
       if (!hasActualData) {
         stratText = "";
         anomText = "";
       }
 
-      if (stratText && stratText.includes('max-width: 650px')) {
-        stratText = "";
-      }
-
-      const mediaLabelMap = { ALL: '통합 매체', Naver: '네이버 검색', Meta: '메타 (Meta)', Google: '구글 애즈' };
-      const currentTabLabel = mediaLabelMap[activeTab] || activeTab;
-
-      // 공란일 경우 출력되는 UI 메시지
-      if (!stratText) {
+      if (strategyBox) {
         if (!hasActualData) {
-          stratText = `
-            <div class="py-8 text-center text-slate-500 font-sans">
-              <span class="text-base font-bold text-slate-400 block mb-1">집행 내역 없음 (공란)</span>
-              해당 기간 내 집행된 <strong class="text-emerald-400">[${currentTabLabel}]</strong> 광고 데이터가 존재하지 않아 공란 처리되었습니다.
-            </div>`;
+          strategyBox.innerHTML = '<div class="py-8 text-center text-slate-500 font-sans"><span class="text-base font-bold text-slate-400 block mb-1">집행 내역 없음 (공란)</span>해당 기간 내 집행된 <strong class="text-emerald-400">[' + currentTabLabel + ']</strong> 광고 데이터가 존재하지 않아 공란 처리되었습니다.</div>';
         } else {
-          stratText = `
-            <div class="py-8 text-center text-slate-400 font-sans">
-              해당 기간의 <strong class="text-blue-400">[${currentTabLabel}]</strong> 전략 코멘트가 아직 등록되지 않았습니다.
-            </div>`;
+          strategyBox.innerHTML = stratText ? stratText : FALLBACK_STRATEGY_HTML;
         }
       }
 
-      if (!anomText) {
+      if (anomalyBox) {
         if (!hasActualData) {
-          anomText = `
-            <div class="py-6 text-center text-slate-500 font-sans text-xs">
-              해당 기간 내 집행된 <strong class="text-amber-400">[${currentTabLabel}]</strong> 광고가 없으므로 보고 내역이 없습니다.
-            </div>`;
+          anomalyBox.innerHTML = '<div class="py-6 text-center text-slate-500 font-sans text-xs">해당 기간 내 집행된 <strong class="text-amber-400">[' + currentTabLabel + ']</strong> 광고가 없으므로 보고 내역이 없습니다.</div>';
+        } else if (anomText) {
+          if (anomText.includes('<li>') || anomText.includes('<p>') || anomText.includes('<div')) {
+            anomalyBox.innerHTML = anomText;
+          } else {
+            var anomalies = anomText.split('\n').filter(function(t) { return t.trim() !== ''; });
+            var html = '<ul class="text-xs leading-relaxed text-slate-300 space-y-2 list-disc list-inside">';
+            anomalies.forEach(function(a) {
+              html += '<li><strong class="text-slate-100">' + a + '</strong></li>';
+            });
+            html += '</ul>';
+            anomalyBox.innerHTML = html;
+          }
         } else {
-          anomText = `
-            <div class="py-6 text-center text-slate-400 font-sans text-xs">
-              등록된 특이사항 및 이슈가 없습니다. 정상 송출 및 최적화가 유지되고 있습니다.
-            </div>`;
+          anomalyBox.innerHTML = FALLBACK_ANOMALY_HTML;
         }
       }
 
-      document.getElementById('strategy-comment-body').innerHTML = stratText;
-      document.getElementById('anomaly-comment-body').innerHTML = anomText;
-    }
+      // 2. 등록 소재 업데이트 (프리미엄 가변 3단 레이아웃 반영 및 1번 항목 쉬머 효과 부여)
+      var creativeSec = document.getElementById('creative-feedback-section');
+      var creativeCon = document.getElementById('creative-container');
+      var countBadge = document.getElementById('creative-count-badge');
+      var creatives = getCreativesForCurrentTab();
 
-    // 5-1. 광고 소재 성과 피드백 렌더링 (★데이터 미존재 시 강제 비활성화 반영)
-    function renderCreatives() {
-      const section = document.getElementById('creatives-section');
-      const grid = document.getElementById('creatives-grid');
+      if (creativeSec && creativeCon) {
+        if (creatives && creatives.length > 0) {
+          creativeSec.classList.remove('hidden');
+          if (countBadge) countBadge.innerText = creatives.length;
+          
+          creativeCon.innerHTML = creatives.map(function(c, idx) {
+            var titleText = c.title || '등록된 소재명 없음';
+            var feedbackText = c.feedback || '소재에 대한 피드백이 등록되지 않았습니다.';
+            var imgSrc = c.image || '';
+            var isFeatured = idx === 0 ? 'featured-shimmer' : '';
+            var badgeText = idx === 0 ? 'BEST PERFORMING · KEY' : 'CREATIVE 0' + (idx + 1);
+            var badgeHtml = idx === 0 
+                ? '<span class="absolute top-3 left-3 px-2.5 py-0.5 rounded text-[10px] font-extrabold bg-indigo-950/90 text-indigo-300 border border-indigo-500/50 backdrop-blur-sm z-20">🏆 ' + badgeText + '</span>'
+                : '<span class="absolute top-3 left-3 px-2.5 py-0.5 rounded text-[10px] font-extrabold bg-slate-900/90 text-cyan-300 border border-cyan-500/40 backdrop-blur-sm z-20">' + badgeText + '</span>';
 
-      const clientObj = clientDb ? (clientDb[matchedClientKey] || Object.values(clientDb)[0]) : null;
-      const monthData = (clientObj && clientObj.months) ? clientObj.months[currentPeriod] : null;
-
-      let creatives = [];
-      if (monthData && monthData.creatives && monthData.creatives[activeTab]) {
-        creatives = monthData.creatives[activeTab];
+            return '<div class="interactive-card ' + isFeatured + ' cursor-pointer flex flex-col p-0" data-title="' + escapeAttr(titleText) + '" data-badge="' + badgeText + '" data-image="' + escapeAttr(imgSrc) + '" data-feedback="' + escapeAttr(feedbackText) + '" onclick="openCreativeCardModal(this)"><div class="h-56 sm:h-60 bg-slate-950 flex items-center justify-center border-b border-slate-800/80 relative overflow-hidden"><img src="' + escapeAttr(imgSrc) + '" class="w-full h-full object-cover object-top transition duration-500 hover:scale-105" alt="' + escapeAttr(titleText) + '" loading="lazy">' + badgeHtml + '<span class="no-print absolute bottom-3 right-3 px-2.5 py-1 rounded text-[11px] font-bold bg-slate-950/85 text-cyan-300 border border-slate-700 backdrop-blur-sm z-20">🔍 크게 보기</span></div><div class="p-4 sm:p-5 flex-grow flex flex-col justify-between bg-[#0F172A]/85 z-20"><div><h5 class="text-sm font-bold text-white mb-1.5 line-clamp-1">' + titleText + '</h5><p class="text-xs text-slate-300 leading-relaxed font-sans line-clamp-2">' + feedbackText + '</p></div></div></div>';
+          }).join('');
+        } else {
+          creativeSec.classList.add('hidden');
+          creativeCon.innerHTML = '';
+          if (countBadge) countBadge.innerText = '0';
+        }
       }
 
-      // [핵심 수정]: 집행 데이터가 없으면 소재 피드백 구역도 강제로 차단
-      const currentTabRows = getFilteredRows(activeTab);
-      const hasActualData = currentTabRows.length > 0;
-      
-      if (!hasActualData) {
-        creatives = [];
-      }
+      // 3. 매체 필터링 및 KPI 카드 렌더링
+      var kpiContainer = document.getElementById('kpi-cards-container');
+      kpiContainer.innerHTML = '';
 
-      if (creatives.length === 0) {
-        section.classList.add('hidden');
-        return;
-      }
+      var hasClicks = false;
+      var hasImpressions = false;
+      var kpiTotals = {};
 
-      section.classList.remove('hidden');
+      currentColumns.forEach(function(c) {
+        if (c.key === 'clicks') hasClicks = true;
+        if (c.key === 'impressions') hasImpressions = true;
 
-      grid.innerHTML = creatives.map((item, index) => {
-        const isFeatured = index === 0 ? 'featured-shimmer' : '';
-        const badgeHtml = index === 0
-          ? `<span class="inline-block px-2.5 py-1 mb-3 rounded-md text-[10px] font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 w-max shadow-sm">🏆 BEST PERFORMING</span>`
-          : `<span class="inline-block px-2.5 py-1 mb-3 rounded-md text-[10px] font-bold bg-slate-900 text-slate-400 border border-slate-700/60 w-max shadow-sm">CREATIVE 0${index + 1}</span>`;
-
-        return `
-          <div class="interactive-card ${isFeatured} cursor-pointer flex flex-col h-full group" onclick="openCreativeModal(${index})">
-            ${badgeHtml}
-            <div class="w-full h-56 mb-4 bg-[#0B1120]/90 rounded-xl overflow-hidden border border-slate-800/80 shrink-0 flex items-center justify-center p-2 relative">
-              <img src="${item.image}" alt="${item.title}" class="max-w-full max-h-full w-auto h-auto object-contain transition-transform duration-500 group-hover:scale-105 drop-shadow-md">
-            </div>
-            <h3 class="text-sm sm:text-base font-bold text-white mb-2 line-clamp-1 group-hover:text-emerald-400 transition-colors">${item.title}</h3>
-            <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed flex-grow">${item.feedback || '등록된 피드백이 없습니다.'}</p>
-          </div>
-        `;
-      }).join('');
-    }
-
-    // 5-2. 광고 소재 스케일 모달 핸들링
-    function openCreativeModal(index) {
-      const clientObj = clientDb ? (clientDb[matchedClientKey] || Object.values(clientDb)[0]) : null;
-      const monthData = (clientObj && clientObj.months) ? clientObj.months[currentPeriod] : null;
-      if (!monthData || !monthData.creatives || !monthData.creatives[activeTab]) return;
-
-      const item = monthData.creatives[activeTab][index];
-      if (!item) return;
-
-      document.getElementById('modal-img').src = item.image;
-      document.getElementById('modal-title').innerText = item.title;
-      document.getElementById('modal-feedback').innerText = item.feedback || '등록된 피드백이 없습니다.';
-
-      document.getElementById('creativeModal').classList.add('active');
-    }
-
-    function closeCreativeModal() {
-      document.getElementById('creativeModal').classList.remove('active');
-    }
-
-    // 6. 실제 데이터 필터링 헬퍼 함수
-    function getFilteredRows(targetTab = activeTab) {
-      if (!actualRawDataset || actualRawDataset.length === 0) return [];
-      if (targetTab === 'ALL') return actualRawDataset;
-      return actualRawDataset.filter(r => {
-        const m = String(r.media || '').trim().toLowerCase();
-        const t = targetTab.toLowerCase();
-        if (t === 'naver') return m.includes('naver') || m.includes('네이버');
-        if (t === 'meta') return m.includes('meta') || m.includes('메타');
-        if (t === 'google') return m.includes('google') || m.includes('구글');
-        return false;
-      });
-    }
-
-    // 7. KPI 카드 및 하단 피벗 테이블 렌더링 (6열 구조)
-    function renderKPIsAndTable() {
-      const filtered = getFilteredRows(activeTab);
-
-      let imp = 0;
-      let reach = 0;
-      let clicks = 0;
-
-      filtered.forEach(r => {
-        imp += Number(r.impressions || 0);
-        reach += Number(r.reach || 0);
-        clicks += Number(r.clicks || 0);
+        kpiTotals[c.key] = 0;
+        filtered.forEach(function(d) {
+          kpiTotals[c.key] += toCleanNumber(d[c.key]) || 0;
+        });
       });
 
-      const ctr = imp > 0 ? ((clicks / imp) * 100).toFixed(2) + "%" : "0.00%";
+      currentColumns.forEach(function(c) {
+        var labelStr = String(c.label || c.key || '');
+        var displayValue = formatNumber(kpiTotals[c.key]);
+        var valColor = c.key === 'clicks' ? "text-emerald-400" : "text-white";
+        
+        kpiContainer.innerHTML += '<div class="interactive-card p-4 !rounded-xl"><span class="text-[11px] font-semibold text-slate-400 mb-1">총 ' + labelStr + '</span><div class="text-base sm:text-xl font-bold font-mono ' + valColor + ' mt-1">' + displayValue + '</div></div>';
+      });
 
-      document.getElementById('kpi-impressions').innerText = imp.toLocaleString();
-      document.getElementById('kpi-reach').innerText = reach.toLocaleString();
-      document.getElementById('kpi-clicks').innerText = clicks.toLocaleString();
-      document.getElementById('kpi-ctr').innerText = ctr;
+      if (hasClicks && hasImpressions) {
+        var ctr = kpiTotals['impressions'] > 0 ? (kpiTotals['clicks'] / kpiTotals['impressions']) * 100 : 0;
+        kpiContainer.innerHTML += '<div class="interactive-card p-4 !rounded-xl"><span class="text-[11px] font-semibold text-slate-400 mb-1">평균 클릭률 (CTR)</span><div class="text-base sm:text-xl font-bold font-mono text-cyan-400 mt-1">' + ctr.toFixed(2) + '%</div></div>';
+      }
 
-      const uniqueDaysCount = new Set(filtered.map(r => r.date)).size;
-      document.getElementById('table-row-count').innerText = uniqueDaysCount;
+      // --- 테이블 헤더 생성 ---
+      var theadRow = document.getElementById('table-header-row');
+      var headerHTML = '<th class="py-3 px-4 font-semibold">집행일자</th><th class="py-3 px-4 font-semibold">매체</th>';
+      currentColumns.forEach(function(c) {
+        var labelStr = String(c.label || c.key || '');
+        var colorClass = c.key === 'clicks' ? 'text-emerald-400' : '';
+        headerHTML += '<th class="py-3 px-4 font-semibold text-right ' + colorClass + '">' + labelStr + '</th>';
+      });
+      if (hasClicks && hasImpressions) headerHTML += '<th class="py-3 px-4 font-semibold text-right text-cyan-400">클릭률 (CTR)</th>';
+      theadRow.innerHTML = headerHTML;
 
-      const tbody = document.getElementById('pivot-table-body');
+      // --- 일별 데이터 집계 및 표 렌더링 ---
+      var dailyMap = {};
+      filtered.forEach(function(item) {
+        var cleanDate = String(item.date || '').trim() || '일자미상';
+        if (!dailyMap[cleanDate]) {
+          dailyMap[cleanDate] = { date: cleanDate, media: currentMedia === 'ALL' ? '통합' : (item.media || currentMedia) };
+          currentColumns.forEach(function(c) { dailyMap[cleanDate][c.key] = 0; });
+        }
+        currentColumns.forEach(function(c) {
+          dailyMap[cleanDate][c.key] += toCleanNumber(item[c.key]) || 0;
+        });
+      });
+
+      var dailyAggregated = Object.values(dailyMap).sort(function(a, b) {
+        return b.date.localeCompare(a.date);
+      });
+      var tbody = document.getElementById('table-body');
       tbody.innerHTML = '';
+      
+      if (dailyAggregated.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="' + (currentColumns.length + 3) + '" class="py-8 text-center text-slate-500 font-sans">선택하신 매체(' + currentTabLabel + ')에 집행된 데이터가 없습니다.</td></tr>';
+      } else {
+        var totalTr = document.createElement('tr');
+        totalTr.className = 'bg-slate-800/90 border-b-2 border-slate-700 font-bold';
+        
+        var totalCellsHTML = '<td class="py-3 px-4 font-sans text-amber-400">총합계 (평균)</td><td class="py-3 px-4 font-sans"><span class="px-2 py-0.5 rounded text-[11px] bg-slate-700 text-slate-300 font-semibold">' + (currentMedia === 'ALL' ? '통합' : currentMedia) + '</span></td>';
 
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-500 font-sans">조건에 맞는 데이터가 존재하지 않습니다.</td></tr>`;
-        return;
-      }
+        currentColumns.forEach(function(c) {
+          var displayVal = formatNumber(kpiTotals[c.key]);
+          var colorClass = c.key === 'clicks' ? 'text-emerald-400 font-bold' : 'text-slate-300';
+          totalCellsHTML += '<td class="py-3 px-4 text-right ' + colorClass + '">' + displayVal + '</td>';
+        });
 
-      const sorted = [...filtered].sort((a, b) => {
-        const dateA = String(a.date || '').trim();
-        const dateB = String(b.date || '').trim();
-        const dateDiff = dateB.localeCompare(dateA);
-        if (dateDiff !== 0) return dateDiff;
-        return String(a.media || '').localeCompare(String(b.media || ''));
-      });
-
-      sorted.forEach(row => {
-        const rowImp = Number(row.impressions || 0);
-        const rowReach = Number(row.reach || 0);
-        const rowClicks = Number(row.clicks || 0);
-        const rowCtr = rowImp > 0 ? ((rowClicks / rowImp) * 100).toFixed(2) + "%" : "0.00%";
-
-        const mediaRaw = String(row.media || '').toLowerCase();
-        const isNaver = mediaRaw.includes('naver') || mediaRaw.includes('네이버');
-        const isGoogle = mediaRaw.includes('google') || mediaRaw.includes('구글');
-
-        let badgeClass = 'bg-blue-950 text-blue-400 border border-blue-800';
-        let badgeLabel = '메타';
-        if (isNaver) {
-          badgeClass = 'bg-emerald-950 text-emerald-400 border border-emerald-800';
-          badgeLabel = '네이버';
-        } else if (isGoogle) {
-          badgeClass = 'bg-rose-950 text-rose-400 border border-rose-800';
-          badgeLabel = '구글';
+        if (hasClicks && hasImpressions) {
+          var avgCtr = kpiTotals['impressions'] > 0 ? ((kpiTotals['clicks'] / kpiTotals['impressions']) * 100).toFixed(2) : '0.00';
+          totalCellsHTML += '<td class="py-3 px-4 text-right text-cyan-400 font-semibold">' + avgCtr + '%</td>';
         }
 
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-800/40 transition-colors";
-        tr.innerHTML = `
-          <td class="py-3 px-4 font-sans font-medium text-slate-300">${row.date}</td>
-          <td class="py-3 px-4">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeClass}">
-              ${badgeLabel}
-            </span>
-          </td>
-          <td class="py-3 px-4 text-right">${rowImp.toLocaleString()}</td>
-          <td class="py-3 px-4 text-right text-slate-400">${rowReach.toLocaleString()}</td>
-          <td class="py-3 px-4 text-right text-emerald-400 font-bold">${rowClicks.toLocaleString()}</td>
-          <td class="py-3 px-4 text-right text-cyan-400 font-semibold">${rowCtr}</td>
-        `;
-        tbody.appendChild(tr);
-      });
+        totalTr.innerHTML = totalCellsHTML;
+        tbody.appendChild(totalTr);
+
+        dailyAggregated.forEach(function(row) {
+          var tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-800/40 transition-colors border-b border-slate-800/40';
+          
+          var badgeClass = 'bg-slate-800 text-slate-300 border border-slate-700';
+          var isNaver = String(row.media).toLowerCase().includes('naver') || String(row.media).includes('네이버');
+          var isMeta = String(row.media).toLowerCase().includes('meta') || String(row.media).includes('메타');
+          var isGoogle = String(row.media).toLowerCase().includes('google') || String(row.media).includes('구글');
+          
+          if (isNaver) badgeClass = 'bg-emerald-950 text-emerald-400 border border-emerald-800';
+          else if (isMeta) badgeClass = 'bg-blue-950 text-blue-400 border border-blue-800';
+          else if (isGoogle) badgeClass = 'bg-rose-950 text-rose-400 border border-rose-800';
+
+          var rowCellsHTML = '<td class="py-3 px-4 font-sans font-medium text-slate-300">' + row.date + '</td><td class="py-3 px-4 font-sans"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + badgeClass + '">' + row.media + '</span></td>';
+
+          currentColumns.forEach(function(c) {
+            var rowVal = formatNumber(row[c.key]);
+            var fontColor = c.key === 'clicks' ? 'text-emerald-400 font-bold' : 'text-slate-300';
+            rowCellsHTML += '<td class="py-3 px-4 text-right ' + fontColor + '">' + rowVal + '</td>';
+          });
+
+          if (hasClicks && hasImpressions) {
+            var rCtr = row['impressions'] > 0 ? ((row['clicks'] / row['impressions']) * 100).toFixed(2) : '0.00';
+            rowCellsHTML += '<td class="py-3 px-4 text-right text-cyan-400 font-semibold">' + rCtr + '%</td>';
+          }
+
+          tr.innerHTML = rowCellsHTML;
+          tbody.appendChild(tr);
+        });
+      }
+
+      if (typeof Chart !== 'undefined') {
+        try {
+          updateCharts(dailyAggregated, hasClicks, hasImpressions, currentColumns);
+        } catch (e) {
+          console.warn("차트 렌더링 예외:", e);
+        }
+      }
     }
 
-    // 8. 일별 추이 차트
-    function renderTrendChart() {
-      const filtered = getFilteredRows(activeTab);
+    function updateCharts(dailyData, hasClicks, hasImpressions, displayColumns) {
+      if (trendChartInstance) {
+        trendChartInstance.destroy();
+        trendChartInstance = null;
+      }
 
-      const dateMap = {};
-      filtered.forEach(r => {
-        const d = r.date;
-        if (!dateMap[d]) dateMap[d] = { imp: 0, clicks: 0 };
-        dateMap[d].imp += Number(r.impressions || 0);
-        dateMap[d].clicks += Number(r.clicks || 0);
-      });
+      if (dailyData.length > 0) {
+        var sortedDailyForChart = dailyData.slice().sort(function(a, b) {
+          return a.date.localeCompare(b.date);
+        });
+        var labels = sortedDailyForChart.map(function(d) {
+          return d.date.length >= 10 ? d.date.slice(5) : d.date;
+        });
+        var datasets = [];
 
-      const dates = Object.keys(dateMap).sort();
-      const impArr = dates.map(d => dateMap[d].imp);
-      const clickArr = dates.map(d => dateMap[d].clicks);
+        if (hasClicks) {
+          datasets.push({
+            type: 'line',
+            label: '클릭수 (건)',
+            data: sortedDailyForChart.map(function(d) { return d.clicks; }),
+            borderColor: '#10b981',
+            backgroundColor: '#10b981',
+            yAxisID: 'yClicks',
+            borderWidth: 2,
+            pointRadius: 3,
+            tension: 0.35,
+            order: 1
+          });
+        }
 
-      if (trendChartInstance) trendChartInstance.destroy();
-      const ctx = document.getElementById('trendChart').getContext('2d');
+        var barColor = currentMedia === 'Naver' ? 'rgba(3, 199, 90, 0.45)' : 'rgba(59, 130, 246, 0.65)';
+        var barHoverColor = currentMedia === 'Naver' ? 'rgba(3, 199, 90, 0.85)' : 'rgba(59, 130, 246, 0.85)';
 
-      trendChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: dates.map(d => String(d).substring(5)),
-          datasets: [
-            {
-              type: 'line',
-              label: '클릭수 (건)',
-              data: clickArr,
-              borderColor: '#10B981',
-              backgroundColor: '#10B981',
-              borderWidth: 2,
-              tension: 0.35,
-              pointRadius: 3,
-              yAxisID: 'yClicks',
-              order: 1
+        if (hasImpressions) {
+          datasets.push({
+            type: 'bar',
+            label: '노출수 (회)',
+            data: sortedDailyForChart.map(function(d) { return d.impressions; }),
+            backgroundColor: barColor,
+            hoverBackgroundColor: barHoverColor,
+            borderRadius: 4,
+            yAxisID: 'yLeft',
+            order: 2
+          });
+        }
+        
+        document.getElementById('chart-legend-text').innerText = "좌축: 노출수(회) / 우축: 클릭수(건)";
+
+        var ctxTrend = document.getElementById('trendChart').getContext('2d');
+        trendChartInstance = new Chart(ctxTrend, {
+          type: 'bar',
+          data: { labels: labels, datasets: datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: disableChartAnimOnce ? false : { duration: 400 },
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { display: false },
+              tooltip: { backgroundColor: '#0F172A', titleColor: '#F8FAFC', bodyColor: '#F8FAFC', borderColor: '#334155', borderWidth: 1 }
             },
-            {
-              type: 'bar',
-              label: '노출수 (회)',
-              data: impArr,
-              backgroundColor: activeTab === 'Naver' ? 'rgba(3, 199, 90, 0.45)' : 'rgba(30, 58, 138, 0.65)',
-              hoverBackgroundColor: activeTab === 'Naver' ? 'rgba(3, 199, 90, 0.85)' : 'rgba(59, 130, 246, 0.85)',
-              borderRadius: 4,
-              yAxisID: 'yImp',
-              order: 2
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: disableChartAnimOnce ? false : { duration: 400 },
-          interaction: { mode: 'index', intersect: false },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: '#0F172A',
-              titleColor: '#F8FAFC',
-              bodyColor: '#F8FAFC',
-              borderColor: '#334155',
-              borderWidth: 1
-            }
-          },
-          scales: {
-            x: {
-              grid: { color: 'rgba(51, 65, 85, 0.3)' },
-              ticks: { color: '#94A3B8', font: { size: 10 } }
-            },
-            yImp: {
-              type: 'linear',
-              position: 'left',
-              grid: { color: 'rgba(51, 65, 85, 0.3)' },
-              ticks: { color: '#94A3B8', font: { size: 10 } }
-            },
-            yClicks: {
-              type: 'linear',
-              position: 'right',
-              grid: { display: false },
-              ticks: { color: '#10B981', font: { size: 10 } }
+            scales: {
+              x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#94A3B8', font: { size: 10 } } },
+              yLeft: {
+                type: 'linear',
+                position: 'left',
+                grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                ticks: { color: '#94A3B8', font: { size: 10 } }
+              },
+              yClicks: {
+                type: 'linear',
+                position: 'right',
+                grid: { drawOnChartArea: false },
+                ticks: { color: '#10B981', font: { size: 10 } }
+              }
             }
           }
+        });
+      } else {
+        document.getElementById('chart-legend-text').innerText = '선택 매체 집행 데이터가 없습니다.';
+      }
+
+      if (shareChartInstance) {
+        shareChartInstance.destroy();
+        shareChartInstance = null;
+      }
+      
+      var allowedKeys = displayColumns.map(function(c) { return c.key; });
+      var findValidKey = function(keys) {
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
+          if (!allowedKeys.includes(k)) continue;
+          var sum = 0;
+          rawDataset.forEach(function(d) { sum += toCleanNumber(d[k]); });
+          if (sum > 0) return k;
         }
+        return null;
+      };
+
+      var shareTargetKey = findValidKey(['impressions', 'clicks']);
+      var msgElem = document.getElementById('no-share-data-msg');
+
+      if (!shareTargetKey) {
+        msgElem.classList.remove('hidden');
+        document.getElementById('share-chart-label').innerText = '데이터 부족';
+        return;
+      } else {
+        msgElem.classList.add('hidden');
+      }
+
+      var shareTargetName = shareTargetKey === 'impressions' ? '노출수' : '클릭수';
+      document.getElementById('share-chart-label').innerText = shareTargetName + ' 기준 비중';
+
+      var naverTotal = 0;
+      var metaTotal = 0;
+      var googleTotal = 0;
+
+      rawDataset.forEach(function(d) { 
+        var val = toCleanNumber(d[shareTargetKey]);
+        var m = String(d.media || '').toLowerCase();
+        if (m.includes('naver') || m.includes('네이버')) naverTotal += val;
+        else if (m.includes('meta') || m.includes('메타')) metaTotal += val;
+        else if (m.includes('google') || m.includes('구글')) googleTotal += val;
       });
-    }
 
-    // 9. 매체별 비중 도넛 차트
-    function renderDonutChart() {
-      let naverClicks = 0;
-      let metaClicks = 0;
-      let googleClicks = 0;
+      var totalTarget = naverTotal + metaTotal + googleTotal;
+      var rawTargetData = [metaTotal, naverTotal, googleTotal];
 
-      actualRawDataset.forEach(r => {
-        const m = String(r.media || '').toLowerCase();
-        const c = Number(r.clicks || 0);
-        if (m.includes('naver') || m.includes('네이버')) naverClicks += c;
-        else if (m.includes('meta') || m.includes('메타')) metaClicks += c;
-        else if (m.includes('google') || m.includes('구글')) googleClicks += c;
-      });
+      var baseColors = ['#1877F2', '#03C75A', '#EA4335'];
+      var dimColors = ['rgba(24, 119, 242, 0.25)', 'rgba(3, 199, 90, 0.25)', 'rgba(234, 67, 53, 0.25)'];
 
-      const totalClicks = naverClicks + metaClicks + googleClicks;
-      const mediaLabels = ['메타 (Meta)', '네이버 (Naver)', '구글 (Google)'];
-      const rawClicksData = [metaClicks, naverClicks, googleClicks];
+      var glowIndex = -1;
+      var finalColors = baseColors.slice();
+      var offsetArray = [0, 0, 0];
 
-      const baseColors = ['#1877F2', '#03C75A', '#EA4335'];
-      const dimColors = ['rgba(24, 119, 242, 0.25)', 'rgba(3, 199, 90, 0.25)', 'rgba(234, 67, 53, 0.25)'];
-
-      let glowIndex = -1;
-      let finalColors = [...baseColors];
-      let offsetArray = [0, 0, 0];
-
-      if (activeTab === 'Naver') {
+      if (currentMedia === 'Naver') {
         glowIndex = 1;
         finalColors = [dimColors[0], baseColors[1], dimColors[2]];
         offsetArray[1] = 12;
-      } else if (activeTab === 'Meta') {
+      } else if (currentMedia === 'Meta') {
         glowIndex = 0;
         finalColors = [baseColors[0], dimColors[1], dimColors[2]];
         offsetArray[0] = 12;
-      } else if (activeTab === 'Google') {
+      } else if (currentMedia === 'Google') {
         glowIndex = 2;
         finalColors = [dimColors[0], dimColors[1], baseColors[2]];
         offsetArray[2] = 12;
       }
 
-      if (donutChartInstance) donutChartInstance.destroy();
-      const ctx = document.getElementById('donutChart').getContext('2d');
-
-      donutChartInstance = new Chart(ctx, {
+      var ctxShare = document.getElementById('shareChart').getContext('2d');
+      shareChartInstance = new Chart(ctxShare, {
         type: 'doughnut',
         data: {
-          labels: mediaLabels,
+          labels: ['메타 (Meta)', '네이버 (Naver)', '구글 (Google)'],
           activeGlowIndex: glowIndex,
           datasets: [{
-            data: rawClicksData,
+            data: rawTargetData,
             backgroundColor: finalColors,
             borderColor: '#0F172A',
             borderWidth: 2,
@@ -987,53 +1493,26 @@
               borderColor: '#334155',
               borderWidth: 1,
               callbacks: {
-                label: (c) => {
-                  const val = c.raw || 0;
-                  const pct = totalClicks > 0 ? ((val / totalClicks) * 100).toFixed(1) : 0;
-                  return ` ${c.label}: ${val.toLocaleString()}회 (${pct}%)`;
+                label: function(c) {
+                  var val = c.raw || 0;
+                  var pct = totalTarget > 0 ? ((val / totalTarget) * 100).toFixed(1) : 0;
+                  return ' ' + c.label + ': ' + val.toLocaleString() + ' (' + pct + '%)';
                 }
               }
             }
           }
         }
       });
-
-      const metaPct = totalClicks > 0 ? ((metaClicks / totalClicks) * 100).toFixed(1) : 0;
-      const naverPct = totalClicks > 0 ? ((naverClicks / totalClicks) * 100).toFixed(1) : 0;
-      const googlePct = totalClicks > 0 ? ((googleClicks / totalClicks) * 100).toFixed(1) : 0;
-
-      document.getElementById('donut-legend-info').innerHTML = `
-        <div class="flex items-center space-x-1.5 ${activeTab === 'Meta' ? 'scale-105 font-bold' : 'opacity-70'}">
-          <span class="w-2.5 h-2.5 rounded-full bg-[#1877F2]"></span>
-          <span class="${activeTab === 'Meta' ? 'text-white' : 'text-slate-400'}">메타</span>
-          <span class="font-mono ${activeTab === 'Meta' ? 'text-blue-400 font-bold' : 'text-slate-300'}">${metaPct}%</span>
-        </div>
-        <div class="flex items-center space-x-1.5 ${activeTab === 'Naver' ? 'scale-105 font-bold' : 'opacity-70'}">
-          <span class="w-2.5 h-2.5 rounded-full bg-[#03C75A]"></span>
-          <span class="${activeTab === 'Naver' ? 'text-white' : 'text-slate-400'}">네이버</span>
-          <span class="font-mono ${activeTab === 'Naver' ? 'text-emerald-400 font-bold' : 'text-slate-300'}">${naverPct}%</span>
-        </div>
-        <div class="flex items-center space-x-1.5 ${activeTab === 'Google' ? 'scale-105 font-bold' : 'opacity-50'}">
-          <span class="w-2.5 h-2.5 rounded-full bg-[#EA4335]"></span>
-          <span class="${activeTab === 'Google' ? 'text-white' : 'text-slate-400'}">구글</span>
-          <span class="font-mono ${activeTab === 'Google' ? 'text-rose-400 font-bold' : 'text-slate-400'}">${googlePct}%</span>
-        </div>
-      `;
     }
 
-    // 10. 매체 선택형 무결점 PDF 리포트 출력 로직
+    /* ==========================================
+       [3. 매체 선택형 무결점 A4 PDF 출력 엔진]
+       ========================================== */
     function openPdfSelectModal() {
-      const counts = {
-        ALL: getFilteredRows('ALL').length,
-        Naver: getFilteredRows('Naver').length,
-        Meta: getFilteredRows('Meta').length,
-        Google: getFilteredRows('Google').length
-      };
-      document.getElementById('pdf-count-ALL').innerText = `데이터 ${counts.ALL}건`;
-      document.getElementById('pdf-count-Naver').innerText = `데이터 ${counts.Naver}건`;
-      document.getElementById('pdf-count-Meta').innerText = `데이터 ${counts.Meta}건`;
-      document.getElementById('pdf-count-Google').innerText = `데이터 ${counts.Google}건`;
-
+      document.getElementById('pdf-count-ALL').innerText = '데이터 ' + getFilteredRows('ALL').length + '건';
+      document.getElementById('pdf-count-Naver').innerText = '데이터 ' + getFilteredRows('Naver').length + '건';
+      document.getElementById('pdf-count-Meta').innerText = '데이터 ' + getFilteredRows('Meta').length + '건';
+      document.getElementById('pdf-count-Google').innerText = '데이터 ' + getFilteredRows('Google').length + '건';
       document.getElementById('pdfSelectModal').classList.add('active');
     }
 
@@ -1043,29 +1522,38 @@
 
     function startMediaPdfPrint(selectedMedia) {
       closePdfSelectModal();
+      setMediaFilter(selectedMedia, true);
 
-      // 선택한 매체 탭으로 애니메이션 없이 즉시 전환하여 차트·코멘트·소재·테이블 동기화
-      switchTab(selectedMedia, true);
-
-      const mediaFileLabel = {
+      var mediaFileLabelMap = {
         ALL: '통합전체',
         Naver: '네이버검색',
         Meta: '메타',
         Google: '구글애즈'
-      }[selectedMedia] || selectedMedia;
+      };
+      var mediaFileLabel = mediaFileLabelMap[selectedMedia] || selectedMedia;
 
-      const originalTitle = document.title;
-      const safePeriod = String(currentPeriod || '결산').replace(/[\\/:*?"<>|]/g, '_');
-      document.title = `루미-밀리언파이_${mediaFileLabel}_성과보고서_${safePeriod}`;
+      var originalTitle = document.title;
+      var safeClient = String(matchedClientDisplayName || '루미-밀리언파이').replace(/[\\/:*?"<>|]/g, '_');
+      var safePeriod = String(currentSelectedPeriod || '결산').replace(/[\\/:*?"<>|]/g, '_');
+      document.title = safeClient + '_' + mediaFileLabel + '_성과보고서_' + safePeriod;
 
-      // DOM 및 차트 캔버스 크기 안정화 후 브라우저 네이티브 벡터 인쇄(PDF 저장) 호출
-      setTimeout(() => {
+      setTimeout(function() {
         if (trendChartInstance) trendChartInstance.resize();
-        if (donutChartInstance) donutChartInstance.resize();
+        if (shareChartInstance) shareChartInstance.resize();
 
         window.print();
         document.title = originalTitle;
       }, 220);
+    }
+
+    window.openPdfSelectModal = openPdfSelectModal;
+    window.closePdfSelectModal = closePdfSelectModal;
+    window.startMediaPdfPrint = startMediaPdfPrint;
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDataLoad);
+    } else {
+      initDataLoad();
     }
   </script>
 </body>
