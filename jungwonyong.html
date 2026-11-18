@@ -314,7 +314,7 @@
         <h1 class="text-base font-bold tracking-tight text-white">PERFORMANCE AD REPOSITORY <span id="client-name-display" class="text-xs text-slate-400 font-normal ml-1">| 고객사: 정원용회계사님</span></h1>
       </div>
 
-      <!-- 우측 통합 액션 그룹 -->
+      <!-- 우측 통합 액션 그룹 (상단 기간 배지: 시작 날짜 ~ 마지막 날짜 자동 표기) -->
       <div class="flex items-center justify-end gap-2 ml-auto">
         <nav id="dynamic-period-nav" class="flex items-center gap-1.5 overflow-x-auto py-1"></nav>
 
@@ -342,7 +342,7 @@
       </div>
     </div>
 
-    <!-- 1. 최상단 전략 코멘트 영역 (우측 날짜: 고객사: 정원용회계사님과 동일한 text-xs text-slate-400 font-normal 스타일 적용) -->
+    <!-- 1. 최상단 전략 코멘트 영역 -->
     <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
       <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
       <div class="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-3">
@@ -491,15 +491,15 @@
       <div id="creative-container" class="layout-magazine-grid"></div>
     </section>
 
-    <!-- 6. 일별 성과 상세 집계 내역 -->
+    <!-- 6. 일별 성과 상세 집계 내역 (우측 배지: 시작 날짜 ~ 마지막 날짜 동일 표기) -->
     <section class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
       <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 bg-slate-900/60">
         <div>
           <h3 class="text-xs sm:text-sm font-bold text-white">일별 성과 상세 집계 내역</h3>
           <p class="text-[11px] text-slate-400 mt-0.5">상단 선택 매체 기준 자동 피벗 연산 테이블</p>
         </div>
-        <div class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-slate-800 text-blue-400 border border-slate-700" id="table-row-count-badge">
-          집계 일수: <span id="table-row-count">0</span>일
+        <div class="text-xs font-mono font-semibold px-2.5 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700" id="table-row-count-badge">
+          2026-10-15 ~ 2026-11-13
         </div>
       </div>
 
@@ -875,6 +875,24 @@
       return '2026-10-15 ~ 2026-11-13';
     }
 
+    function getPeriodNavDateRange(periodKey) {
+      if (dbReportData && dbReportData.months && dbReportData.months[periodKey]) {
+        var pObj = dbReportData.months[periodKey];
+        var norm = normalizeDataset(pObj.rawDataset);
+        var hasValid = norm.some(function(d) {
+          return (d.impressions + d.reach + d.clicks) > 0;
+        });
+        if (norm.length > 0 && hasValid) {
+          return getReportDateRangeLabel(norm, pObj);
+        }
+        if (periodKey === currentSelectedPeriod) {
+          return getReportDateRangeLabel(rawDataset.length > 0 ? rawDataset : FALLBACK_RAW_DATASET, pObj);
+        }
+        return getReportDateRangeLabel([], pObj);
+      }
+      return getReportDateRangeLabel(rawDataset.length > 0 ? rawDataset : FALLBACK_RAW_DATASET, null);
+    }
+
     function findClientRecord(db, currentFilename) {
       if (!db || typeof db !== 'object') return null;
       if (db["jungwonyong"]) {
@@ -990,8 +1008,8 @@
         currentSelectedPeriod = "2차";
       }
 
-      renderPeriodNavigation();
       loadPeriodDataAndRender();
+      renderPeriodNavigation();
     }
 
     function renderPeriodNavigation() {
@@ -1002,8 +1020,8 @@
       if (!dbReportData || !dbReportData.months || Object.keys(dbReportData.months).length === 0) {
         var aTag = document.createElement('a');
         aTag.href = "javascript:void(0);";
-        aTag.className = "px-3 py-1.5 text-xs font-semibold rounded-md border border-emerald-500/60 bg-emerald-500/10 text-emerald-400 shrink-0";
-        aTag.innerText = "2차 (현재)";
+        aTag.className = "px-3 py-1.5 text-xs font-semibold rounded-md border border-emerald-500/60 bg-emerald-500/10 text-emerald-400 shrink-0 font-mono";
+        aTag.innerText = getPeriodNavDateRange("2차");
         navContainer.appendChild(aTag);
         return;
       }
@@ -1012,17 +1030,18 @@
       periods.forEach(function(p) {
         var aTag = document.createElement('a');
         aTag.href = "javascript:void(0);";
+        var labelRange = getPeriodNavDateRange(p);
         
         if (p === currentSelectedPeriod) {
-          aTag.className = "px-3 py-1.5 text-xs font-semibold rounded-md border border-emerald-500/60 bg-emerald-500/10 text-emerald-400 shrink-0";
-          aTag.innerText = p + ' (현재)';
+          aTag.className = "px-3 py-1.5 text-xs font-semibold rounded-md border border-emerald-500/60 bg-emerald-500/10 text-emerald-400 shrink-0 font-mono";
+          aTag.innerText = labelRange;
         } else {
-          aTag.className = "no-print px-3 py-1.5 text-xs font-semibold rounded-md border border-slate-700 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition shrink-0";
-          aTag.innerText = p;
+          aTag.className = "no-print px-3 py-1.5 text-xs font-semibold rounded-md border border-slate-700 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition shrink-0 font-mono";
+          aTag.innerText = labelRange;
           aTag.onclick = function() {
             currentSelectedPeriod = p;
-            renderPeriodNavigation();
             loadPeriodDataAndRender();
+            renderPeriodNavigation();
           };
         }
         navContainer.appendChild(aTag);
@@ -1166,9 +1185,7 @@
       }
 
       var periodTitleEl = document.getElementById('report-period-title');
-      var stratDateEl = document.getElementById('strategy-date-display');
       if (periodTitleEl) periodTitleEl.innerText = currentSelectedPeriod || "2차";
-      if (stratDateEl) stratDateEl.innerText = getReportDateRangeLabel(rawDataset, periodData);
       
       renderDashboard();
     }
@@ -1212,11 +1229,18 @@
       var filtered = getFilteredRows(currentMedia);
       var hasActualData = hasMediaActualDelivery(currentMedia);
       var currentTabLabel = MEDIA_LABEL_MAP[currentMedia] || currentMedia;
+      var dateRangeText = getReportDateRangeLabel(filtered, periodData);
 
-      // 상단 우측 날짜 표기 업데이트 (일일 데이터 시작 날짜 ~ 마지막 날짜)
+      // 상단 STRATEGY COMMENT 우측 날짜 표기 업데이트
       var stratDateEl = document.getElementById('strategy-date-display');
       if (stratDateEl) {
-        stratDateEl.innerText = getReportDateRangeLabel(filtered, periodData);
+        stratDateEl.innerText = dateRangeText;
+      }
+
+      // 하단 일별 성과 상세 집계 내역 우측 배지 날짜 표기 업데이트
+      var tableBadgeEl = document.getElementById('table-row-count-badge');
+      if (tableBadgeEl) {
+        tableBadgeEl.innerText = dateRangeText;
       }
       
       // 1. 코멘트 업데이트 (실제 집행 데이터가 없는 매체는 강제 공란 처리)
@@ -1401,9 +1425,6 @@
           tbody.appendChild(tr);
         });
       }
-      
-      var uniqueDaysCount = new Set(filtered.map(function(r) { return String(r.date || '').trim(); })).size;
-      document.getElementById('table-row-count').innerText = uniqueDaysCount;
 
       if (typeof Chart !== 'undefined') {
         try {
