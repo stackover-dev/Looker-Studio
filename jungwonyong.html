@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
   <meta property="og:type" content="website">
-  <meta property="og:title" content="정원용회계사 - 월간 퍼포먼스 광고 성과 보고서">
-  <meta property="og:description" content="정원용회계사 디지털 매체 결산 보고서입니다.">
+  <meta property="og:title" content="정원용회계사님 - 월간 퍼포먼스 광고 성과 보고서">
+  <meta property="og:description" content="정원용회계사님 디지털 매체 결산 보고서입니다.">
   <meta property="og:image" content="./og-imageg.png">
   <link rel="icon" type="image/png" href="./favicon-497.png">
 
@@ -691,7 +691,7 @@
     }
 
     let dbReportData = null;
-    let matchedClientDisplayName = "정원용회계사";
+    let matchedClientDisplayName = "정원용회계사님";
     let currentSelectedPeriod = "2차";
     let rawDataset = [];
     let currentMedia = 'ALL';
@@ -804,7 +804,7 @@
     const FALLBACK_STRATEGY_HTML = `
       <div style="line-height: 1.8; color: #F8FAFC;">
         <p style="font-weight: bold; color: #60A5FA !important; margin-bottom: 10px;">
-          📌 [정원용회계사] 2차 퍼포먼스 광고 캠페인 성과 요약 및 전략 총평
+          📌 [정원용회계사님] 2차 퍼포먼스 광고 캠페인 성과 요약 및 전략 총평
         </p>
         <div style="background-color: #1E293B; border-left: 4px solid #3B82F6; padding: 12px 16px; margin-bottom: 14px; border-radius: 8px;">
           <strong style="color: #38BDF8 !important;">📊 2차 집행 핵심 종합 데이터 집계</strong><br>
@@ -834,10 +834,10 @@
     function findClientRecord(db, currentFilename) {
       if (!db || typeof db !== 'object') return null;
       if (db["jungwonyong"]) {
-        return { name: db["jungwonyong"].name || "정원용회계사", record: db["jungwonyong"] };
+        return { name: db["jungwonyong"].name || "정원용회계사님", record: db["jungwonyong"] };
       }
-      if (db["정원용회계사"]) {
-        return { name: "정원용회계사", record: db["정원용회계사"] };
+      if (db["정원용회계사님"]) {
+        return { name: "정원용회계사님", record: db["정원용회계사님"] };
       }
       for (const key in db) {
         const item = db[key];
@@ -883,7 +883,7 @@
     }
 
     async function initDataLoad() {
-      let clientName = "정원용회계사";
+      let clientName = "정원용회계사님";
       const currentFilename = window.location.pathname.split('/').pop() || 'jungwonyong.html';
       
       let remoteDb = null;
@@ -1562,7 +1562,7 @@
       }[selectedMedia] || selectedMedia;
 
       const originalTitle = document.title;
-      const safeClient = String(matchedClientDisplayName || '정원용회계사').replace(/[\\/:*?"<>|]/g, '_');
+      const safeClient = String(matchedClientDisplayName || '정원용회계사님').replace(/[\\/:*?"<>|]/g, '_');
       const safePeriod = String(currentSelectedPeriod || '2차').replace(/[\\/:*?"<>|]/g, '_');
       document.title = `${safeClient}_${mediaFileLabel}_성과보고서_${safePeriod}`;
 
