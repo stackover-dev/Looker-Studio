@@ -30,16 +30,16 @@
       --glow-cyan-hover: rgba(6, 182, 212, 0.75);
       --glow-indigo: rgba(99, 102, 241, 0.3);
       --glow-indigo-hover: rgba(99, 102, 241, 0.8);
-      --shimmer-spec: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0) 100%);
+      --shimmer-spec: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0) 100%);
     }
 
-    body { 
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; 
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg-primary);
       color: #F8FAFC;
       word-break: keep-all;
     }
-    
+
     @font-face {
       font-family: 'Binggrae';
       src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Binggrae.woff') format('woff');
@@ -48,28 +48,35 @@
     }
 
     /* 전략 코멘트 및 운영 이슈 영역 전용 타이포그래피 스펙 */
-    [id*="strategy-comment-box"], [id*="anomaly-comment-box"] {
+    [id*="strategy-comment-box"],
+    [id*="anomaly-comment-box"] {
       font-family: 'Binggrae', sans-serif !important;
       font-size: 16px !important;
       line-height: 1.8 !important;
       word-break: keep-all !important;
     }
 
-    [id*="strategy-comment-box"] p, [id*="strategy-comment-box"] h4, [id*="strategy-comment-box"] li,
-    [id*="anomaly-comment-box"] p, [id*="anomaly-comment-box"] li {
+    [id*="strategy-comment-box"] p,
+    [id*="strategy-comment-box"] h4,
+    [id*="strategy-comment-box"] li,
+    [id*="anomaly-comment-box"] p,
+    [id*="anomaly-comment-box"] li {
       color: #F8FAFC !important;
       font-family: 'Binggrae', sans-serif !important;
       font-size: 16px !important;
     }
 
-    [id*="strategy-comment-box"] b, [id*="strategy-comment-box"] strong,
-    [id*="anomaly-comment-box"] b, [id*="anomaly-comment-box"] strong {
+    [id*="strategy-comment-box"] b,
+    [id*="strategy-comment-box"] strong,
+    [id*="anomaly-comment-box"] b,
+    [id*="anomaly-comment-box"] strong {
       color: #FDE047 !important;
       font-weight: bold !important;
       font-size: 17px !important;
     }
 
-    [id*="strategy-comment-box"] mark, [id*="anomaly-comment-box"] mark {
+    [id*="strategy-comment-box"] mark,
+    [id*="anomaly-comment-box"] mark {
       background-color: rgba(253, 224, 71, 0.2) !important;
       color: #FDE047 !important;
       padding: 2px 6px !important;
@@ -86,11 +93,11 @@
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 0 20px 0 var(--glow-cyan);
-      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
-                  box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                  box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1),
                   border-color 0.4s ease;
     }
-    
+
     .interactive-card:hover {
       transform: translateY(-8px);
       border-color: rgba(255, 255, 255, 0.22);
@@ -103,10 +110,12 @@
       border-color: rgba(129, 140, 248, 0.28);
       box-shadow: 0 0 25px 2px var(--glow-indigo);
     }
+
     .interactive-card.featured-shimmer:hover {
       border-color: rgba(129, 140, 248, 0.65);
       box-shadow: 0 0 40px 8px var(--glow-indigo-hover);
     }
+
     .interactive-card.featured-shimmer::before {
       content: '';
       position: absolute;
@@ -120,6 +129,7 @@
       z-index: 10;
       pointer-events: none;
     }
+
     @keyframes premium-shimmer {
       0% { left: -150%; }
       25% { left: 150%; }
@@ -127,16 +137,25 @@
     }
 
     /* 3단 가변 그리드 레이아웃 */
-    .layout-benchmark-grid, .layout-magazine-grid {
+    .layout-benchmark-grid,
+    .layout-magazine-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 20px;
     }
+
     @media (max-width: 1024px) {
-      .layout-benchmark-grid, .layout-magazine-grid { grid-template-columns: repeat(2, 1fr); }
+      .layout-benchmark-grid,
+      .layout-magazine-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
+
     @media (max-width: 640px) {
-      .layout-benchmark-grid, .layout-magazine-grid { grid-template-columns: 1fr; }
+      .layout-benchmark-grid,
+      .layout-magazine-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* ==========================================
@@ -144,24 +163,35 @@
        ========================================== */
     .modal-blur-overlay {
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background-color: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      display: flex; justify-content: center; align-items: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       padding: 20px;
-      z-index: 9999; opacity: 0; pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
       transition: opacity 0.35s ease;
     }
-    
-    .modal-blur-overlay.active { opacity: 1; pointer-events: auto; }
-    
+
+    .modal-blur-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     .modal-scale-content {
       background-color: #111113;
       border: 1px solid rgba(255, 255, 255, 0.18);
       padding: 28px;
       border-radius: 28px;
-      max-width: 860px; width: 94%;
+      max-width: 860px;
+      width: 94%;
       max-height: 92vh;
       display: flex;
       flex-direction: column;
@@ -170,8 +200,10 @@
       transform: scale(0.75);
       transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    
-    .modal-blur-overlay.active .modal-scale-content { transform: scale(1); }
+
+    .modal-blur-overlay.active .modal-scale-content {
+      transform: scale(1);
+    }
 
     ::-webkit-scrollbar { height: 6px; width: 6px; }
     ::-webkit-scrollbar-track { background: #0F172A; }
@@ -190,7 +222,6 @@
       * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
-        color-adjust: exact !important;
       }
 
       html {
@@ -227,7 +258,8 @@
         margin: 0 !important;
       }
 
-      section, .interactive-card {
+      section,
+      .interactive-card {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
         box-shadow: none !important;
@@ -250,7 +282,8 @@
         gap: 16px !important;
       }
 
-      .layout-benchmark-grid, .layout-magazine-grid {
+      .layout-benchmark-grid,
+      .layout-magazine-grid {
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 16px !important;
       }
@@ -1169,7 +1202,8 @@
                 </div>
               </div>
             </div>
-          `}).join('');
+          `;
+          }).join('');
         } else {
           creativeSec.classList.add('hidden');
           creativeCon.innerHTML = '';
@@ -1302,4 +1336,250 @@
           }
 
           tr.innerHTML = rowCellsHTML;
-          tbody.append
+          tbody.appendChild(tr);
+        });
+      }
+      
+      const uniqueDaysCount = new Set(filtered.map(r => String(r.date || '').trim())).size;
+      document.getElementById('table-row-count').innerText = uniqueDaysCount;
+
+      if (typeof Chart !== 'undefined') {
+        try {
+          updateCharts(dailyAggregated, hasClicks, hasImpressions, currentColumns);
+        } catch (e) {
+          console.warn("차트 렌더링 예외:", e);
+        }
+      }
+    }
+
+    function updateCharts(dailyData, hasClicks, hasImpressions, displayColumns) {
+      if (trendChartInstance) {
+        trendChartInstance.destroy();
+        trendChartInstance = null;
+      }
+
+      if (dailyData.length > 0) {
+        const sortedDailyForChart = [...dailyData].sort((a, b) => a.date.localeCompare(b.date));
+        const labels = sortedDailyForChart.map(d => d.date.length >= 10 ? d.date.slice(5) : d.date);
+        const datasets = [];
+
+        if (hasClicks) {
+          datasets.push({
+            type: 'line',
+            label: '클릭수 (건)',
+            data: sortedDailyForChart.map(d => d.clicks),
+            borderColor: '#10b981',
+            backgroundColor: '#10b981',
+            yAxisID: 'yClicks',
+            borderWidth: 2,
+            pointRadius: 3,
+            tension: 0.35,
+            order: 1
+          });
+        }
+
+        const barColor = currentMedia === 'Naver' ? 'rgba(3, 199, 90, 0.45)' : 'rgba(59, 130, 246, 0.65)';
+        const barHoverColor = currentMedia === 'Naver' ? 'rgba(3, 199, 90, 0.85)' : 'rgba(59, 130, 246, 0.85)';
+
+        if (hasImpressions) {
+          datasets.push({
+            type: 'bar',
+            label: '노출수 (회)',
+            data: sortedDailyForChart.map(d => d.impressions),
+            backgroundColor: barColor,
+            hoverBackgroundColor: barHoverColor,
+            borderRadius: 4,
+            yAxisID: 'yLeft',
+            order: 2
+          });
+        }
+        
+        document.getElementById('chart-legend-text').innerText = "좌축: 노출수(회) / 우축: 클릭수(건)";
+
+        const ctxTrend = document.getElementById('trendChart').getContext('2d');
+        trendChartInstance = new Chart(ctxTrend, {
+          type: 'bar',
+          data: { labels: labels, datasets: datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: disableChartAnimOnce ? false : { duration: 400 },
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { display: false },
+              tooltip: { backgroundColor: '#0F172A', titleColor: '#F8FAFC', bodyColor: '#F8FAFC', borderColor: '#334155', borderWidth: 1 }
+            },
+            scales: {
+              x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#94A3B8', font: { size: 10 } } },
+              yLeft: {
+                type: 'linear',
+                position: 'left',
+                grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                ticks: { color: '#94A3B8', font: { size: 10 } }
+              },
+              yClicks: {
+                type: 'linear',
+                position: 'right',
+                grid: { drawOnChartArea: false },
+                ticks: { color: '#10B981', font: { size: 10 } }
+              }
+            }
+          }
+        });
+      } else {
+        document.getElementById('chart-legend-text').innerText = '선택 매체 집행 데이터가 없습니다.';
+      }
+
+      if (shareChartInstance) {
+        shareChartInstance.destroy();
+        shareChartInstance = null;
+      }
+      
+      const allowedKeys = displayColumns.map(c => c.key);
+      const findValidKey = (keys) => {
+        for (const k of keys) {
+          if (!allowedKeys.includes(k)) continue;
+          let sum = 0;
+          rawDataset.forEach(d => { sum += toCleanNumber(d[k]); });
+          if (sum > 0) return k;
+        }
+        return null;
+      };
+
+      const shareTargetKey = findValidKey(['impressions', 'clicks']);
+      const msgElem = document.getElementById('no-share-data-msg');
+
+      if (!shareTargetKey) {
+        msgElem.classList.remove('hidden');
+        document.getElementById('share-chart-label').innerText = '데이터 부족';
+        return;
+      } else {
+        msgElem.classList.add('hidden');
+      }
+
+      const shareTargetName = shareTargetKey === 'impressions' ? '노출수' : '클릭수';
+      document.getElementById('share-chart-label').innerText = `${shareTargetName} 기준 비중`;
+
+      let naverTotal = 0;
+      let metaTotal = 0;
+      let googleTotal = 0;
+
+      rawDataset.forEach(d => { 
+        const val = toCleanNumber(d[shareTargetKey]);
+        const m = String(d.media || '').toLowerCase();
+        if (m.includes('naver') || m.includes('네이버')) naverTotal += val;
+        else if (m.includes('meta') || m.includes('메타')) metaTotal += val;
+        else if (m.includes('google') || m.includes('구글')) googleTotal += val;
+      });
+
+      const totalTarget = naverTotal + metaTotal + googleTotal;
+      const rawTargetData = [metaTotal, naverTotal, googleTotal];
+
+      const baseColors = ['#1877F2', '#03C75A', '#EA4335'];
+      const dimColors = ['rgba(24, 119, 242, 0.25)', 'rgba(3, 199, 90, 0.25)', 'rgba(234, 67, 53, 0.25)'];
+
+      let glowIndex = -1;
+      let finalColors = [...baseColors];
+      let offsetArray = [0, 0, 0];
+
+      if (currentMedia === 'Naver') {
+        glowIndex = 1;
+        finalColors = [dimColors[0], baseColors[1], dimColors[2]];
+        offsetArray[1] = 12;
+      } else if (currentMedia === 'Meta') {
+        glowIndex = 0;
+        finalColors = [baseColors[0], dimColors[1], dimColors[2]];
+        offsetArray[0] = 12;
+      } else if (currentMedia === 'Google') {
+        glowIndex = 2;
+        finalColors = [dimColors[0], dimColors[1], baseColors[2]];
+        offsetArray[2] = 12;
+      }
+
+      const ctxShare = document.getElementById('shareChart').getContext('2d');
+      shareChartInstance = new Chart(ctxShare, {
+        type: 'doughnut',
+        data: {
+          labels: ['메타 (Meta)', '네이버 (Naver)', '구글 (Google)'],
+          activeGlowIndex: glowIndex,
+          datasets: [{
+            data: rawTargetData,
+            backgroundColor: finalColors,
+            borderColor: '#0F172A',
+            borderWidth: 2,
+            offset: offsetArray,
+            hoverOffset: 12
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: disableChartAnimOnce ? false : { duration: 400 },
+          cutout: '72%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#0F172A',
+              borderColor: '#334155',
+              borderWidth: 1,
+              callbacks: {
+                label: (c) => {
+                  const val = c.raw || 0;
+                  const pct = totalTarget > 0 ? ((val / totalTarget) * 100).toFixed(1) : 0;
+                  return ` ${c.label}: ${val.toLocaleString()} (${pct}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    /* ==========================================
+       [3. 매체 선택형 무결점 A4 PDF 출력 엔진]
+       ========================================== */
+    function openPdfSelectModal() {
+      document.getElementById('pdf-count-ALL').innerText = `데이터 ${getFilteredRows('ALL').length}건`;
+      document.getElementById('pdf-count-Naver').innerText = `데이터 ${getFilteredRows('Naver').length}건`;
+      document.getElementById('pdf-count-Meta').innerText = `데이터 ${getFilteredRows('Meta').length}건`;
+      document.getElementById('pdf-count-Google').innerText = `데이터 ${getFilteredRows('Google').length}건`;
+      document.getElementById('pdfSelectModal').classList.add('active');
+    }
+
+    function closePdfSelectModal() {
+      document.getElementById('pdfSelectModal').classList.remove('active');
+    }
+
+    function startMediaPdfPrint(selectedMedia) {
+      closePdfSelectModal();
+      setMediaFilter(selectedMedia, true);
+
+      const mediaFileLabel = {
+        ALL: '통합전체',
+        Naver: '네이버검색',
+        Meta: '메타',
+        Google: '구글애즈'
+      }[selectedMedia] || selectedMedia;
+
+      const originalTitle = document.title;
+      const safeClient = String(matchedClientDisplayName || '정원용회계사').replace(/[\\/:*?"<>|]/g, '_');
+      const safePeriod = String(currentSelectedPeriod || '2차').replace(/[\\/:*?"<>|]/g, '_');
+      document.title = `${safeClient}_${mediaFileLabel}_성과보고서_${safePeriod}`;
+
+      setTimeout(() => {
+        if (trendChartInstance) trendChartInstance.resize();
+        if (shareChartInstance) shareChartInstance.resize();
+
+        window.print();
+        document.title = originalTitle;
+      }, 220);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDataLoad);
+    } else {
+      initDataLoad();
+    }
+  </script>
+</body>
+</html>
