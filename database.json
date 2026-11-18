@@ -77,8 +77,8 @@
             "anomaly": ""
           },
           "Meta": {
-            "strategy": "",
-            "anomaly": ""
+            "strategy": "<div style=\"color: #e2e8f0; font-size: 14px; line-height: 1.7;\">\n  <p style=\"margin: 0 0 12px 0;\">\n    최근 <strong>29일</strong> 누적 기준 메타(Meta) 캠페인은 총 노출 <strong style=\"color: #ffffff;\">19,901회</strong>, 도달 <strong style=\"color: #38bdf8;\">18,552명</strong>, 클릭 <strong style=\"color: #34d399;\">1,634건</strong>을 기록하며 <strong style=\"color: #38bdf8;\">평균 클릭률(CTR) 8.21%</strong>의 고효율 성과를 유지하고 있습니다. 최근 집계일(2026-11-17) 역시 노출 810회·클릭 67건으로 <strong style=\"color: #34d399;\">CTR 8.27%</strong>를 달성하며 평균치를 상회하는 안정적인 추세를 이어가고 있습니다.\n  </p>\n  <div style=\"background: rgba(56, 189, 248, 0.08); border-left: 3px solid #38bdf8; padding: 10px 14px; border-radius: 4px;\">\n    <strong style=\"color: #38bdf8;\">핵심 전략 방향</strong><br>\n    최상위 효율 소재인 <strong>‘오늘 저녁 뭐 먹을지 고민되시나요’(CTR 9.18%)</strong>와 안정적인 2순위 소재 <strong>‘출근 준비’</strong>를 중심으로 클릭 볼륨을 견인하는 한편, 고효율 잠재력을 보인 신규·서브 소재의 노출 모수를 점진적으로 확대하여 전체 전환 유입을 극대화할 계획입니다.\n  </div>\n</div>",
+            "anomaly": "<div style=\"color: #e2e8f0; font-size: 14px; line-height: 1.65;\">\n  <ul style=\"margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 10px;\">\n    <li>\n      <strong style=\"color: #34d399;\">[최우수 소재 집중 운영] ‘오늘 저녁 뭐 먹을지 고민되시나요’</strong><br>\n      현재 집행 소재 중 가장 뛰어난 <strong style=\"color: #34d399;\">CTR 9.18%</strong>를 기록하며 전체 캠페인 평균 CTR(8.21%) 상승을 주도하고 있습니다. 핵심 주력 소재로서 라이브 비중을 최우선으로 유지합니다.\n    </li>\n    <li>\n      <strong style=\"color: #38bdf8;\">[기존 안정 소재 효율 방어] ‘출근 준비’</strong><br>\n      클릭률 2순위 기존 소재로 꾸준한 고객 반응을 확보하고 있습니다. 단일 소재 피로도 누적을 방지하고 일별 클릭 볼륨의 하방을 지지하는 베이스 소재로 병행 운영합니다.\n    </li>\n    <li>\n      <strong style=\"color: #fbbf24;\">[노출 볼륨 확대 대응] ‘수업 시간에 칠판 필기 따라 적느라’</strong><br>\n      우수한 클릭률 반응을 보이고 있으나 상대적으로 노출 모수가 제한적인 상태입니다. 성급한 소재 교체 대신 <strong>지속적인 라이브 유지</strong>를 통해 알고리즘 학습과 추가 노출 기회를 확보하는 방향으로 대응합니다.\n    </li>\n  </ul>\n</div>"
           },
           "Google": {
             "strategy": "",
