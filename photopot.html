@@ -30,7 +30,7 @@
       --glow-cyan-hover: rgba(6, 182, 212, 0.55);
       --glow-indigo: rgba(99, 102, 241, 0.18);
       --glow-indigo-hover: rgba(99, 102, 241, 0.6);
-      --shimmer-spec: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0) 100%);
+      --shimmer-spec: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.09) 50%, rgba(255, 255, 255, 0) 100%);
     }
 
     body {
@@ -57,8 +57,8 @@
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 0 18px 0 var(--glow-cyan);
-      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
-                  box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                  box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1),
                   border-color 0.4s ease;
     }
 
@@ -73,9 +73,11 @@
       background: linear-gradient(135deg, #1e1b4b 0%, #0F172A 100%);
       box-shadow: 0 0 22px 2px var(--glow-indigo);
     }
+
     .interactive-card.featured-shimmer:hover {
       box-shadow: 0 0 36px 6px var(--glow-indigo-hover);
     }
+
     .interactive-card.featured-shimmer::before {
       content: '';
       position: absolute;
@@ -88,6 +90,7 @@
       animation: premium-shimmer 4.0s infinite ease-in-out;
       pointer-events: none;
     }
+
     @keyframes premium-shimmer {
       0% { left: -150%; }
       25% { left: 150%; }
@@ -100,9 +103,11 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 20px;
     }
+
     @media (max-width: 1024px) {
       .layout-magazine-grid { grid-template-columns: repeat(2, 1fr); }
     }
+
     @media (max-width: 640px) {
       .layout-magazine-grid { grid-template-columns: 1fr; }
     }
@@ -128,7 +133,9 @@
       transition: opacity 0.35s ease;
       padding: 16px;
     }
+
     .modal-blur-overlay.active { opacity: 1; pointer-events: auto; }
+
     .modal-scale-content {
       background-color: #0F172A;
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -142,6 +149,7 @@
       transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
     }
+
     .modal-blur-overlay.active .modal-scale-content { transform: scale(1); }
     .modal-scale-content::-webkit-scrollbar { width: 4px; }
 
@@ -157,7 +165,6 @@
       * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
-        color-adjust: exact !important;
       }
 
       html {
@@ -180,10 +187,6 @@
         display: none !important;
       }
 
-      .print-only-badge {
-        display: inline-block !important;
-      }
-
       header {
         position: static !important;
         box-shadow: none !important;
@@ -198,7 +201,8 @@
         margin: 0 !important;
       }
 
-      section, .interactive-card {
+      section,
+      .interactive-card {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
         box-shadow: none !important;
@@ -244,7 +248,7 @@
 </head>
 <body class="min-h-screen flex flex-col pb-12">
 
-  <!-- 1. 상단 네비게이션 헤더 (우측 끝에 [회차 선택] + [PDF 버튼] 밀착 배치) -->
+  <!-- 1. 상단 네비게이션 헤더 (드롭다운 제거 후 PDF 리포트 다운로드 버튼만 깔끔하게 배치) -->
   <header class="bg-[#0F172A] border-b border-slate-800 sticky top-0 z-40 shadow-lg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center space-x-2.5">
@@ -254,14 +258,7 @@
         </h1>
       </div>
 
-      <!-- 우측 통합 액션 그룹: 회차 선택 바로 오른쪽에 PDF 다운로드 버튼 밀착 -->
-      <div class="flex items-center justify-end gap-2 ml-auto">
-        <select id="period-selector" onchange="onPeriodChange(this.value)" class="no-print px-3 py-1.5 bg-slate-900 border border-emerald-500/40 text-emerald-400 rounded-lg text-xs font-semibold tracking-tight shrink-0 focus:outline-none focus:ring-1 focus:ring-emerald-400 cursor-pointer">
-          <option value="">집행 기간 로드 중...</option>
-        </select>
-        <div id="print-period-badge" class="hidden print-only-badge px-3 py-1.5 bg-slate-900 border border-emerald-500/40 text-emerald-400 rounded-lg text-xs font-semibold tracking-tight shrink-0">
-          신규 집행 기간 (현재)
-        </div>
+      <div class="flex items-center justify-end ml-auto">
         <button type="button" onclick="openPdfSelectModal()" class="no-print px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-md shadow-indigo-950/60 cursor-pointer shrink-0">
           <span>📄 PDF 리포트 다운로드</span>
         </button>
@@ -547,8 +544,8 @@
         } else {
           for (const key in clientDb) {
             if (
-              key.includes('photopot') || 
-              key.includes('포토팟') || 
+              key.includes('photopot') ||
+              key.includes('포토팟') ||
               (clientDb[key].htmlFilename && (clientDb[key].htmlFilename.includes('photopot') || clientDb[key].htmlFilename === currentFilename))
             ) {
               clientObj = clientDb[key];
@@ -561,34 +558,24 @@
         if (!clientObj) clientObj = Object.values(clientDb)[0];
 
         matchedClientDisplayName = matchedName;
-        document.getElementById('header-client-name').innerText = matchedName;
+        const headerClientEl = document.getElementById('header-client-name');
+        if (headerClientEl) headerClientEl.innerText = matchedName;
 
         if (clientObj && clientObj.months) {
           const periods = Object.keys(clientObj.months);
-          const selector = document.getElementById('period-selector');
-          selector.innerHTML = '';
-
-          periods.forEach(p => {
-            const opt = document.createElement('option');
-            opt.value = p;
-            opt.innerText = `${p} (현재)`;
-            selector.appendChild(opt);
-          });
-
           let targetPeriod = periods.find(p => clientObj.months[p].rawDataset && clientObj.months[p].rawDataset.length > 0);
           if (!targetPeriod) {
             targetPeriod = periods[periods.length - 1] || "신규 집행 기간";
           }
 
           currentPeriod = targetPeriod;
-          selector.value = currentPeriod;
           setPeriodData(clientObj.months[currentPeriod]);
         }
       }
 
       if (!currentPeriod) currentPeriod = "신규 집행 기간";
-      document.getElementById('strategy-period-label').innerText = `기준: ${currentPeriod} 결산`;
-      document.getElementById('print-period-badge').innerText = `${currentPeriod} (현재)`;
+      const stratPeriodLabel = document.getElementById('strategy-period-label');
+      if (stratPeriodLabel) stratPeriodLabel.innerText = `기준: ${currentPeriod} 결산`;
     }
 
     function setPeriodData(monthObj) {
@@ -611,18 +598,6 @@
         !String(c.label || '').includes('비용') &&
         !String(c.label || '').includes('전환')
       );
-    }
-
-    function onPeriodChange(newPeriod) {
-      currentPeriod = newPeriod;
-      document.getElementById('strategy-period-label').innerText = `기준: ${currentPeriod} 결산`;
-      document.getElementById('print-period-badge').innerText = `${currentPeriod} (현재)`;
-      
-      const clientObj = clientDb ? (clientDb["photopot"] || clientDb["포토팟"] || Object.values(clientDb)[0]) : null;
-      if (clientObj && clientObj.months && clientObj.months[newPeriod]) {
-        setPeriodData(clientObj.months[newPeriod]);
-      }
-      renderDashboard();
     }
 
     function switchTab(mediaKey, instantMode = false) {
