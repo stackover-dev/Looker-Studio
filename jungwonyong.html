@@ -342,7 +342,7 @@
       </div>
     </div>
 
-    <!-- 1. 최상단 전략 코멘트 영역 (우측 상단: 일일 데이터 시작 날짜 ~ 마지막 날짜 자동 표기) -->
+    <!-- 1. 최상단 전략 코멘트 영역 (우측 날짜: 고객사: 정원용회계사님과 동일한 text-xs text-slate-400 font-normal 스타일 적용) -->
     <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
       <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
       <div class="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-3">
@@ -350,7 +350,7 @@
           <span>STRATEGY COMMENT</span>
           <span id="active-media-badge" class="ml-1 px-2 py-0.5 rounded bg-blue-950/80 text-blue-300 border border-blue-800/60 text-[10px]">통합(전체)</span>
         </h2>
-        <span id="strategy-date-display" class="text-[11px] text-slate-300 font-mono font-semibold bg-slate-800/80 px-2.5 py-0.5 rounded border border-slate-700/70">2026-10-15 ~ 2026-11-13</span>
+        <span id="strategy-date-display" class="text-xs text-slate-400 font-normal">2026-10-15 ~ 2026-11-13</span>
       </div>
       <div id="strategy-comment-box" class="text-sm leading-relaxed text-slate-300 w-full overflow-x-auto"></div>
     </section>
@@ -722,12 +722,26 @@
       return m;
     }
 
+    function normalizeDateString(rawDate) {
+      var s = String(rawDate || '').trim();
+      if (!s || s === '일자미상') return '일자미상';
+      var match = s.match(/(\d{4})[.\-\/\s]+(\d{1,2})[.\-\/\s]+(\d{1,2})/);
+      if (match) {
+        var yyyy = match[1];
+        var mm = match[2].length === 1 ? '0' + match[2] : match[2];
+        var dd = match[3].length === 1 ? '0' + match[3] : match[3];
+        return yyyy + '-' + mm + '-' + dd;
+      }
+      return s;
+    }
+
     function normalizeDataset(rows) {
       if (!Array.isArray(rows)) return [];
       return rows.map(function(row) {
         if (!row || typeof row !== 'object') return null;
         var normalized = Object.assign({}, row);
-        normalized.date = String(row.date || row.Date || row['집행일자'] || row['일자'] || row['날짜'] || '').trim() || '일자미상';
+        var rawD = row.date || row.Date || row['집행일자'] || row['일자'] || row['날짜'] || '';
+        normalized.date = normalizeDateString(rawD);
         normalized.media = normalizeMediaName(row.media || row.Media || row.platform || row.channel || row['매체'] || row['플랫폼']);
         normalized.impressions = toCleanNumber(row.impressions !== undefined ? row.impressions : (row.Impressions !== undefined ? row.Impressions : (row['노출수'] !== undefined ? row['노출수'] : row['노출'])));
         normalized.reach = toCleanNumber(row.reach !== undefined ? row.reach : (row.Reach !== undefined ? row.Reach : (row['도달수'] !== undefined ? row['도달수'] : row['도달'])));
@@ -827,33 +841,38 @@
     ].join('\n');
 
     /* ==========================================
-       [핵심 추가] 일일 데이터 보고서 기준 시작 날짜 ~ 마지막 날짜 계산 함수
+       [핵심] 일일 데이터 보고서 기준 시작 날짜 ~ 마지막 날짜 계산 함수
        ========================================== */
-    function getReportDateRangeLabel(targetRows) {
+    function getReportDateRangeLabel(targetRows, periodObj) {
       var rows = (Array.isArray(targetRows) && targetRows.length > 0) ? targetRows : rawDataset;
-      if (!Array.isArray(rows) || rows.length === 0) {
-        return '기준: ' + (currentSelectedPeriod || '2차') + ' 결산';
-      }
-
       var validDates = [];
-      rows.forEach(function(item) {
-        var d = String(item && item.date ? item.date : '').trim();
-        if (d && d !== '일자미상' && validDates.indexOf(d) === -1) {
-          validDates.push(d);
-        }
-      });
 
-      if (validDates.length === 0) {
-        return '기준: ' + (currentSelectedPeriod || '2차') + ' 결산';
+      if (Array.isArray(rows) && rows.length > 0) {
+        rows.forEach(function(item) {
+          var d = normalizeDateString(item && item.date ? item.date : '');
+          if (d && d !== '일자미상' && validDates.indexOf(d) === -1) {
+            validDates.push(d);
+          }
+        });
       }
 
-      validDates.sort(function(a, b) {
-        return a.localeCompare(b);
-      });
+      if (validDates.length > 0) {
+        validDates.sort(function(a, b) {
+          return a.localeCompare(b);
+        });
+        return validDates[0] + ' ~ ' + validDates[validDates.length - 1];
+      }
 
-      var startDate = validDates[0];
-      var endDate = validDates[validDates.length - 1];
-      return startDate + ' ~ ' + endDate;
+      if (periodObj) {
+        if (periodObj.startDate && periodObj.endDate) {
+          return normalizeDateString(periodObj.startDate) + ' ~ ' + normalizeDateString(periodObj.endDate);
+        }
+        if (periodObj.dateRange) {
+          return String(periodObj.dateRange).trim();
+        }
+      }
+
+      return '2026-10-15 ~ 2026-11-13';
     }
 
     function findClientRecord(db, currentFilename) {
@@ -1132,8 +1151,8 @@
     }
 
     function loadPeriodDataAndRender() {
-      if (dbReportData && dbReportData.months && dbReportData.months[currentSelectedPeriod]) {
-        var periodData = dbReportData.months[currentSelectedPeriod];
+      var periodData = (dbReportData && dbReportData.months) ? dbReportData.months[currentSelectedPeriod] : null;
+      if (periodData) {
         var normalized = normalizeDataset(periodData.rawDataset);
         var hasValidMetrics = normalized.some(function(d) {
           return (d.impressions + d.reach + d.clicks) > 0;
@@ -1149,7 +1168,7 @@
       var periodTitleEl = document.getElementById('report-period-title');
       var stratDateEl = document.getElementById('strategy-date-display');
       if (periodTitleEl) periodTitleEl.innerText = currentSelectedPeriod || "2차";
-      if (stratDateEl) stratDateEl.innerText = getReportDateRangeLabel(rawDataset);
+      if (stratDateEl) stratDateEl.innerText = getReportDateRangeLabel(rawDataset, periodData);
       
       renderDashboard();
     }
@@ -1197,7 +1216,7 @@
       // 상단 우측 날짜 표기 업데이트 (일일 데이터 시작 날짜 ~ 마지막 날짜)
       var stratDateEl = document.getElementById('strategy-date-display');
       if (stratDateEl) {
-        stratDateEl.innerText = getReportDateRangeLabel(filtered);
+        stratDateEl.innerText = getReportDateRangeLabel(filtered, periodData);
       }
       
       // 1. 코멘트 업데이트 (실제 집행 데이터가 없는 매체는 강제 공란 처리)
