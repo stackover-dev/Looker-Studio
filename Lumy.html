@@ -12,7 +12,9 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
     
-    /* [1. 글로벌 프리미엄 디자인 시스템 변수] */
+    /* ==========================================
+       [1. 글로벌 프리미엄 디자인 시스템 변수]
+       ========================================== */
     :root {
       --bg-primary: #0B1120;
       --bg-card: #0F172A;
@@ -39,7 +41,7 @@
     ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
     /* ==========================================
-       [2. 프리미엄 인터랙션 카드 & 모달 스펙]
+       [2. 프리미엄 인터랙션 카드 & 절제된 쉬머 스펙]
        ========================================== */
     .interactive-card {
       position: relative;
@@ -99,7 +101,9 @@
       .layout-magazine-grid { grid-template-columns: 1fr; }
     }
 
-    /* 스케일 모달(Modal) 확대 인터랙션 */
+    /* ==========================================
+       [3. 스케일 모달(Modal) 확대 인터랙션]
+       ========================================== */
     .modal-blur-overlay {
       position: fixed;
       top: 0;
@@ -114,32 +118,34 @@
       z-index: 1000;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.4s ease;
+      transition: opacity 0.35s ease;
+      padding: 16px;
     }
     .modal-blur-overlay.active { opacity: 1; pointer-events: auto; }
     .modal-scale-content {
       background-color: #0F172A;
       border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 32px;
+      padding: 28px;
       border-radius: 24px;
-      max-width: 640px;
-      width: 92%;
+      max-width: 600px;
+      width: 100%;
       max-height: 90vh;
       overflow-y: auto;
       transform: scale(0.75);
       transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
     }
     .modal-blur-overlay.active .modal-scale-content { transform: scale(1); }
     .modal-scale-content::-webkit-scrollbar { width: 4px; }
 
     /* ==========================================
-       [3. 무결점 벡터 PDF 출력 전용 스타일 (@media print)]
-       - 좌우 잘림 0%, 다크 배경 보존, 페이지 끊김 방지
+       [4. 좌우 잘림 0% 무결점 A4 PDF 출력 전용 엔진]
+       - 1140px 데스크톱 레이아웃을 A4 용지 폭에 정확히 배율 맞춤(zoom: 0.68)
+       - 다크 테마 배경색 100% 보존 및 페이지 분할 보호
        ========================================== */
     @page {
       size: A4 portrait;
-      margin: 10mm 8mm;
+      margin: 8mm;
     }
 
     @media print {
@@ -149,13 +155,20 @@
         color-adjust: exact !important;
       }
 
-      html, body {
+      html {
+        background-color: #0B1120 !important;
+        width: 100% !important;
+      }
+
+      body {
         background-color: #0B1120 !important;
         color: #F8FAFC !important;
-        width: 100% !important;
-        min-width: 100% !important;
-        margin: 0 !important;
+        width: 1120px !important;
+        max-width: 1120px !important;
+        min-width: 1120px !important;
+        margin: 0 auto !important;
         padding: 0 !important;
+        zoom: 0.67; /* 1120px * 0.67 = 750px -> A4 세로 가용폭(755px) 내 좌우 잘림 완벽 차단 */
       }
 
       .no-print {
@@ -166,12 +179,13 @@
         position: static !important;
         box-shadow: none !important;
         background-color: #0F172A !important;
+        width: 100% !important;
       }
 
       main {
         max-width: 100% !important;
         width: 100% !important;
-        padding: 12px 0 !important;
+        padding: 16px 12px !important;
         margin: 0 !important;
       }
 
@@ -186,9 +200,16 @@
         display: none !important;
       }
 
+      /* 인쇄 시에도 3열 그리드 및 2:1 차트 그리드 비율 유지 */
       .layout-magazine-grid {
         grid-template-columns: repeat(3, 1fr) !important;
-        gap: 12px !important;
+        gap: 16px !important;
+      }
+
+      .print-chart-grid {
+        display: grid !important;
+        grid-template-columns: 2fr 1fr !important;
+        gap: 16px !important;
       }
 
       .overflow-x-auto {
@@ -198,7 +219,6 @@
       table {
         width: 100% !important;
         min-width: 0 !important;
-        font-size: 11px !important;
       }
 
       tr {
@@ -227,7 +247,8 @@
           </div>
         </div>
 
-        <button type="button" onclick="downloadPDFReport()" class="no-print flex-grow sm:flex-grow-0 px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-sm shadow-indigo-950/50 cursor-pointer">
+        <!-- 매체 선택형 PDF 다운로드 트리거 버튼 (CSV 버튼 제거 완료) -->
+        <button type="button" onclick="openPdfSelectModal()" class="no-print flex-grow sm:flex-grow-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-md shadow-indigo-950/60 cursor-pointer">
           <span>📄 PDF 리포트 다운로드</span>
         </button>
       </div>
@@ -271,7 +292,7 @@
       </div>
     </section>
 
-    <!-- 5. 광고 소재 성과 피드백 갤러리 (3단 매거진 레이아웃 + 100% 무손실 뷰) -->
+    <!-- 5. 광고 소재 성과 피드백 갤러리 (3단 매거진 레이아웃) -->
     <section id="creatives-section" class="bg-[#0F172A] rounded-2xl border border-slate-800 p-4 sm:p-6 shadow-xl border-l-4 border-l-purple-500 hidden">
       <div class="border-b border-slate-800/80 pb-3 mb-6">
         <h2 class="text-xs font-extrabold tracking-wider text-purple-400 uppercase">
@@ -304,7 +325,7 @@
     </section>
 
     <!-- 7. 차트 영역 -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 print-chart-grid">
       
       <!-- 좌측: 일별 주요 지표 추이 -->
       <div class="lg:col-span-2 bg-[#0F172A] p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-xl flex flex-col">
@@ -377,7 +398,67 @@
 
   </main>
 
-  <!-- 시스템 모달 프레임 -->
+  <!-- 모달 1: 매체 선택형 PDF 리포트 다운로드 팝업 (스케일 모달 인터랙션) -->
+  <div class="modal-blur-overlay no-print" id="pdfSelectModal" onclick="closePdfSelectModal()">
+    <div class="modal-scale-content" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
+        <div>
+          <span class="text-[11px] font-extrabold tracking-wider text-indigo-400 uppercase block mb-1">EXPORT REPORT TO PDF</span>
+          <h2 class="text-lg sm:text-xl font-bold text-white">다운로드할 보고서 매체 선택</h2>
+        </div>
+        <button type="button" onclick="closePdfSelectModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold transition">✕</button>
+      </div>
+
+      <p class="text-xs text-slate-400 mb-5 leading-relaxed">
+        선택하신 매체 탭의 전략 코멘트·소재 피드백·차트·일별 데이터 전체가 A4 규격에 맞춰 좌우 잘림 없이 고해상도 PDF로 출력됩니다.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6" id="pdf-media-options">
+        <button type="button" onclick="startMediaPdfPrint('ALL')" class="interactive-card !p-4 !rounded-2xl text-left flex flex-col justify-between group cursor-pointer border-indigo-500/30">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">ALL CHANNELS</span>
+            <span id="pdf-count-ALL" class="text-[11px] font-mono text-slate-400">0건</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-emerald-400 transition-colors">통합(전체) 보고서</h3>
+          <p class="text-[11px] text-slate-400 mt-1">전체 매체 통합 성과 및 종합 전략</p>
+        </button>
+
+        <button type="button" onclick="startMediaPdfPrint('Naver')" class="interactive-card !p-4 !rounded-2xl text-left flex flex-col justify-between group cursor-pointer">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-950 text-emerald-400 border border-emerald-800">NAVER</span>
+            <span id="pdf-count-Naver" class="text-[11px] font-mono text-slate-400">0건</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-emerald-400 transition-colors">네이버 검색 보고서</h3>
+          <p class="text-[11px] text-slate-400 mt-1">네이버 검색광고 단독 지표 및 코멘트</p>
+        </button>
+
+        <button type="button" onclick="startMediaPdfPrint('Meta')" class="interactive-card !p-4 !rounded-2xl text-left flex flex-col justify-between group cursor-pointer">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-blue-950 text-blue-400 border border-blue-800">META</span>
+            <span id="pdf-count-Meta" class="text-[11px] font-mono text-slate-400">0건</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-blue-400 transition-colors">메타 (DA/SA) 보고서</h3>
+          <p class="text-[11px] text-slate-400 mt-1">인스타그램·페이스북 성과 및 소재 리포트</p>
+        </button>
+
+        <button type="button" onclick="startMediaPdfPrint('Google')" class="interactive-card !p-4 !rounded-2xl text-left flex flex-col justify-between group cursor-pointer">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-rose-950 text-rose-400 border border-rose-800">GOOGLE</span>
+            <span id="pdf-count-Google" class="text-[11px] font-mono text-slate-400">0건</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-rose-400 transition-colors">구글 애즈 보고서</h3>
+          <p class="text-[11px] text-slate-400 mt-1">구글 검색·디스플레이 성과 및 코멘트</p>
+        </button>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 text-[11.5px] text-slate-300 flex items-start gap-2.5">
+        <span class="text-indigo-400 font-bold shrink-0">💡 안내:</span>
+        <span>매체 선택 후 열리는 인쇄 창에서 대상을 <b>[PDF로 저장]</b>으로 선택하시고, 설정의 <b>[배경 그래픽]</b>이 체크되어 있는지 확인해 주세요.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 모달 2: 광고 소재 상세 확대 모달 -->
   <div class="modal-blur-overlay no-print" id="creativeModal" onclick="closeCreativeModal()">
     <div class="modal-scale-content" onclick="event.stopPropagation()">
       <div class="w-full bg-[#0B1120] rounded-xl mb-4 border border-slate-800/80 p-2 flex justify-center items-center overflow-hidden">
@@ -423,6 +504,7 @@
     let allPeriods = [];
     let clientDb = null;
     let actualRawDataset = [];
+    let disableChartAnimOnce = false;
 
     let trendChartInstance = null;
     let donutChartInstance = null;
@@ -502,9 +584,11 @@
     }
 
     // 4. 탭 전환 및 전체 대시보드 렌더링
-    function switchTab(mediaKey) {
+    function switchTab(mediaKey, instantMode = false) {
       activeTab = mediaKey;
+      disableChartAnimOnce = instantMode;
       renderDashboard();
+      disableChartAnimOnce = false;
     }
 
     function renderDashboard() {
@@ -543,7 +627,7 @@
         stratText = "";
       }
 
-      const currentTabRows = getFilteredRows();
+      const currentTabRows = getFilteredRows(activeTab);
       const hasActualData = currentTabRows.length > 0;
       const mediaLabelMap = { ALL: '통합 매체', Naver: '네이버 검색', Meta: '메타 (Meta)', Google: '구글 애즈' };
       const currentTabLabel = mediaLabelMap[activeTab] || activeTab;
@@ -641,12 +725,12 @@
     }
 
     // 6. 실제 데이터 필터링 헬퍼 함수
-    function getFilteredRows() {
+    function getFilteredRows(targetTab = activeTab) {
       if (!actualRawDataset || actualRawDataset.length === 0) return [];
-      if (activeTab === 'ALL') return actualRawDataset;
+      if (targetTab === 'ALL') return actualRawDataset;
       return actualRawDataset.filter(r => {
         const m = String(r.media || '').trim().toLowerCase();
-        const t = activeTab.toLowerCase();
+        const t = targetTab.toLowerCase();
         if (t === 'naver') return m.includes('naver') || m.includes('네이버');
         if (t === 'meta') return m.includes('meta') || m.includes('메타');
         if (t === 'google') return m.includes('google') || m.includes('구글');
@@ -656,7 +740,7 @@
 
     // 7. KPI 카드 및 하단 피벗 테이블 렌더링 (전환수 열 제거 완료 - 6열 구조)
     function renderKPIsAndTable() {
-      const filtered = getFilteredRows();
+      const filtered = getFilteredRows(activeTab);
 
       let imp = 0, reach = 0, clicks = 0;
       filtered.forEach(r => {
@@ -731,7 +815,7 @@
 
     // 8. 일별 추이 차트
     function renderTrendChart() {
-      const filtered = getFilteredRows();
+      const filtered = getFilteredRows(activeTab);
 
       const dateMap = {};
       filtered.forEach(r => {
@@ -780,6 +864,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: disableChartAnimOnce ? false : { duration: 400 },
           interaction: { mode: 'index', intersect: false },
           plugins: {
             legend: { display: false },
@@ -853,6 +938,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: disableChartAnimOnce ? false : { duration: 400 },
           cutout: '72%',
           plugins: {
             legend: { display: false },
@@ -895,19 +981,51 @@
       `;
     }
 
-    // 10. 무결점 벡터 PDF 리포트 다운로드 (좌우 잘림 방지 및 다크 테마 보존)
-    function downloadPDFReport() {
+    // 10. 매체 선택형 무결점 PDF 리포트 출력 로직
+    function openPdfSelectModal() {
+      const counts = {
+        ALL: getFilteredRows('ALL').length,
+        Naver: getFilteredRows('Naver').length,
+        Meta: getFilteredRows('Meta').length,
+        Google: getFilteredRows('Google').length
+      };
+      document.getElementById('pdf-count-ALL').innerText = `데이터 ${counts.ALL}건`;
+      document.getElementById('pdf-count-Naver').innerText = `데이터 ${counts.Naver}건`;
+      document.getElementById('pdf-count-Meta').innerText = `데이터 ${counts.Meta}건`;
+      document.getElementById('pdf-count-Google').innerText = `데이터 ${counts.Google}건`;
+
+      document.getElementById('pdfSelectModal').classList.add('active');
+    }
+
+    function closePdfSelectModal() {
+      document.getElementById('pdfSelectModal').classList.remove('active');
+    }
+
+    function startMediaPdfPrint(selectedMedia) {
+      closePdfSelectModal();
+
+      // 선택한 매체 탭으로 애니메이션 없이 즉시 전환하여 차트·코멘트·소재·테이블 동기화
+      switchTab(selectedMedia, true);
+
+      const mediaFileLabel = {
+        ALL: '통합전체',
+        Naver: '네이버검색',
+        Meta: '메타',
+        Google: '구글애즈'
+      }[selectedMedia] || selectedMedia;
+
       const originalTitle = document.title;
       const safePeriod = String(currentPeriod || '결산').replace(/[\\/:*?"<>|]/g, '_');
-      document.title = `루미-밀리언파이_${activeTab}_성과보고서_${safePeriod}`;
+      document.title = `루미-밀리언파이_${mediaFileLabel}_성과보고서_${safePeriod}`;
 
-      if (trendChartInstance) trendChartInstance.resize();
-      if (donutChartInstance) donutChartInstance.resize();
-
+      // DOM 및 차트 캔버스 크기 안정화 후 브라우저 네이티브 벡터 인쇄(PDF 저장) 호출
       setTimeout(() => {
+        if (trendChartInstance) trendChartInstance.resize();
+        if (donutChartInstance) donutChartInstance.resize();
+
         window.print();
         document.title = originalTitle;
-      }, 150);
+      }, 220);
     }
   </script>
 </body>
