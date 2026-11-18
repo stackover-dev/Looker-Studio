@@ -11,7 +11,7 @@
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
-    
+
     /* ==========================================
        [1. 글로벌 프리미엄 디자인 시스템 변수]
        ========================================== */
@@ -23,7 +23,7 @@
       --glow-cyan-hover: rgba(6, 182, 212, 0.55);
       --glow-indigo: rgba(99, 102, 241, 0.18);
       --glow-indigo-hover: rgba(99, 102, 241, 0.6);
-      --shimmer-spec: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0) 100%);
+      --shimmer-spec: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.09) 50%, rgba(255, 255, 255, 0) 100%);
     }
 
     body {
@@ -51,11 +51,11 @@
       padding: 24px;
       overflow: hidden;
       box-shadow: 0 0 18px 0 var(--glow-cyan);
-      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
-                  box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                  box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1),
                   border-color 0.4s ease;
     }
-    
+
     .interactive-card:hover {
       transform: translateY(-6px);
       border-color: rgba(255, 255, 255, 0.2);
@@ -67,9 +67,11 @@
       background: linear-gradient(135deg, #1e1b4b 0%, #0F172A 100%);
       box-shadow: 0 0 22px 2px var(--glow-indigo);
     }
+
     .interactive-card.featured-shimmer:hover {
       box-shadow: 0 0 36px 6px var(--glow-indigo-hover);
     }
+
     .interactive-card.featured-shimmer::before {
       content: '';
       position: absolute;
@@ -82,6 +84,7 @@
       animation: premium-shimmer 4.0s infinite ease-in-out;
       pointer-events: none;
     }
+
     @keyframes premium-shimmer {
       0% { left: -150%; }
       25% { left: 150%; }
@@ -94,9 +97,11 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
     }
+
     @media (max-width: 1024px) {
       .layout-magazine-grid { grid-template-columns: repeat(2, 1fr); }
     }
+
     @media (max-width: 640px) {
       .layout-magazine-grid { grid-template-columns: 1fr; }
     }
@@ -121,7 +126,12 @@
       transition: opacity 0.35s ease;
       padding: 16px;
     }
-    .modal-blur-overlay.active { opacity: 1; pointer-events: auto; }
+
+    .modal-blur-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     .modal-scale-content {
       background-color: #0F172A;
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -135,13 +145,18 @@
       transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
     }
-    .modal-blur-overlay.active .modal-scale-content { transform: scale(1); }
-    .modal-scale-content::-webkit-scrollbar { width: 4px; }
+
+    .modal-blur-overlay.active .modal-scale-content {
+      transform: scale(1);
+    }
+
+    .modal-scale-content::-webkit-scrollbar {
+      width: 4px;
+    }
 
     /* ==========================================
        [4. 좌우 잘림 0% 무결점 A4 PDF 출력 전용 엔진]
-       - 1140px 데스크톱 레이아웃을 A4 용지 폭에 정확히 배율 맞춤(zoom: 0.68)
-       - 다크 테마 배경색 100% 보존 및 페이지 분할 보호
+       - 비표준 color-adjust 제거 및 표준 print-color-adjust 적용
        ========================================== */
     @page {
       size: A4 portrait;
@@ -152,7 +167,6 @@
       * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
-        color-adjust: exact !important;
       }
 
       html {
@@ -168,7 +182,7 @@
         min-width: 1120px !important;
         margin: 0 auto !important;
         padding: 0 !important;
-        zoom: 0.67; /* 1120px * 0.67 = 750px -> A4 세로 가용폭(755px) 내 좌우 잘림 완벽 차단 */
+        zoom: 0.67;
       }
 
       .no-print {
@@ -189,7 +203,8 @@
         margin: 0 !important;
       }
 
-      section, .interactive-card {
+      section,
+      .interactive-card {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
         box-shadow: none !important;
@@ -200,7 +215,6 @@
         display: none !important;
       }
 
-      /* 인쇄 시에도 3열 그리드 및 2:1 차트 그리드 비율 유지 */
       .layout-magazine-grid {
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 16px !important;
@@ -247,7 +261,7 @@
           </div>
         </div>
 
-        <!-- 매체 선택형 PDF 다운로드 트리거 버튼 (CSV 버튼 제거 완료) -->
+        <!-- 매체 선택형 PDF 다운로드 트리거 버튼 -->
         <button type="button" onclick="openPdfSelectModal()" class="no-print flex-grow sm:flex-grow-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-md shadow-indigo-950/60 cursor-pointer">
           <span>📄 PDF 리포트 다운로드</span>
         </button>
@@ -276,8 +290,7 @@
         </h2>
         <span class="text-[11px] text-slate-400 font-mono" id="strategy-period-label">결산 데이터 조회 중</span>
       </div>
-      <div id="strategy-comment-body" class="text-xs sm:text-sm text-slate-200 leading-relaxed overflow-x-auto w-full">
-      </div>
+      <div id="strategy-comment-body" class="text-xs sm:text-sm text-slate-200 leading-relaxed overflow-x-auto w-full"></div>
     </section>
 
     <!-- 4. 운영 이슈 분석 및 사후 대응 내역 -->
@@ -288,8 +301,7 @@
         </h2>
         <h3 class="text-sm font-bold text-slate-100 mt-1">운영 이슈 분석 및 사후 대응 내역</h3>
       </div>
-      <div id="anomaly-comment-body" class="text-xs sm:text-sm leading-relaxed overflow-x-auto w-full">
-      </div>
+      <div id="anomaly-comment-body" class="text-xs sm:text-sm leading-relaxed overflow-x-auto w-full"></div>
     </section>
 
     <!-- 5. 광고 소재 성과 피드백 갤러리 (3단 매거진 레이아웃) -->
@@ -300,8 +312,7 @@
         </h2>
         <h3 class="text-sm font-bold text-slate-100 mt-1">광고 소재 성과 분석 및 피드백</h3>
       </div>
-      <div class="layout-magazine-grid" id="creatives-grid">
-      </div>
+      <div class="layout-magazine-grid" id="creatives-grid"></div>
     </section>
 
     <!-- 6. 핵심 지표 KPI 카드 -->
@@ -326,7 +337,6 @@
 
     <!-- 7. 차트 영역 -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 print-chart-grid">
-      
       <!-- 좌측: 일별 주요 지표 추이 -->
       <div class="lg:col-span-2 bg-[#0F172A] p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-xl flex flex-col">
         <div class="flex items-center justify-between mb-4">
@@ -360,13 +370,11 @@
           ※ 본 지표는 단순 수치 비교이며, 매체별 광고 특성과 그에 따른 고객 의도(Intent) 반영 수준 등의 차이가 존재합니다.
         </p>
 
-        <div class="pt-2.5 border-t border-slate-800/80 flex items-center justify-around text-xs font-semibold" id="donut-legend-info">
-        </div>
+        <div class="pt-2.5 border-t border-slate-800/80 flex items-center justify-around text-xs font-semibold" id="donut-legend-info"></div>
       </div>
-
     </section>
 
-    <!-- 8. 일별 성과 상세 집계 내역 (전환수 열 제거 완료 - 6열 구성) -->
+    <!-- 8. 일별 성과 상세 집계 내역 (6열 구성) -->
     <section class="bg-[#0F172A] rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
       <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 bg-slate-900/60">
         <div>
@@ -390,8 +398,7 @@
               <th class="py-3 px-4 text-right text-cyan-400">클릭률 (CTR)</th>
             </tr>
           </thead>
-          <tbody id="pivot-table-body" class="divide-y divide-slate-800/60 font-mono text-slate-200">
-          </tbody>
+          <tbody id="pivot-table-body" class="divide-y divide-slate-800/60 font-mono text-slate-200"></tbody>
         </table>
       </div>
     </section>
@@ -462,7 +469,7 @@
   <div class="modal-blur-overlay no-print" id="creativeModal" onclick="closeCreativeModal()">
     <div class="modal-scale-content" onclick="event.stopPropagation()">
       <div class="w-full bg-[#0B1120] rounded-xl mb-4 border border-slate-800/80 p-2 flex justify-center items-center overflow-hidden">
-        <img id="modal-img" src="" class="max-w-full max-h-[60vh] object-contain rounded-lg" alt="소재 이미지">
+        <img id="modal-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="max-w-full max-h-[60vh] object-contain rounded-lg" alt="소재 이미지">
       </div>
       <h2 id="modal-title" class="text-lg font-bold text-white mb-2"></h2>
       <p id="modal-feedback" class="text-slate-300 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap bg-slate-900/50 p-3.5 rounded-xl border border-slate-800"></p>
@@ -515,6 +522,14 @@
       renderDashboard();
     });
 
+    // ESC 키로 모달 닫기 지원
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closePdfSelectModal();
+        closeCreativeModal();
+      }
+    });
+
     async function loadLiveDatabase() {
       try {
         let res = await fetch('./database.json?t=' + Date.now());
@@ -529,7 +544,11 @@
       if (!clientDb) {
         const local = localStorage.getItem('MEDIA_REPORT_DB');
         if (local) {
-          try { clientDb = JSON.parse(local); } catch (e) {}
+          try {
+            clientDb = JSON.parse(local);
+          } catch (e) {
+            console.warn("로컬 캐시 JSON 파싱 오류", e);
+          }
         }
       }
 
@@ -569,10 +588,11 @@
       if (allPeriods.length > 1) {
         wrap.innerHTML = allPeriods.map(p => {
           const isCurrent = p === currentPeriod;
+          const escapedP = String(p).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
           const cls = isCurrent
             ? "px-3 py-1.5 bg-emerald-500 text-slate-950 rounded-lg text-xs font-bold tracking-tight shrink-0 shadow-sm cursor-pointer"
             : "px-3 py-1.5 bg-slate-900 border border-slate-700 hover:border-emerald-500/50 text-slate-300 rounded-lg text-xs font-semibold tracking-tight shrink-0 cursor-pointer transition";
-          return `<button type="button" onclick="switchPeriod('${p.replace(/'/g, "\\'")}')" class="${cls}">${p}${isCurrent ? ' (현재)' : ''}</button>`;
+          return `<button type="button" onclick="switchPeriod('${escapedP}')" class="${cls}">${p}${isCurrent ? ' (현재)' : ''}</button>`;
         }).join('');
       } else {
         wrap.innerHTML = `
@@ -669,10 +689,10 @@
     function renderCreatives() {
       const section = document.getElementById('creatives-section');
       const grid = document.getElementById('creatives-grid');
-      
+
       const clientObj = clientDb ? (clientDb[matchedClientKey] || Object.values(clientDb)[0]) : null;
       const monthData = (clientObj && clientObj.months) ? clientObj.months[currentPeriod] : null;
-      
+
       let creatives = [];
       if (monthData && monthData.creatives && monthData.creatives[activeTab]) {
         creatives = monthData.creatives[activeTab];
@@ -684,11 +704,11 @@
       }
 
       section.classList.remove('hidden');
-      
+
       grid.innerHTML = creatives.map((item, index) => {
         const isFeatured = index === 0 ? 'featured-shimmer' : '';
-        const badgeHtml = index === 0 
-          ? `<span class="inline-block px-2.5 py-1 mb-3 rounded-md text-[10px] font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 w-max shadow-sm">🏆 BEST PERFORMING</span>` 
+        const badgeHtml = index === 0
+          ? `<span class="inline-block px-2.5 py-1 mb-3 rounded-md text-[10px] font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 w-max shadow-sm">🏆 BEST PERFORMING</span>`
           : `<span class="inline-block px-2.5 py-1 mb-3 rounded-md text-[10px] font-bold bg-slate-900 text-slate-400 border border-slate-700/60 w-max shadow-sm">CREATIVE 0${index + 1}</span>`;
 
         return `
@@ -716,7 +736,7 @@
       document.getElementById('modal-img').src = item.image;
       document.getElementById('modal-title').innerText = item.title;
       document.getElementById('modal-feedback').innerText = item.feedback || '등록된 피드백이 없습니다.';
-      
+
       document.getElementById('creativeModal').classList.add('active');
     }
 
@@ -738,11 +758,14 @@
       });
     }
 
-    // 7. KPI 카드 및 하단 피벗 테이블 렌더링 (전환수 열 제거 완료 - 6열 구조)
+    // 7. KPI 카드 및 하단 피벗 테이블 렌더링 (6열 구조)
     function renderKPIsAndTable() {
       const filtered = getFilteredRows(activeTab);
 
-      let imp = 0, reach = 0, clicks = 0;
+      let imp = 0;
+      let reach = 0;
+      let clicks = 0;
+
       filtered.forEach(r => {
         imp += Number(r.impressions || 0);
         reach += Number(r.reach || 0);
@@ -770,7 +793,7 @@
       const sorted = [...filtered].sort((a, b) => {
         const dateA = String(a.date || '').trim();
         const dateB = String(b.date || '').trim();
-        const dateDiff = dateB.localeCompare(dateA); 
+        const dateDiff = dateB.localeCompare(dateA);
         if (dateDiff !== 0) return dateDiff;
         return String(a.media || '').localeCompare(String(b.media || ''));
       });
@@ -825,7 +848,7 @@
         dateMap[d].clicks += Number(r.clicks || 0);
       });
 
-      const dates = Object.keys(dateMap).sort(); 
+      const dates = Object.keys(dateMap).sort();
       const impArr = dates.map(d => dateMap[d].imp);
       const clickArr = dates.map(d => dateMap[d].clicks);
 
@@ -868,12 +891,31 @@
           interaction: { mode: 'index', intersect: false },
           plugins: {
             legend: { display: false },
-            tooltip: { backgroundColor: '#0F172A', titleColor: '#F8FAFC', bodyColor: '#F8FAFC', borderColor: '#334155', borderWidth: 1 }
+            tooltip: {
+              backgroundColor: '#0F172A',
+              titleColor: '#F8FAFC',
+              bodyColor: '#F8FAFC',
+              borderColor: '#334155',
+              borderWidth: 1
+            }
           },
           scales: {
-            x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#94A3B8', font: { size: 10 } } },
-            yImp: { type: 'linear', position: 'left', grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#94A3B8', font: { size: 10 } } },
-            yClicks: { type: 'linear', position: 'right', grid: { display: false }, ticks: { color: '#10B981', font: { size: 10 } } }
+            x: {
+              grid: { color: 'rgba(51, 65, 85, 0.3)' },
+              ticks: { color: '#94A3B8', font: { size: 10 } }
+            },
+            yImp: {
+              type: 'linear',
+              position: 'left',
+              grid: { color: 'rgba(51, 65, 85, 0.3)' },
+              ticks: { color: '#94A3B8', font: { size: 10 } }
+            },
+            yClicks: {
+              type: 'linear',
+              position: 'right',
+              grid: { display: false },
+              ticks: { color: '#10B981', font: { size: 10 } }
+            }
           }
         }
       });
