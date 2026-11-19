@@ -3,6 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <!-- ✅ SNS 공유 필수 메타 태그 (절대 경로 및 캐시 무효화 쿼리 ?v=20261118 적용) -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://stackover-dev.github.io/Looker-Studio/noahuniversecompany.html">
+  <meta property="og:title" content="노아유니버스컴퍼니 - 퍼포먼스 마케팅 통합 보고서">
+  <meta property="og:description" content="노아유니버스컴퍼니 디지털 매체 결산 보고서입니다.">
+  <meta property="og:image" content="https://stackover-dev.github.io/Looker-Studio/og-imageg.png?v=20261118">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- ✅ Twitter / Slack / 메신저 호환 카드 메타 태그 -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="노아유니버스컴퍼니 - 퍼포먼스 마케팅 통합 보고서">
+  <meta name="twitter:description" content="노아유니버스컴퍼니 디지털 매체 결산 보고서입니다.">
+  <meta name="twitter:image" content="https://stackover-dev.github.io/Looker-Studio/og-imageg.png?v=20261118">
+
+  <!-- ✅ 파비콘 적용 -->
+  <link rel="icon" type="image/png" href="./favicon-497.png">
+
   <title>노아유니버스컴퍼니 - 퍼포먼스 마케팅 통합 보고서</title>
 
   <!-- Tailwind CSS & Chart.js CDN -->
@@ -250,7 +269,7 @@
           </div>
         </div>
 
-        <!-- 매체 선택형 PDF 다운로드 트리거 버튼 (CSV 버튼 제거 완료) -->
+        <!-- 매체 선택형 PDF 다운로드 트리거 버튼 -->
         <button type="button" onclick="openPdfSelectModal()" class="no-print flex-grow sm:flex-grow-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-md shadow-indigo-950/60 cursor-pointer">
           <span>📄 PDF 리포트 다운로드</span>
         </button>
