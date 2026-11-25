@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="이네이블유 - 월간 퍼포먼스 광고 성과 보고서">
+  <meta property="og:description" content="이네이블유 디지털 매체 결산 보고서입니다.">
+  <meta property="og:image" content="https://stackover-dev.github.io/Looker-Studio/og-imageg.png?v=20261118">
+  <link rel="icon" type="image/png" href="./favicon-497.png">
+
+  <title>이네이블유 - 월간 퍼포먼스 광고 성과 보고서</title>
+  
+  <!-- Tailwind CSS & Chart.js CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
+
+    /* ==========================================
+       [1. 글로벌 프리미엄 디자인 시스템 변수]
+       ========================================== */
+    :root {
+      --bg-primary: #020617;
+      --bg-card: #0F172A;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --glow-cyan: rgba(6, 182, 212, 0.3);
+      --glow-cyan-hover: rgba(6, 182, 212, 0.75);
+      --glow-indigo: rgba(99, 102, 241, 0.3);
+      --glow-indigo-hover: rgba(99, 102, 241, 0.8);
+      --shimmer-spec: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0) 100%);
+    }
+
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: #F8FAFC;
+      -webkit-font-smoothing: antialiased;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    @font-face {
+      font-family: 'Binggrae';
+      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Binggrae.woff') format('woff');
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    /* 전략 코멘트 및 운영 이슈 영역 전용 타이포그래피 스펙 */
+    [id*="strategy-comment-box"],
+    [id*="anomaly-comment-box"] {
+      font-family: 'Binggrae', sans-serif !important;
+      font-size: 16px !important;
+      line-height: 1.8 !important;
+      word-break: keep-all !important;
+    }
+
+    [id*="strategy-comment-box"] p,
+    [id*="strategy-comment-box"] h4,
+    [id*="strategy-comment-box"] li,
+    [id*="anomaly-comment-box"] p,
+    [id*="anomaly-comment-box"] li {
+      color: #F8FAFC !important;
+      font-family: 'Binggrae', sans-serif !important;
+      font-size: 16px !important;
+    }
+
+    [id*="strategy-comment-box"] b,
+    [id*="strategy-comment-box"] strong,
+    [id*="anomaly-comment-box"] b,
+    [id*="anomaly-comment-box"] strong {
+      color: #FDE047 !important;
+      font-weight: bold !important;
+      font-size: 17px !important;
+    }
+
+    [id*="strategy-comment-box"] mark,
+    [id*="anomaly-comment-box"] mark {
+      background-color: rgba(253, 224, 71, 0.2) !important;
+      color: #FDE047 !important;
+      padding: 2px 6px !important;
+      border-radius: 4px !important;
+    }
+
+    /* ==========================================
+       [2. 프리미엄 인터랙션 카드 & 절제된 쉬머 스펙]
+       ========================================== */
+    .interactive-card {
+      position: relative;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 0 20px 0 var(--glow-cyan);
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                  box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                  border-color 0.4s ease;
+    }
+
+    .interactive-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(255, 255, 255, 0.22);
+      box-shadow: 0 0 35px 5px var(--glow-cyan-hover);
+    }
+
+    /* 대표 소재(BEST PERFORMING) 전용 절제된 쉬머 애니메이션 */
+    .interactive-card.featured-shimmer {
+      background: linear-gradient(135deg, #1e1b4b 0%, #09090b 100%);
+      border-color: rgba(129, 140, 248, 0.28);
+      box-shadow: 0 0 25px 2px var(--glow-indigo);
+    }
+
+    .interactive-card.featured-shimmer:hover {
+      border-color: rgba(129, 140, 248, 0.65);
+      box-shadow: 0 0 40px 8px var(--glow-indigo-hover);
+    }
+
+    .interactive-card.featured-shimmer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -150%;
+      width: 150%;
+      height: 100%;
+      background: var(--shimmer-spec);
+      transform: skewX(-20deg);
+      animation: premium-shimmer 4.0s infinite ease-in-out;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    @keyframes premium-shimmer {
+      0% { left: -150%; }
+      25% { left: 150%; }
+      100% { left: 150%; }
+    }
+
+    /* 3단 가변 그리드 레이아웃 */
+    .layout-magazine-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 1024px) {
+      .layout-magazine-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .layout-magazine-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ==========================================
+       [3. 스케일 모달(Modal) 확대 인터랙션]
+       ========================================== */
+    .modal-blur-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+
+    .modal-blur-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-scale-content {
+      background-color: #111113;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 28px;
+      border-radius: 28px;
+      max-width: 860px;
+      width: 94%;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9);
+      transform: scale(0.75);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-blur-overlay.active .modal-scale-content {
+      transform: scale(1);
+    }
+
+    ::-webkit-scrollbar { height: 6px; width: 6px; }
+    ::-webkit-scrollbar-track { background: #0F172A; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    /* ==========================================
+       [4. 좌우 잘림 0% 무결점 A4 PDF 출력 전용 엔진]
+       ========================================== */
+    @page {
+      size: A4 portrait;
+      margin: 8mm;
+    }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      html {
+        background-color: #020617 !important;
+        width: 100% !important;
+      }
+
+      body {
+        background-color: #020617 !important;
+        color: #F8FAFC !important;
+        width: 1120px !important;
+        max-width: 1120px !important;
+        min-width: 1120px !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        zoom: 0.67;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      header {
+        position: static !important;
+        box-shadow: none !important;
+        background-color: #0F172A !important;
+        width: 100% !important;
+      }
+
+      main {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 16px 12px !important;
+        margin: 0 !important;
+      }
+
+      section,
+      .interactive-card {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+
+      .interactive-card.featured-shimmer::before {
+        display: none !important;
+      }
+
+      .print-kpi-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 12px !important;
+      }
+
+      .print-chart-grid {
+        display: grid !important;
+        grid-template-columns: 2fr 1fr !important;
+        gap: 16px !important;
+      }
+
+      .layout-magazine-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 16px !important;
+      }
+
+      .overflow-x-auto {
+        overflow: visible !important;
+      }
+
+      table {
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+
+      tr {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+  <!-- 상단 고정 네비게이션 헤더 -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
+        <h1 class="text-base font-bold tracking-tight text-white">PERFORMANCE AD REPOSITORY <span id="client-name-display" class="text-xs text-slate-400 font-normal ml-1">| 고객사: 이네이블유</span></h1>
+      </div>
+
+      <!-- 우측 통합 액션 그룹 (상단 기간 배지 + PDF 다운로드 버튼 밀착 배치) -->
+      <div class="flex items-center justify-end gap-2 ml-auto">
+        <nav id="dynamic-period-nav" class="flex items-center gap-1.5 overflow-x-auto py-1"></nav>
+
+        <button type="button" onclick="openPdfSelectModal()" class="no-print flex items-center space-x-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-1.5 rounded-lg transition shadow-md shadow-indigo-950/60 cursor-pointer shrink-0">
+          <span>📄 PDF 리포트 다운로드</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- 상단 타이틀 및 매체 탭 필터 -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6 relative z-20">
+      <div>
+        <p class="text-xs font-medium uppercase tracking-wider text-emerald-400">Monthly Performance Media Audit</p>
+        <h2 class="text-2xl font-bold text-white mt-1"><span id="report-period-title">집행 결산</span> 디지털 매체 결산 보고서</h2>
+      </div>
+
+      <div class="flex flex-wrap bg-slate-900 border border-slate-800 rounded-xl p-1 shadow-inner gap-1" id="media-filter-container">
+        <button type="button" onclick="setMediaFilter('ALL')" data-media="ALL" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow cursor-pointer">통합(전체)</button>
+        <button type="button" onclick="setMediaFilter('Naver')" data-media="Naver" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white cursor-pointer">네이버 검색</button>
+        <button type="button" onclick="setMediaFilter('Meta')" data-media="Meta" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white cursor-pointer">메타 (DA/SA)</button>
+        <button type="button" onclick="setMediaFilter('Google')" data-media="Google" class="media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white cursor-pointer">구글 애즈</button>
+      </div>
+    </div>
+
+    <!-- 1. 최상단 전략 코멘트 영역 (1단 100% 풀위드 표준 레이아웃) -->
+    <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+      <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
+      <div class="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-3">
+        <h2 class="text-xs font-extrabold tracking-wider text-blue-400 uppercase flex items-center gap-1.5">
+          <span>STRATEGY COMMENT</span>
+          <span id="active-media-badge" class="ml-1 px-2 py-0.5 rounded bg-blue-950/80 text-blue-300 border border-blue-800/60 text-[10px]">통합(전체)</span>
+        </h2>
+        <span id="strategy-date-display" class="text-xs text-slate-400 font-normal">집행 기간 로드 중...</span>
+      </div>
+      <div id="strategy-comment-box" class="text-sm leading-relaxed text-slate-300 w-full overflow-x-auto">
+        <p class="text-slate-500 animate-pulse font-sans text-xs">관리자 데이터 로딩 중...</p>
+      </div>
+    </section>
+
+    <!-- 2. 운영 이슈 분석 및 사후 대응 내역 (1단 100% 풀위드 표준 레이아웃) -->
+    <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden mt-6">
+      <div class="absolute top-0 left-0 w-1.5 h-full bg-amber-500"></div>
+      <div class="border-b border-slate-800/80 pb-3 mb-4">
+        <h2 class="text-xs font-extrabold tracking-wider text-amber-400 uppercase">
+          ANOMALIES & OPERATIONAL ACTIONS
+        </h2>
+        <h3 class="text-base font-bold text-white mt-1">운영 이슈 분석 및 사후 대응 내역</h3>
+      </div>
+
+      <div id="anomaly-comment-box" class="w-full overflow-x-auto">
+        <p class="text-slate-500 text-xs animate-pulse font-sans">관리자 데이터 로딩 중...</p>
+      </div>
+    </section>
+
+    <!-- 3. KPI 상단 요약 카드 (비용·CPC·전환수 완전 제외) -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 print-kpi-grid" id="kpi-cards-container"></section>
+
+    <!-- 4. 차트 영역 -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 print-chart-grid">
+      <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold text-white">일별 주요 지표 추이</h3>
+          <span class="text-[11px] text-slate-400 font-mono" id="chart-legend-text">좌축: 노출수(회) / 우축: 클릭수(건)</span>
+        </div>
+        <div class="relative h-72 w-full">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold text-white">매체별 핵심 지표 비중</h3>
+          <span class="text-[11px] text-emerald-400 font-semibold" id="share-chart-label">기준 지표 비율</span>
+        </div>
+        <div class="relative h-64 w-full flex items-center justify-center">
+          <div id="no-share-data-msg" class="hidden absolute inset-0 flex items-center justify-center text-xs text-slate-500">등록된 지표 데이터가 없습니다.</div>
+          <canvas id="shareChart"></canvas>
+        </div>
+        <p class="text-[10.5px] text-rose-400/90 text-center mt-4 leading-relaxed px-1">
+          ※ 상단 매체 필터 클릭 시 피벗 집계와 즉각 연동됩니다.
+        </p>
+      </div>
+    </section>
+
+    <!-- 5. 등록된 자사 크리에이티브(소재) 피드백 갤러리 섹션 -->
+    <section id="creative-feedback-section" class="hidden space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-800 pb-3">
+        <div>
+          <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+            <span>🖼️</span> CREATIVE PERFORMANCE & FEEDBACK
+          </h3>
+          <p class="text-[11px] text-slate-400 mt-0.5">실제 집행된 광고 크리에이티브 소재 및 성과 분석 피드백</p>
+        </div>
+        <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-slate-900 text-emerald-400 border border-slate-800 self-start sm:self-auto">
+          등록 소재: <span id="creative-count-badge">0</span>건
+        </span>
+      </div>
+      <div id="creative-container" class="layout-magazine-grid"></div>
+    </section>
+
+    <!-- 6. 일별 성과 상세 집계 내역 -->
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+      <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 bg-slate-900/60">
+        <div>
+          <h3 class="text-xs sm:text-sm font-bold text-white">일별 성과 상세 집계 내역</h3>
+          <p class="text-[11px] text-slate-400 mt-0.5">상단 선택 매체 기준 자동 피벗 연산 테이블</p>
+        </div>
+        <div class="text-xs font-mono font-semibold px-2.5 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700" id="table-row-count-badge">
+          집계 기간 산출 중...
+        </div>
+      </div>
+
+      <div class="overflow-x-auto w-full">
+        <table class="w-full text-left text-xs whitespace-nowrap min-w-[520px]" id="performance-table">
+          <thead class="bg-slate-900/90 text-slate-400 border-b border-slate-800 font-medium tracking-wider">
+            <tr id="table-header-row"></tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/60 font-mono text-slate-300" id="table-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 모달 1: 매체 선택형 PDF 리포트 다운로드 팝업 -->
+  <div class="modal-blur-overlay no-print" id="pdfSelectModal" onclick="closePdfSelectModal()">
+    <div class="modal-scale-content !max-w-[600px]" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
+        <div>
+          <span class="text-[11px] font-extrabold tracking-wider text-indigo-400 uppercase block mb-1">EXPORT REPORT TO PDF</span>
+          <h2 class="text-lg sm:text-xl font-bold text-white">다운로드할 보고서 매체 선택</h2>
+        </div>
+        <button type="button" onclick="closePdfSelectModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold transition cursor-pointer">✕</button>
+      </div>
+
+      <p class="text-xs text-slate-400 mb-5 leading-relaxed">
+        선택하신 매체 탭의 전략 코멘트·운영 이슈·KPI·차트·소재 피드백·일별 데이터 전체가 A4 규격에 맞춰 좌우 잘림 없이 고해상도 PDF로 출력됩니다.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6">
+        <button type="button" onclick="startMediaPdfPrint('ALL')" class="interactive-card p-4 text-left flex flex-col justify-between group cursor-pointer border-indigo-500/30">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">ALL CHANNELS</span>
+            <span id="pdf-count-ALL" class="text-[11px] font-mono text-slate-400">0건</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-emerald-400 transition-colors">통합(전체) 보고서</h3>
+          <p class="text-[11px] text-slate-400 mt-1">전체 매체 통합 성과 및 종합 전략</p>
+        </button>
+
+        <button type="button" onclick="startMediaPdfPrint('Naver')" class="interactive-card p-4 text-left flex flex-col justify-between group cursor-pointer">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-950 text-emerald-400 border border-emerald-800">NAVER</span>
+            <span id="pdf-count-Naver" class="text-[11px] font-mono text-slate-400">0건</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-emerald-400 transition-colors">네이버 검색 보고서</h3>
+          <p class="text-[11px] text-slate-400 mt-1">네이버 검색광고 단독 지표 및 코멘트</p>
+        </button>
+
+        <button type="button" onclick="startMediaPdfPrint('Meta')" class="interactive-card p-4 text-left flex flex-col justify-between group cursor-pointer">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-blue-950 text-blue-400 border border-blue-800">META</span>
+            <span id="pdf-count-Meta" class="text-[11px] font-mono text-slate-400">0건</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-blue-400 transition-colors">메타 (DA/SA) 보고서</h3>
+          <p class="text-[11px] text-slate-400 mt-1">인스타그램·페이스북 성과 및 소재 리포트</p>
+        </button>
+
+        <button type="button" onclick="startMediaPdfPrint('Google')" class="interactive-card p-4 text-left flex flex-col justify-between group cursor-pointer">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-rose-950 text-rose-400 border border-rose-800">GOOGLE</span>
+            <span id="pdf-count-Google" class="text-[11px] font-mono text-slate-400">0건</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-rose-400 transition-colors">구글 애즈 보고서</h3>
+          <p class="text-[11px] text-slate-400 mt-1">구글 검색·디스플레이 성과 및 코멘트</p>
+        </button>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 text-[11.5px] text-slate-300 flex items-start gap-2.5">
+        <span class="text-indigo-400 font-bold shrink-0">💡 안내:</span>
+        <span>매체 선택 후 열리는 인쇄 창에서 대상을 <b>[PDF로 저장]</b>으로 선택하시고, 설정의 <b>[배경 그래픽]</b>이 체크되어 있는지 확인해 주세요.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 모달 2: 광고 소재 이미지 확대 스케일 모달 -->
+  <div class="modal-blur-overlay no-print" id="sysModal" onclick="closeSystemModal()">
+    <div class="modal-scale-content" onclick="event.stopPropagation()">
+      <div class="flex items-start justify-between gap-4 pb-4 border-b border-slate-800 shrink-0">
+        <div>
+          <span id="sysModalBadge" class="text-[11px] font-extrabold tracking-wider text-cyan-400 uppercase block mb-1">CREATIVE PERFORMANCE</span>
+          <h2 id="sysModalTitle" style="font-size: 20px; font-weight: bold; color: white; line-height: 1.35;"></h2>
+        </div>
+        <button type="button" onclick="closeSystemModal()" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold shrink-0 transition border border-slate-700 cursor-pointer">
+          ✕ 닫기
+        </button>
+      </div>
+
+      <div id="sysModalImgWrap" class="hidden my-4 bg-slate-950 rounded-xl border border-slate-800 p-3 overflow-y-auto max-h-[64vh] text-center">
+        <img id="sysModalImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="확대 미리보기" class="w-full max-w-2xl h-auto rounded-lg mx-auto shadow-2xl">
+      </div>
+
+      <div class="pt-2 shrink-0">
+        <p id="sysModalDesc" style="color: #cbd5e1; font-size: 14.5px; line-height: 1.7; white-space: pre-line;"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================
+       [1. 모달 확대 인터랙션 함수]
+       ========================================== */
+    function openSystemModal(t, d, imgSrc, badgeText) {
+      var modal = document.getElementById('sysModal');
+      var modalBadge = document.getElementById('sysModalBadge');
+      var title = document.getElementById('sysModalTitle');
+      var desc = document.getElementById('sysModalDesc');
+      var imgWrap = document.getElementById('sysModalImgWrap');
+      var imgEl = document.getElementById('sysModalImg');
+
+      if (!modal) return;
+      if (title) title.innerText = t || '';
+      if (desc) desc.innerText = d || '';
+      if (modalBadge) modalBadge.innerText = badgeText || 'CREATIVE PERFORMANCE';
+
+      if (imgSrc && imgEl && imgWrap) {
+        imgEl.src = imgSrc;
+        imgWrap.classList.remove('hidden');
+        imgWrap.scrollTop = 0;
+      } else if (imgWrap) {
+        if (imgEl) imgEl.src = '';
+        imgWrap.classList.add('hidden');
+      }
+
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function openCreativeCardModal(cardEl) {
+      if (!cardEl) return;
+      var t = cardEl.getAttribute('data-title') || '';
+      var d = cardEl.getAttribute('data-feedback') || '';
+      var imgSrc = cardEl.getAttribute('data-image') || '';
+      var badgeText = cardEl.getAttribute('data-badge') || 'CREATIVE PERFORMANCE';
+      openSystemModal(t, d, imgSrc, badgeText);
+    }
+
+    function closeSystemModal() {
+      var modal = document.getElementById('sysModal');
+      if (modal) modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    window.openSystemModal = openSystemModal;
+    window.openCreativeCardModal = openCreativeCardModal;
+    window.closeSystemModal = closeSystemModal;
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeSystemModal();
+        closePdfSelectModal();
+      }
+    });
+
+    /* ==========================================
+       [2. 도넛 차트 네온 글로우 플러그인 및 상태 초기화]
+       ========================================== */
+    var neonGlowPlugin = {
+      id: 'neonGlowPlugin',
+      beforeDraw: function(chart) {
+        if (chart.config.type !== 'doughnut') return;
+        var ctx = chart.ctx;
+        var glowIdx = chart.config.data.activeGlowIndex;
+
+        if (glowIdx !== undefined && glowIdx !== null && glowIdx !== -1) {
+          var meta = chart.getDatasetMeta(0);
+          var arc = meta.data[glowIdx];
+          if (arc) {
+            ctx.save();
+            ctx.shadowColor = chart.config.data.datasets[0].backgroundColor[glowIdx];
+            ctx.shadowBlur = 24;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+            arc.draw(ctx);
+            ctx.restore();
+          }
+        }
+      }
+    };
+    if (typeof Chart !== 'undefined') {
+      try { Chart.register(neonGlowPlugin); } catch (e) {}
+    }
+
+    var dbReportData = null;
+    var matchedClientDisplayName = "이네이블유";
+    var currentSelectedPeriod = "";
+    var rawDataset = [];
+    var currentMedia = 'ALL';
+    var trendChartInstance = null;
+    var shareChartInstance = null;
+    var currentColumns = [];
+    var disableChartAnimOnce = false;
+
+    var MEDIA_LABEL_MAP = {
+      ALL: '통합(전체)',
+      Naver: '네이버 검색',
+      Meta: '메타 (DA/SA)',
+      Google: '구글 애즈'
+    };
+
+    function formatNumber(num) {
+      return new Intl.NumberFormat('ko-KR').format(Math.round(num || 0));
+    }
+
+    function toCleanNumber(val) {
+      if (typeof val === 'number') return Number.isFinite(val) ? val : 0;
+      if (val === null || val === undefined) return 0;
+      var cleaned = String(val).replace(/[^0-9.-]/g, '');
+      var parsed = parseFloat(cleaned);
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function normalizeMediaName(rawMedia) {
+      var m = String(rawMedia || '').trim();
+      var lower = m.toLowerCase();
+      if (!m) return 'Meta';
+      if (lower.includes('naver') || lower.includes('네이버')) return 'Naver';
+      if (lower.includes('meta') || lower.includes('메타') || lower.includes('facebook') || lower.includes('instagram')) return 'Meta';
+      if (lower.includes('google') || lower.includes('구글')) return 'Google';
+      return m;
+    }
+
+    function normalizeDateString(rawDate) {
+      var s = String(rawDate || '').trim();
+      if (!s || s === '일자미상') return '일자미상';
+      var match = s.match(/(\d{4})[.\-\/\s]+(\d{1,2})[.\-\/\s]+(\d{1,2})/);
+      if (match) {
+        var yyyy = match[1];
+        var mm = match[2].length === 1 ? '0' + match[2] : match[2];
+        var dd = match[3].length === 1 ? '0' + match[3] : match[3];
+        return yyyy + '-' + mm + '-' + dd;
+      }
+      return s;
+    }
+
+    function normalizeDataset(rows) {
+      if (!Array.isArray(rows)) return [];
+      return rows.map(function(row) {
+        if (!row || typeof row !== 'object') return null;
+        var normalized = Object.assign({}, row);
+        var rawD = row.date || row.Date || row['집행일자'] || row['일자'] || row['날짜'] || '';
+        normalized.date = normalizeDateString(rawD);
+        normalized.media = normalizeMediaName(row.media || row.Media || row.platform || row.channel || row['매체'] || row['플랫폼']);
+        normalized.impressions = toCleanNumber(row.impressions !== undefined ? row.impressions : (row.Impressions !== undefined ? row.Impressions : (row['노출수'] !== undefined ? row['노출수'] : row['노출'])));
+        normalized.reach = toCleanNumber(row.reach !== undefined ? row.reach : (row.Reach !== undefined ? row.Reach : (row['도달수'] !== undefined ? row['도달수'] : row['도달'])));
+        normalized.clicks = toCleanNumber(row.clicks !== undefined ? row.clicks : (row.Clicks !== undefined ? row.Clicks : (row['클릭수'] !== undefined ? row['클릭수'] : row['클릭'])));
+        return normalized;
+      }).filter(Boolean);
+    }
+
+    function normalizeColumns(cols) {
+      var defaultCols = [
+        { key: 'impressions', label: '노출수', isConv: false },
+        { key: 'reach', label: '도달수', isConv: false },
+        { key: 'clicks', label: '클릭수', isConv: false }
+      ];
+
+      if (!Array.isArray(cols) || cols.length === 0) return defaultCols;
+
+      var labelFallbackMap = {
+        impressions: '노출수',
+        reach: '도달수',
+        clicks: '클릭수'
+      };
+
+      var mapped = cols.map(function(c) {
+        if (!c) return null;
+        var key = typeof c === 'string' ? c : String(c.key || c.field || c.id || '').trim();
+        if (!key || key === 'cost' || key === 'conv' || key === 'result') return null;
+        var label = typeof c === 'string' ? (labelFallbackMap[key] || key) : String(c.label || c.name || c.title || labelFallbackMap[key] || key).trim();
+        if (label.includes('비용') || label.includes('전환')) return null;
+        return { key: key, label: label, isConv: false };
+      }).filter(Boolean);
+
+      return mapped.length > 0 ? mapped : defaultCols;
+    }
+
+    /* ==========================================
+       [3. 일일 데이터 보고서 기준 시작 날짜 ~ 마지막 날짜 계산 함수]
+       ========================================== */
+    function getReportDateRangeLabel(targetRows, periodObj) {
+      var rows = (Array.isArray(targetRows) && targetRows.length > 0) ? targetRows : rawDataset;
+      var validDates = [];
+
+      if (Array.isArray(rows) && rows.length > 0) {
+        rows.forEach(function(item) {
+          var d = normalizeDateString(item && item.date ? item.date : '');
+          if (d && d !== '일자미상' && validDates.indexOf(d) === -1) {
+            validDates.push(d);
+          }
+        });
+      }
+
+      if (validDates.length > 0) {
+        validDates.sort(function(a, b) {
+          return a.localeCompare(b);
+        });
+        return validDates[0] + ' ~ ' + validDates[validDates.length - 1];
+      }
+
+      if (periodObj) {
+        if (periodObj.startDate && periodObj.endDate) {
+          return normalizeDateString(periodObj.startDate) + ' ~ ' + normalizeDateString(periodObj.endDate);
+        }
+        if (periodObj.dateRange) {
+          return String(periodObj.dateRange).trim();
+        }
+      }
+
+      return currentSelectedPeriod ? ('기준: ' + currentSelectedPeriod + ' 결산') : '집행 데이터 없음';
+    }
+
+    function getPeriodNavDateRange(periodKey) {
+      if (dbReportData && dbReportData.months && dbReportData.months[periodKey]) {
+        var pObj = dbReportData.months[periodKey];
+        var norm = normalizeDataset(pObj.rawDataset);
+        var hasValid = norm.some(function(d) {
+          return (d.impressions + d.reach + d.clicks) > 0;
+        });
+        if (norm.length > 0 && hasValid) {
+          return getReportDateRangeLabel(norm, pObj);
+        }
+        if (periodKey === currentSelectedPeriod && rawDataset.length > 0) {
+          return getReportDateRangeLabel(rawDataset, pObj);
+        }
+        return getReportDateRangeLabel([], pObj);
+      }
+      return periodKey || '결산 보고서';
+    }
+
+    /* 이네이블유 전용 database.json 자동 매칭 */
+    function findClientRecord(db, currentFilename) {
+      if (!db || typeof db !== 'object') return null;
+      var currentKey = String(currentFilename || '').replace(/\.html$/i, '');
+      if (currentKey && db[currentKey]) {
+        return { name: db[currentKey].name || "이네이블유", record: db[currentKey] };
+      }
+      if (db["enableu"]) {
+        return { name: db["enableu"].name || "이네이블유", record: db["enableu"] };
+      }
+      if (db["enable-u"]) {
+        return { name: db["enable-u"].name || "이네이블유", record: db["enable-u"] };
+      }
+      if (db["enableyou"]) {
+        return { name: db["enableyou"].name || "이네이블유", record: db["enableyou"] };
+      }
+      if (db["이네이블유"]) {
+        return { name: "이네이블유", record: db["이네이블유"] };
+      }
+      for (var key in db) {
+        if (!Object.prototype.hasOwnProperty.call(db, key)) continue;
+        var item = db[key];
+        if (!item) continue;
+        if (
+          key.includes("이네이블유") ||
+          key.includes("이네이블") ||
+          key.toLowerCase().includes("enableu") ||
+          key.toLowerCase().includes("enable-u") ||
+          key.toLowerCase().includes("enableyou") ||
+          (item.name && (item.name.includes("이네이블유") || item.name.includes("이네이블"))) ||
+          (item.htmlFilename && (
+            item.htmlFilename === currentFilename ||
+            item.htmlFilename.toLowerCase().includes("enableu") ||
+            item.htmlFilename.toLowerCase().includes("enable-u") ||
+            item.htmlFilename.toLowerCase().includes("enable")
+          ))
+        ) {
+          return { name: item.name || key, record: item };
+        }
+      }
+      return null;
+    }
+
+    function mergeClientRecords(remoteRec, localRec) {
+      if (!remoteRec) return localRec;
+      if (!localRec) return remoteRec;
+
+      var merged = Object.assign({}, remoteRec, localRec);
+      merged.months = Object.assign({}, remoteRec.months || {});
+
+      if (localRec.months && typeof localRec.months === 'object') {
+        Object.keys(localRec.months).forEach(function(periodKey) {
+          var rMonth = (remoteRec.months && remoteRec.months[periodKey]) || {};
+          var lMonth = localRec.months[periodKey] || {};
+
+          var useLocalDataset = Array.isArray(lMonth.rawDataset) && lMonth.rawDataset.length > 0 &&
+                                (!Array.isArray(rMonth.rawDataset) || lMonth.rawDataset.length >= rMonth.rawDataset.length);
+
+          merged.months[periodKey] = Object.assign({}, rMonth, lMonth, {
+            rawDataset: useLocalDataset ? lMonth.rawDataset : (rMonth.rawDataset || lMonth.rawDataset || []),
+            columns: (lMonth.columns && lMonth.columns.length > 0) ? lMonth.columns : (rMonth.columns || []),
+            comments: Object.assign({}, rMonth.comments || {}, lMonth.comments || {}),
+            creatives: (lMonth.creatives && Object.keys(lMonth.creatives).length > 0) ? lMonth.creatives : (rMonth.creatives || {})
+          });
+        });
+      }
+      return merged;
+    }
+
+    async function initDataLoad() {
+      var clientName = "이네이블유";
+      var currentFilename = decodeURIComponent(window.location.pathname.split('/').pop() || 'enableu.html');
+      
+      var remoteDb = null;
+      var localDb = null;
+
+      var candidatePaths = [
+        './database.json?t=' + Date.now(),
+        '../database.json?t=' + Date.now(),
+        '/Looker-Studio/database.json?t=' + Date.now(),
+        '/adplanters/database.json?t=' + Date.now()
+      ];
+
+      for (var i = 0; i < candidatePaths.length; i++) {
+        try {
+          var response = await fetch(candidatePaths[i], { cache: 'no-store' });
+          if (response.ok) {
+            remoteDb = await response.json();
+            break;
+          }
+        } catch (e) {}
+      }
+
+      try {
+        var savedDb = localStorage.getItem('MEDIA_REPORT_DB');
+        if (savedDb) localDb = JSON.parse(savedDb);
+      } catch (e) {}
+
+      var remoteMatch = findClientRecord(remoteDb, currentFilename);
+      var localMatch = findClientRecord(localDb, currentFilename);
+
+      if (remoteMatch && localMatch) {
+        clientName = localMatch.name || remoteMatch.name;
+        dbReportData = mergeClientRecords(remoteMatch.record, localMatch.record);
+      } else if (remoteMatch) {
+        clientName = remoteMatch.name;
+        dbReportData = remoteMatch.record;
+      } else if (localMatch) {
+        clientName = localMatch.name;
+        dbReportData = localMatch.record;
+      }
+
+      matchedClientDisplayName = clientName;
+      var clientDisplayEl = document.getElementById('client-name-display');
+      if (clientDisplayEl) clientDisplayEl.innerText = '| 고객사: ' + clientName;
+
+      if (dbReportData && dbReportData.months) {
+        var availablePeriods = Object.keys(dbReportData.months);
+        if (availablePeriods.length > 0) {
+          var populated = availablePeriods.filter(function(p) {
+            return Array.isArray(dbReportData.months[p].rawDataset) && dbReportData.months[p].rawDataset.length > 0;
+          });
+          currentSelectedPeriod = populated.length > 0 ? populated[populated.length - 1] : availablePeriods[availablePeriods.length - 1];
+        }
+      } else {
+        currentSelectedPeriod = "집행 결산";
+      }
+
+      loadPeriodDataAndRender();
+      renderPeriodNavigation();
+    }
+
+    function renderPeriodNavigation() {
+      var navContainer = document.getElementById('dynamic-period-nav');
+      if (!navContainer) return;
+      navContainer.innerHTML = '';
+
+      if (!dbReportData || !dbReportData.months || Object.keys(dbReportData.months).length === 0) {
+        var aTag = document.createElement('a');
+        aTag.href = "javascript:void(0);";
+        aTag.className = "px-3 py-1.5 text-xs font-semibold rounded-md border border-emerald-500/60 bg-emerald-500/10 text-emerald-400 shrink-0 font-mono";
+        aTag.innerText = getPeriodNavDateRange(currentSelectedPeriod || "집행 결산");
+        navContainer.appendChild(aTag);
+        return;
+      }
+
+      var periods = Object.keys(dbReportData.months);
+      periods.forEach(function(p) {
+        var aTag = document.createElement('a');
+        aTag.href = "javascript:void(0);";
+        var labelRange = getPeriodNavDateRange(p);
+        
+        if (p === currentSelectedPeriod) {
+          aTag.className = "px-3 py-1.5 text-xs font-semibold rounded-md border border-emerald-500/60 bg-emerald-500/10 text-emerald-400 shrink-0 font-mono";
+          aTag.innerText = labelRange;
+        } else {
+          aTag.className = "no-print px-3 py-1.5 text-xs font-semibold rounded-md border border-slate-700 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition shrink-0 font-mono";
+          aTag.innerText = labelRange;
+          aTag.onclick = function() {
+            currentSelectedPeriod = p;
+            loadPeriodDataAndRender();
+            renderPeriodNavigation();
+          };
+        }
+        navContainer.appendChild(aTag);
+      });
+    }
+
+    function cleanText(txt) {
+      if (!txt) return "";
+      var rawStr = String(txt).trim();
+      var plainText = rawStr
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/\u0026nbsp;/gi, ' ')
+        .replace(/\u00A0/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      if (
+        !plainText ||
+        plainText === "전략 총평을 입력하세요." || 
+        plainText === "특이사항을 입력하세요." || 
+        plainText === "관리자 데이터 로딩 중..." || 
+        plainText.includes("HTML 태그를 활용하여") ||
+        plainText.includes("실시간 프리뷰 영역입니다")
+      ) return "";
+      return rawStr;
+    }
+
+    function extractComment(periodObj, mediaTab, type) {
+      if (!periodObj) return "";
+      var comments = periodObj.comments || {};
+      var checkKeys = function(keys) {
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
+          if (comments[k] && cleanText(comments[k][type])) return cleanText(comments[k][type]);
+        }
+        return "";
+      };
+
+      var result = "";
+      if (mediaTab === 'Meta') result = checkKeys(['Meta', 'meta', '메타', '메타 (DA/SA)']);
+      else if (mediaTab === 'Naver') result = checkKeys(['Naver', 'naver', '네이버', '네이버 검색']);
+      else if (mediaTab === 'Google') result = checkKeys(['Google', 'google', '구글', '구글 애즈']);
+      else if (mediaTab === 'ALL') {
+        result = checkKeys(['ALL', 'all', '통합', '통합(전체)']);
+        if (!result) result = checkKeys(['Meta', 'meta', '메타', '메타 (DA/SA)', 'Naver', 'naver', '네이버', '네이버 검색', 'Google', 'google', '구글', '구글 애즈']);
+      }
+
+      if (!result && mediaTab === 'ALL') {
+        var rootKey = type === 'strategy' ? 'strategyComment' : 'anomalyComment';
+        result = cleanText(periodObj[rootKey]);
+      }
+      return result;
+    }
+
+    function matchMediaKey(keyName, tabKey) {
+      var k = String(keyName || '').trim().toLowerCase();
+      var t = String(tabKey || '').trim().toLowerCase();
+      if (t === 'all') return k === 'all' || k === '통합' || k === '통합(전체)';
+      if (t === 'meta') return k.includes('meta') || k.includes('메타') || k.includes('facebook') || k.includes('instagram');
+      if (t === 'naver') return k.includes('naver') || k.includes('네이버');
+      if (t === 'google') return k.includes('google') || k.includes('구글');
+      return k === t;
+    }
+
+    function hasMediaActualDelivery(targetTab) {
+      var rows = getFilteredRows(targetTab);
+      if (!rows || rows.length === 0) return false;
+      return rows.some(function(r) {
+        return (toCleanNumber(r.impressions) + toCleanNumber(r.reach) + toCleanNumber(r.clicks)) > 0;
+      });
+    }
+
+    function getCreativesForCurrentTab() {
+      // 실제 광고 집행 데이터(로우 데이터)가 없는 매체는 소재 피드백을 강제로 비활성화(공란) 처리
+      if (!hasMediaActualDelivery(currentMedia)) return [];
+
+      if (!dbReportData || !dbReportData.months || !dbReportData.months[currentSelectedPeriod]) return [];
+      var periodData = dbReportData.months[currentSelectedPeriod];
+      if (!periodData.creatives) return [];
+      var raw = periodData.creatives;
+
+      if (Array.isArray(raw)) {
+        if (currentMedia === 'ALL') return raw;
+        var filteredArr = raw.filter(function(item) {
+          return !item.media || matchMediaKey(item.media, currentMedia);
+        });
+        return filteredArr.length > 0 ? filteredArr : raw;
+      }
+
+      if (typeof raw === 'object') {
+        if (currentMedia === 'ALL') {
+          var allList = [];
+          var otherLists = [];
+          Object.keys(raw).forEach(function(k) {
+            var arr = Array.isArray(raw[k]) ? raw[k] : [];
+            if (matchMediaKey(k, 'ALL')) allList = allList.concat(arr);
+            else otherLists = otherLists.concat(arr);
+          });
+          return allList.length > 0 ? allList : otherLists;
+        } else {
+          var list = [];
+          Object.keys(raw).forEach(function(k) {
+            if (matchMediaKey(k, currentMedia) && Array.isArray(raw[k])) {
+              list = list.concat(raw[k]);
+            }
+          });
+          if (list.length === 0) {
+            Object.keys(raw).forEach(function(k) {
+              if (matchMediaKey(k, 'ALL') && Array.isArray(raw[k])) {
+                list = list.concat(raw[k]);
+              }
+            });
+          }
+          return list;
+        }
+      }
+      return [];
+    }
+
+    function escapeAttr(str) {
+      return String(str || '')
+        .replace(/&/g, '\u0026amp;')
+        .replace(/"/g, '\u0026quot;')
+        .replace(/'/g, '\u0026#39;')
+        .replace(/</g, '\u0026lt;')
+        .replace(/>/g, '\u0026gt;');
+    }
+
+    function loadPeriodDataAndRender() {
+      var periodData = (dbReportData && dbReportData.months) ? dbReportData.months[currentSelectedPeriod] : null;
+      if (periodData) {
+        rawDataset = normalizeDataset(periodData.rawDataset);
+        currentColumns = normalizeColumns(periodData.columns);
+      } else {
+        rawDataset = [];
+        currentColumns = normalizeColumns(null);
+      }
+
+      var periodTitleEl = document.getElementById('report-period-title');
+      if (periodTitleEl) periodTitleEl.innerText = currentSelectedPeriod || "집행 결산";
+      
+      renderDashboard();
+    }
+
+    function getFilteredRows(targetTab) {
+      var tab = targetTab || currentMedia;
+      if (tab === 'ALL') return rawDataset;
+      return rawDataset.filter(function(item) {
+        var m = String(item.media || '').trim().toLowerCase();
+        var t = tab.toLowerCase();
+        if (t === 'naver') return m.includes('naver') || m.includes('네이버');
+        if (t === 'meta') return m.includes('meta') || m.includes('메타') || m.includes('facebook') || m.includes('instagram');
+        if (t === 'google') return m.includes('google') || m.includes('구글');
+        return m === t;
+      });
+    }
+
+    function setMediaFilter(media, instantMode) {
+      currentMedia = media || 'ALL';
+      disableChartAnimOnce = Boolean(instantMode);
+
+      document.querySelectorAll('.media-btn').forEach(function(btn) {
+        if (btn.dataset.media === currentMedia) {
+          btn.className = 'media-btn px-4 py-2 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow cursor-pointer';
+        } else {
+          btn.className = 'media-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer';
+        }
+      });
+
+      var badgeEl = document.getElementById('active-media-badge');
+      if (badgeEl) badgeEl.innerText = MEDIA_LABEL_MAP[currentMedia] || currentMedia;
+
+      renderDashboard();
+      disableChartAnimOnce = false;
+    }
+
+    window.setMediaFilter = setMediaFilter;
+
+    function renderDashboard() {
+      var periodData = (dbReportData && dbReportData.months) ? dbReportData.months[currentSelectedPeriod] : null;
+      var filtered = getFilteredRows(currentMedia);
+      var hasActualData = hasMediaActualDelivery(currentMedia);
+      var currentTabLabel = MEDIA_LABEL_MAP[currentMedia] || currentMedia;
+      var dateRangeText = getReportDateRangeLabel(filtered, periodData);
+
+      // 상단 STRATEGY COMMENT 우측 날짜 표기 업데이트
+      var stratDateEl = document.getElementById('strategy-date-display');
+      if (stratDateEl) {
+        stratDateEl.innerText = dateRangeText;
+      }
+
+      // 하단 일별 성과 상세 집계 내역 우측 배지 날짜 표기 업데이트
+      var tableBadgeEl = document.getElementById('table-row-count-badge');
+      if (tableBadgeEl) {
+        tableBadgeEl.innerText = dateRangeText;
+      }
+      
+      // 1. 코멘트 업데이트 (실제 집행 데이터가 없는 매체는 강제 공란 처리)
+      var strategyBox = document.getElementById('strategy-comment-box');
+      var anomalyBox = document.getElementById('anomaly-comment-box');
+      
+      var stratText = extractComment(periodData, currentMedia, 'strategy');
+      var anomText = extractComment(periodData, currentMedia, 'anomaly');
+
+      if (!hasActualData) {
+        stratText = "";
+        anomText = "";
+      }
+
+      if (strategyBox) {
+        if (!hasActualData) {
+          strategyBox.innerHTML = '<div class="py-8 text-center text-slate-500 font-sans"><span class="text-base font-bold text-slate-400 block mb-1">집행 내역 없음 (공란)</span>해당 기간 내 집행된 <strong class="text-emerald-400">[' + currentTabLabel + ']</strong> 광고 데이터가 존재하지 않아 공란 처리되었습니다.</div>';
+        } else if (stratText) {
+          strategyBox.innerHTML = stratText;
+        } else {
+          strategyBox.innerHTML = '<div class="py-8 text-center text-slate-400 font-sans text-xs">해당 기간의 <strong class="text-blue-400">[' + currentTabLabel + ']</strong> 전략 코멘트가 아직 등록되지 않았습니다.</div>';
+        }
+      }
+
+      if (anomalyBox) {
+        if (!hasActualData) {
+          anomalyBox.innerHTML = '<div class="py-6 text-center text-slate-500 font-sans text-xs">해당 기간 내 집행된 <strong class="text-amber-400">[' + currentTabLabel + ']</strong> 광고가 없으므로 보고 내역이 없습니다.</div>';
+        } else if (anomText) {
+          if (anomText.includes('<li>') || anomText.includes('<p>') || anomText.includes('<div')) {
+            anomalyBox.innerHTML = anomText;
+          } else {
+            var anomalies = anomText.split('\n').filter(function(t) { return t.trim() !== ''; });
+            var html = '<ul class="text-xs leading-relaxed text-slate-300 space-y-2 list-disc list-inside">';
+            anomalies.forEach(function(a) {
+              html += '<li><strong class="text-slate-100">' + a + '</strong></li>';
+            });
+            html += '</ul>';
+            anomalyBox.innerHTML = html;
+          }
+        } else {
+          anomalyBox.innerHTML = '<div class="py-6 text-center text-slate-400 font-sans text-xs">등록된 특이사항 및 이슈가 없습니다. 정상 송출 및 최적화가 유지되고 있습니다.</div>';
+        }
+      }
+
+      // 2. 등록 소재 업데이트 (집행 데이터 없는 매체는 자동 숨김 처리)
+      var creativeSec = document.getElementById('creative-feedback-section');
+      var creativeCon = document.getElementById('creative-container');
+      var countBadge = document.getElementById('creative-count-badge');
+      var creatives = getCreativesForCurrentTab();
+
+      if (creativeSec && creativeCon) {
+        if (creatives && creatives.length > 0) {
+          creativeSec.classList.remove('hidden');
+          if (countBadge) countBadge.innerText = creatives.length;
+          
+          creativeCon.innerHTML = creatives.map(function(c, idx) {
+            var isFeatured = idx === 0 ? ' featured-shimmer' : '';
+            var badgeLabel = idx === 0 ? '🏆 BEST PERFORMING' : ('소재 #' + (idx + 1));
+            var badgeClass = idx === 0
+              ? 'bg-indigo-950/90 text-indigo-300 border border-indigo-500/50'
+              : 'bg-blue-950/80 text-blue-400 border border-blue-800/80';
+            var titleText = c.title || '등록된 소재명 없음';
+            var feedbackText = c.feedback || '소재에 대한 피드백이 등록되지 않았습니다.';
+            var imgSrc = c.image || '';
+            
+            return '<div class="interactive-card' + isFeatured + ' cursor-pointer flex flex-col p-0 transition hover:border-slate-700" data-title="' + escapeAttr(titleText) + '" data-badge="CREATIVE #' + (idx + 1) + '" data-image="' + escapeAttr(imgSrc) + '" data-feedback="' + escapeAttr(feedbackText) + '" onclick="openCreativeCardModal(this)"><div class="h-60 sm:h-64 bg-slate-950 flex items-center justify-center border-b border-slate-800 p-3 relative"><img src="' + escapeAttr(imgSrc) + '" class="max-w-full max-h-full object-contain rounded-lg shadow-sm" alt="' + escapeAttr(titleText) + '" loading="lazy"><span class="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-bold ' + badgeClass + ' backdrop-blur-sm">' + badgeLabel + '</span></div><div class="p-4 sm:p-5 flex-grow flex flex-col justify-between bg-[#0F172A]"><div><h4 class="text-xs sm:text-sm font-bold text-white mb-2 leading-snug">' + titleText + '</h4><p class="text-xs text-slate-300 whitespace-pre-line leading-relaxed font-sans line-clamp-3">' + feedbackText + '</p></div></div></div>';
+          }).join('');
+        } else {
+          creativeSec.classList.add('hidden');
+          creativeCon.innerHTML = '';
+          if (countBadge) countBadge.innerText = '0';
+        }
+      }
+
+      // 3. 매체 필터링 및 KPI 카드 렌더링 (비용·CPC·전환수 완전 제외)
+      var kpiContainer = document.getElementById('kpi-cards-container');
+      kpiContainer.innerHTML = '';
+
+      var hasClicks = false;
+      var hasImpressions = false;
+      var kpiTotals = {};
+
+      currentColumns.forEach(function(c) {
+        if (c.key === 'clicks') hasClicks = true;
+        if (c.key === 'impressions') hasImpressions = true;
+
+        kpiTotals[c.key] = 0;
+        filtered.forEach(function(d) {
+          kpiTotals[c.key] += toCleanNumber(d[c.key]) || 0;
+        });
+      });
+
+      currentColumns.forEach(function(c) {
+        var labelStr = String(c.label || c.key || '');
+        var displayValue = formatNumber(kpiTotals[c.key]);
+        var valColor = c.key === 'clicks' ? "text-emerald-400" : "text-white";
+        
+        kpiContainer.innerHTML += '<div class="interactive-card p-4 !rounded-xl"><span class="text-[11px] font-semibold text-slate-400 mb-1">총 ' + labelStr + '</span><div class="text-base sm:text-xl font-bold font-mono ' + valColor + ' mt-1">' + displayValue + '</div></div>';
+      });
+
+      if (hasClicks && hasImpressions) {
+        var ctr = kpiTotals['impressions'] > 0 ? (kpiTotals['clicks'] / kpiTotals['impressions']) * 100 : 0;
+        kpiContainer.innerHTML += '<div class="interactive-card p-4 !rounded-xl"><span class="text-[11px] font-semibold text-slate-400 mb-1">평균 클릭률 (CTR)</span><div class="text-base sm:text-xl font-bold font-mono text-cyan-400 mt-1">' + ctr.toFixed(2) + '%</div></div>';
+      }
+
+      // --- 테이블 헤더 생성 ---
+      var theadRow = document.getElementById('table-header-row');
+      var headerHTML = '<th class="py-3 px-4 font-semibold">집행일자</th><th class="py-3 px-4 font-semibold">매체</th>';
+      currentColumns.forEach(function(c) {
+        var labelStr = String(c.label || c.key || '');
+        var colorClass = c.key === 'clicks' ? 'text-emerald-400' : '';
+        headerHTML += '<th class="py-3 px-4 font-semibold text-right ' + colorClass + '">' + labelStr + '</th>';
+      });
+      if (hasClicks && hasImpressions) headerHTML += '<th class="py-3 px-4 font-semibold text-right text-cyan-400">클릭률 (CTR)</th>';
+      theadRow.innerHTML = headerHTML;
+
+      // --- 일별 데이터 집계 및 표 렌더링 ---
+      var dailyMap = {};
+      filtered.forEach(function(item) {
+        var cleanDate = String(item.date || '').trim() || '일자미상';
+        if (!dailyMap[cleanDate]) {
+          dailyMap[cleanDate] = { date: cleanDate, media: currentMedia === 'ALL' ? '통합' : (item.media || currentMedia) };
+          currentColumns.forEach(function(c) { dailyMap[cleanDate][c.key] = 0; });
+        }
+        currentColumns.forEach(function(c) {
+          dailyMap[cleanDate][c.key] += toCleanNumber(item[c.key]) || 0;
+        });
+      });
+
+      var dailyAggregated = Object.values(dailyMap).sort(function(a, b) {
+        return b.date.localeCompare(a.date);
+      });
+      var tbody = document.getElementById('table-body');
+      tbody.innerHTML = '';
+      
+      if (dailyAggregated.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="' + (currentColumns.length + 3) + '" class="py-8 text-center text-slate-500 font-sans">선택하신 매체(' + currentTabLabel + ')에 집행된 데이터가 없습니다.</td></tr>';
+      } else {
+        var totalTr = document.createElement('tr');
+        totalTr.className = 'bg-slate-800/90 border-b-2 border-slate-700 font-bold';
+        
+        var totalCellsHTML = '<td class="py-3 px-4 font-sans text-amber-400">총합계 (평균)</td><td class="py-3 px-4 font-sans"><span class="px-2 py-0.5 rounded text-[11px] bg-slate-700 text-slate-300 font-semibold">' + (currentMedia === 'ALL' ? '통합' : currentMedia) + '</span></td>';
+
+        currentColumns.forEach(function(c) {
+          var displayVal = formatNumber(kpiTotals[c.key]);
+          var colorClass = c.key === 'clicks' ? 'text-emerald-400 font-bold' : 'text-slate-300';
+          totalCellsHTML += '<td class="py-3 px-4 text-right ' + colorClass + '">' + displayVal + '</td>';
+        });
+
+        if (hasClicks && hasImpressions) {
+          var avgCtr = kpiTotals['impressions'] > 0 ? ((kpiTotals['clicks'] / kpiTotals['impressions']) * 100).toFixed(2) : '0.00';
+          totalCellsHTML += '<td class="py-3 px-4 text-right text-cyan-400 font-semibold">' + avgCtr + '%</td>';
+        }
+
+        totalTr.innerHTML = totalCellsHTML;
+        tbody.appendChild(totalTr);
+
+        dailyAggregated.forEach(function(row) {
+          var tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-800/40 transition-colors border-b border-slate-800/40';
+          
+          var badgeClass = 'bg-slate-800 text-slate-300 border border-slate-700';
+          var isNaver = String(row.media).toLowerCase().includes('naver') || String(row.media).includes('네이버');
+          var isMeta = String(row.media).toLowerCase().includes('meta') || String(row.media).includes('메타');
+          var isGoogle = String(row.media).toLowerCase().includes('google') || String(row.media).includes('구글');
+          if (isNaver) badgeClass = 'bg-emerald-950 text-emerald-400 border border-emerald-800';
+          else if (isMeta) badgeClass = 'bg-blue-950 text-blue-400 border border-blue-800';
+          else if (isGoogle) badgeClass = 'bg-rose-950 text-rose-400 border border-rose-800';
+
+          var rowCellsHTML = '<td class="py-3 px-4 font-sans font-medium text-slate-300">' + row.date + '</td><td class="py-3 px-4 font-sans"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + badgeClass + '">' + row.media + '</span></td>';
+
+          currentColumns.forEach(function(c) {
+            var rowVal = formatNumber(row[c.key]);
+            var fontColor = c.key === 'clicks' ? 'text-emerald-400 font-bold' : 'text-slate-300';
+            rowCellsHTML += '<td class="py-3 px-4 text-right ' + fontColor + '">' + rowVal + '</td>';
+          });
+
+          if (hasClicks && hasImpressions) {
+            var rCtr = row['impressions'] > 0 ? ((row['clicks'] / row['impressions']) * 100).toFixed(2) : '0.00';
+            rowCellsHTML += '<td class="py-3 px-4 text-right text-cyan-400 font-semibold">' + rCtr + '%</td>';
+          }
+
+          tr.innerHTML = rowCellsHTML;
+          tbody.appendChild(tr);
+        });
+      }
+
+      if (typeof Chart !== 'undefined') {
+        try {
+          updateCharts(dailyAggregated, hasClicks, hasImpressions, currentColumns);
+        } catch (e) {
+          console.warn("차트 렌더링 예외:", e);
+        }
+      }
+    }
+
+    function updateCharts(dailyData, hasClicks, hasImpressions, displayColumns) {
+      if (trendChartInstance) {
+        trendChartInstance.destroy();
+        trendChartInstance = null;
+      }
+
+      if (dailyData.length > 0) {
+        var sortedDailyForChart = dailyData.slice().sort(function(a, b) {
+          return a.date.localeCompare(b.date);
+        });
+        var labels = sortedDailyForChart.map(function(d) {
+          return d.date.length >= 10 ? d.date.slice(5) : d.date;
+        });
+        var datasets = [];
+
+        if (hasClicks) {
+          datasets.push({
+            type: 'line',
+            label: '클릭수 (건)',
+            data: sortedDailyForChart.map(function(d) { return d.clicks; }),
+            borderColor: '#10b981',
+            backgroundColor: '#10b981',
+            yAxisID: 'yClicks',
+            borderWidth: 2,
+            pointRadius: 3,
+            tension: 0.35,
+            order: 1
+          });
+        }
+
+        var barColor = currentMedia === 'Naver' ? 'rgba(3, 199, 90, 0.45)' : 'rgba(59, 130, 246, 0.65)';
+        var barHoverColor = currentMedia === 'Naver' ? 'rgba(3, 199, 90, 0.85)' : 'rgba(59, 130, 246, 0.85)';
+
+        if (hasImpressions) {
+          datasets.push({
+            type: 'bar',
+            label: '노출수 (회)',
+            data: sortedDailyForChart.map(function(d) { return d.impressions; }),
+            backgroundColor: barColor,
+            hoverBackgroundColor: barHoverColor,
+            borderRadius: 4,
+            yAxisID: 'yLeft',
+            order: 2
+          });
+        }
+        
+        document.getElementById('chart-legend-text').innerText = "좌축: 노출수(회) / 우축: 클릭수(건)";
+
+        var ctxTrend = document.getElementById('trendChart').getContext('2d');
+        trendChartInstance = new Chart(ctxTrend, {
+          type: 'bar',
+          data: { labels: labels, datasets: datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: disableChartAnimOnce ? false : { duration: 400 },
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { display: false },
+              tooltip: { backgroundColor: '#0F172A', titleColor: '#F8FAFC', bodyColor: '#F8FAFC', borderColor: '#334155', borderWidth: 1 }
+            },
+            scales: {
+              x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#94A3B8', font: { size: 10 } } },
+              yLeft: {
+                type: 'linear',
+                position: 'left',
+                grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                ticks: { color: '#94A3B8', font: { size: 10 } }
+              },
+              yClicks: {
+                type: 'linear',
+                position: 'right',
+                grid: { drawOnChartArea: false },
+                ticks: { color: '#10B981', font: { size: 10 } }
+              }
+            }
+          }
+        });
+      } else {
+        document.getElementById('chart-legend-text').innerText = '선택 매체 집행 데이터가 없습니다.';
+      }
+
+      if (shareChartInstance) {
+        shareChartInstance.destroy();
+        shareChartInstance = null;
+      }
+      
+      var allowedKeys = displayColumns.map(function(c) { return c.key; });
+      var findValidKey = function(keys) {
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
+          if (!allowedKeys.includes(k)) continue;
+          var sum = 0;
+          rawDataset.forEach(function(d) { sum += toCleanNumber(d[k]); });
+          if (sum > 0) return k;
+        }
+        return null;
+      };
+
+      var shareTargetKey = findValidKey(['impressions', 'clicks']);
+      var msgElem = document.getElementById('no-share-data-msg');
+
+      if (!shareTargetKey) {
+        msgElem.classList.remove('hidden');
+        document.getElementById('share-chart-label').innerText = '데이터 부족';
+        return;
+      } else {
+        msgElem.classList.add('hidden');
+      }
+
+      var shareTargetName = shareTargetKey === 'impressions' ? '노출수' : '클릭수';
+      document.getElementById('share-chart-label').innerText = shareTargetName + ' 기준 비중';
+
+      var naverTotal = 0;
+      var metaTotal = 0;
+      var googleTotal = 0;
+
+      rawDataset.forEach(function(d) { 
+        var val = toCleanNumber(d[shareTargetKey]);
+        var m = String(d.media || '').toLowerCase();
+        if (m.includes('naver') || m.includes('네이버')) naverTotal += val;
+        else if (m.includes('meta') || m.includes('메타')) metaTotal += val;
+        else if (m.includes('google') || m.includes('구글')) googleTotal += val;
+      });
+
+      var totalTarget = naverTotal + metaTotal + googleTotal;
+      var rawTargetData = [metaTotal, naverTotal, googleTotal];
+
+      var baseColors = ['#1877F2', '#03C75A', '#EA4335'];
+      var dimColors = ['rgba(24, 119, 242, 0.25)', 'rgba(3, 199, 90, 0.25)', 'rgba(234, 67, 53, 0.25)'];
+
+      var glowIndex = -1;
+      var finalColors = baseColors.slice();
+      var offsetArray = [0, 0, 0];
+
+      if (currentMedia === 'Naver') {
+        glowIndex = 1;
+        finalColors = [dimColors[0], baseColors[1], dimColors[2]];
+        offsetArray[1] = 12;
+      } else if (currentMedia === 'Meta') {
+        glowIndex = 0;
+        finalColors = [baseColors[0], dimColors[1], dimColors[2]];
+        offsetArray[0] = 12;
+      } else if (currentMedia === 'Google') {
+        glowIndex = 2;
+        finalColors = [dimColors[0], dimColors[1], baseColors[2]];
+        offsetArray[2] = 12;
+      }
+
+      var ctxShare = document.getElementById('shareChart').getContext('2d');
+      shareChartInstance = new Chart(ctxShare, {
+        type: 'doughnut',
+        data: {
+          labels: ['메타 (Meta)', '네이버 (Naver)', '구글 (Google)'],
+          activeGlowIndex: glowIndex,
+          datasets: [{
+            data: rawTargetData,
+            backgroundColor: finalColors,
+            borderColor: '#0F172A',
+            borderWidth: 2,
+            offset: offsetArray,
+            hoverOffset: 12
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: disableChartAnimOnce ? false : { duration: 400 },
+          cutout: '72%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#0F172A',
+              borderColor: '#334155',
+              borderWidth: 1,
+              callbacks: {
+                label: function(c) {
+                  var val = c.raw || 0;
+                  var pct = totalTarget > 0 ? ((val / totalTarget) * 100).toFixed(1) : 0;
+                  return ' ' + c.label + ': ' + val.toLocaleString() + ' (' + pct + '%)';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    /* ==========================================
+       [4. 매체 선택형 무결점 A4 PDF 출력 엔진]
+       ========================================== */
+    function openPdfSelectModal() {
+      document.getElementById('pdf-count-ALL').innerText = '데이터 ' + getFilteredRows('ALL').length + '건';
+      document.getElementById('pdf-count-Naver').innerText = '데이터 ' + getFilteredRows('Naver').length + '건';
+      document.getElementById('pdf-count-Meta').innerText = '데이터 ' + getFilteredRows('Meta').length + '건';
+      document.getElementById('pdf-count-Google').innerText = '데이터 ' + getFilteredRows('Google').length + '건';
+      document.getElementById('pdfSelectModal').classList.add('active');
+    }
+
+    function closePdfSelectModal() {
+      document.getElementById('pdfSelectModal').classList.remove('active');
+    }
+
+    function startMediaPdfPrint(selectedMedia) {
+      closePdfSelectModal();
+      setMediaFilter(selectedMedia, true);
+
+      var mediaFileLabelMap = {
+        ALL: '통합전체',
+        Naver: '네이버검색',
+        Meta: '메타',
+        Google: '구글애즈'
+      };
+      var mediaFileLabel = mediaFileLabelMap[selectedMedia] || selectedMedia;
+
+      var originalTitle = document.title;
+      var safeClient = String(matchedClientDisplayName || '이네이블유').replace(/[\\/:*?"<>|]/g, '_');
+      var safePeriod = String(currentSelectedPeriod || '결산').replace(/[\\/:*?"<>|]/g, '_');
+      document.title = safeClient + '_' + mediaFileLabel + '_성과보고서_' + safePeriod;
+
+      setTimeout(function() {
+        if (trendChartInstance) trendChartInstance.resize();
+        if (shareChartInstance) shareChartInstance.resize();
+
+        window.print();
+        document.title = originalTitle;
+      }, 220);
+    }
+
+    window.openPdfSelectModal = openPdfSelectModal;
+    window.closePdfSelectModal = closePdfSelectModal;
+    window.startMediaPdfPrint = startMediaPdfPrint;
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDataLoad);
+    } else {
+      initDataLoad();
+    }
+  </script>
+</body>
+</html>
