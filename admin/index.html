@@ -453,6 +453,12 @@
             background: var(--bg-card);
             color: var(--text-main);
             cursor: pointer;
+            transition: border-color 0.2s ease, transform 0.2s var(--ease-smooth);
+        }
+
+        .fmt-btn:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
         }
 
         .fmt-highlight {
@@ -488,6 +494,30 @@
             font-size: 14px;
             color: var(--text-main);
             overflow-y: auto;
+            line-height: 1.65;
+        }
+
+        /* 실시간 프리뷰 내 리스트(ul/ol) 및 문단 가독성 보강 */
+        .live-preview-box p {
+            margin-bottom: 8px;
+        }
+
+        .live-preview-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .live-preview-box ul,
+        .live-preview-box ol {
+            padding-left: 20px;
+            margin: 6px 0;
+        }
+
+        .live-preview-box li {
+            margin-bottom: 6px;
+        }
+
+        .live-preview-box li:last-child {
+            margin-bottom: 0;
         }
 
         /* =========================================================
@@ -934,10 +964,10 @@
                 </div>
                 <div class="format-tools">
                     <span style="font-size:11px; color:var(--text-muted); margin-right:4px;">빠른 서식:</span>
-                    <button type="button" class="fmt-btn" onclick="applyQuickFormat('bold')">B</button>
-                    <button type="button" class="fmt-btn fmt-highlight" onclick="applyQuickFormat('highlight')">Highlight</button>
-                    <button type="button" class="fmt-btn fmt-green" onclick="applyQuickFormat('green')">Green</button>
-                    <button type="button" class="fmt-btn" onclick="applyQuickFormat('list')">• List</button>
+                    <button type="button" class="fmt-btn" onclick="applyQuickFormat('bold', 'commentEditor')">B</button>
+                    <button type="button" class="fmt-btn fmt-highlight" onclick="applyQuickFormat('highlight', 'commentEditor')">Highlight</button>
+                    <button type="button" class="fmt-btn fmt-green" onclick="applyQuickFormat('green', 'commentEditor')">Green</button>
+                    <button type="button" class="fmt-btn" onclick="applyQuickFormat('list', 'commentEditor')">• List</button>
                 </div>
             </div>
 
@@ -953,15 +983,32 @@
             </div>
         </section>
 
-        <!-- 섹션 4: 단독 가로 행 - 운영 이슈 및 최적화 대응 내역 -->
+        <!-- 섹션 4: 운영 이슈 및 최적화 대응 내역 (빠른 서식 + 실시간 프리뷰 2단 동일 구조 적용) -->
         <section class="glass-panel">
             <div class="panel-header">
                 <div>
                     <div class="panel-title" style="color:var(--accent-amber);">⚡ 운영 이슈 및 최적화 대응 내역 (선택 회차 및 매체 연동 / HTML 코드 적용 가능)</div>
                     <div class="panel-desc">매체 운영 중 발생한 특이사항 및 최적화 대응 히스토리를 기록합니다.</div>
                 </div>
+                <div class="format-tools">
+                    <span style="font-size:11px; color:var(--text-muted); margin-right:4px;">빠른 서식:</span>
+                    <button type="button" class="fmt-btn" onclick="applyQuickFormat('bold', 'issueEditor')">B</button>
+                    <button type="button" class="fmt-btn fmt-highlight" onclick="applyQuickFormat('highlight', 'issueEditor')">Highlight</button>
+                    <button type="button" class="fmt-btn fmt-green" onclick="applyQuickFormat('green', 'issueEditor')">Green</button>
+                    <button type="button" class="fmt-btn" onclick="applyQuickFormat('list', 'issueEditor')">• List</button>
+                </div>
             </div>
-            <textarea id="issueEditor" class="editor-textarea" style="min-height:180px;" placeholder="HTML 태그를 활용하여 운영 이슈 및 최적화 대응 내역을 작성하세요." oninput="handleEditorInput()"></textarea>
+
+            <div class="editor-split">
+                <div>
+                    <div class="field-label" style="margin-bottom:8px;">HTML 코드 편집기</div>
+                    <textarea id="issueEditor" class="editor-textarea" placeholder="HTML 태그를 활용하여 운영 이슈 및 최적화 대응 내역을 작성하세요." oninput="handleEditorInput()"></textarea>
+                </div>
+                <div>
+                    <div class="field-label" style="margin-bottom:8px;">클라이언트 실제 노출 프리뷰 (Live Preview)</div>
+                    <div id="issuePreview" class="live-preview-box">실시간 프리뷰 영역입니다. 좌측에 대응 내역을 입력하세요.</div>
+                </div>
+            </div>
         </section>
 
         <!-- 섹션 5: 단독 가로 행 (성과 데이터 바로 위) - 광고 소재 성과 피드백 관리 -->
@@ -1382,12 +1429,17 @@
                 btn.classList.toggle('active', btn.dataset.media === uiState.currentMedia);
             });
 
+            /* 최상단 전략 코멘트 & 하단 운영 이슈 대응 내역 프리뷰 동시 동기화 */
             const commentBucket = periodObj.comments[uiState.currentMedia] || { strategy: '', anomaly: '' };
             document.getElementById('commentEditor').value = commentBucket.strategy || '';
             document.getElementById('commentPreview').innerHTML = commentBucket.strategy
                 ? commentBucket.strategy
                 : '<span style="color:var(--text-muted);">실시간 프리뷰 영역입니다. 상단에 코멘트를 입력하세요.</span>';
+
             document.getElementById('issueEditor').value = commentBucket.anomaly || '';
+            document.getElementById('issuePreview').innerHTML = commentBucket.anomaly
+                ? commentBucket.anomaly
+                : '<span style="color:var(--text-muted);">실시간 프리뷰 영역입니다. 좌측에 대응 내역을 입력하세요.</span>';
 
             const creatives = periodObj.creatives[uiState.currentMedia] || [];
             renderCreativesList(creatives);
@@ -1642,6 +1694,7 @@
             renderAll();
         }
 
+        /* 전략 코멘트 & 운영 이슈 대응 내역 실시간 프리뷰 동시 업데이트 */
         function handleEditorInput() {
             const periodObj = getActivePeriodObj();
             const strategyHtml = document.getElementById('commentEditor').value;
@@ -1660,10 +1713,16 @@
                 ? strategyHtml
                 : '<span style="color:var(--text-muted);">실시간 프리뷰 영역입니다. 상단에 코멘트를 입력하세요.</span>';
 
+            document.getElementById('issuePreview').innerHTML = anomalyHtml
+                ? anomalyHtml
+                : '<span style="color:var(--text-muted);">실시간 프리뷰 영역입니다. 좌측에 대응 내역을 입력하세요.</span>';
+
             saveToLocalBackup();
         }
 
-        function applyQuickFormat(type) {
+        /* 공통 빠른 서식 적용기 (commentEditor / issueEditor 공용 지원) */
+        function applyQuickFormat(type, targetId) {
+            const editorId = targetId || 'commentEditor';
             let openTag = '<b>';
             let closeTag = '</b>';
             if (type === 'highlight') {
@@ -1676,7 +1735,8 @@
                 openTag = '<ul>\n  <li>';
                 closeTag = '</li>\n</ul>';
             }
-            const textarea = document.getElementById('commentEditor');
+            const textarea = document.getElementById(editorId);
+            if (!textarea) return;
             const start = textarea.selectionStart;
             const end = textarea.selectionEnd;
             const selected = textarea.value.substring(start, end) || '텍스트 입력';
