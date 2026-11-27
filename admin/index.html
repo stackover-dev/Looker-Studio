@@ -270,6 +270,8 @@
         }
 
         .glass-panel {
+            width: 100%;
+            min-width: 0;
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             border-radius: 20px;
@@ -488,23 +490,32 @@
             overflow-y: auto;
         }
 
-        .bottom-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
+        /* =========================================================
+           [5-1. 풀와이드 단독 가로 행: 광고 소재 성과 피드백 관리]
+           ========================================================= */
+        .creative-count-badge {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent-purple);
+            background: rgba(129, 140, 248, 0.12);
+            border: 1px solid rgba(129, 140, 248, 0.35);
+            padding: 5px 12px;
+            border-radius: 20px;
         }
 
+        /* 풀와이드 가로 행 입력 폼 (이미지 + 입력필드 + 등록 CTA) */
         .creative-upload-box {
             display: grid;
-            grid-template-columns: 110px 1fr;
-            gap: 14px;
-            margin-bottom: 14px;
+            grid-template-columns: 116px minmax(0, 1fr) 210px;
+            gap: 16px;
+            align-items: stretch;
+            margin-bottom: 18px;
         }
 
         .img-dropzone {
-            height: 110px;
-            border: 1px dashed rgba(255, 255, 255, 0.25);
-            border-radius: 12px;
+            height: 116px;
+            border: 1.5px dashed rgba(129, 140, 248, 0.35);
+            border-radius: 14px;
             background: var(--bg-input);
             display: flex;
             flex-direction: column;
@@ -516,6 +527,12 @@
             text-align: center;
             overflow: hidden;
             position: relative;
+            transition: border-color 0.3s ease, background 0.3s ease;
+        }
+
+        .img-dropzone:hover {
+            border-color: var(--accent-purple);
+            background: rgba(129, 140, 248, 0.06);
         }
 
         .img-dropzone img {
@@ -527,32 +544,59 @@
         .creative-inputs {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
+            min-width: 0;
         }
 
+        .btn-creative-add {
+            width: 100%;
+            height: 100%;
+            min-height: 46px;
+            justify-content: center;
+            flex-direction: column;
+            gap: 4px;
+            background: rgba(129, 140, 248, 0.1);
+            border: 1px solid rgba(129, 140, 248, 0.45);
+            color: #a5b4fc;
+            border-radius: 14px;
+        }
+
+        .btn-creative-add:hover {
+            background: rgba(129, 140, 248, 0.2);
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 22px var(--glow-indigo);
+        }
+
+        /* 등록된 소재 가로 행 리스트 */
         .creative-list {
-            margin-top: 16px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            max-height: 280px;
+            gap: 12px;
+            max-height: 360px;
             overflow-y: auto;
+            padding-right: 4px;
         }
 
         .creative-item {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
             background: var(--bg-input);
             border: 1px solid var(--border-subtle);
-            padding: 10px 12px;
-            border-radius: 12px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            transition: border-color 0.3s var(--ease-smooth), transform 0.3s var(--ease-smooth);
+        }
+
+        .creative-item:hover {
+            border-color: rgba(129, 140, 248, 0.35);
+            transform: translateY(-1px);
         }
 
         .creative-thumb {
-            width: 52px;
-            height: 52px;
-            border-radius: 8px;
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
             object-fit: cover;
             background: #27272a;
             flex-shrink: 0;
@@ -564,17 +608,21 @@
         }
 
         .creative-meta h4 {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
+            color: var(--text-main);
+            word-break: keep-all;
+            overflow-wrap: anywhere;
         }
 
         .creative-meta p {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-sub);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            line-height: 1.5;
+            white-space: normal;
+            word-break: keep-all;
+            overflow-wrap: anywhere;
         }
 
         /* =========================================================
@@ -767,13 +815,15 @@
         @media (max-width: 1024px) {
             .client-grid { grid-template-columns: 1fr; }
             .editor-split { grid-template-columns: 1fr; }
-            .bottom-grid { grid-template-columns: 1fr; }
+            .creative-upload-box { grid-template-columns: 116px minmax(0, 1fr); }
+            .btn-creative-add { grid-column: 1 / -1; flex-direction: row; }
             .excel-kpi-strip { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 768px) {
             .top-navbar { padding: 14px 18px; }
             .main-container { padding: 0 16px; }
+            .creative-item { align-items: flex-start; }
         }
 
         @media (max-width: 480px) {
@@ -903,43 +953,46 @@
             </div>
         </section>
 
-        <!-- 섹션 4: 하단 2단 운영 이슈 + 광고 소재 성과 피드백 관리 -->
-        <section class="bottom-grid">
-            <div class="glass-panel">
-                <div class="panel-header">
-                    <div>
-                        <div class="panel-title" style="color:var(--accent-amber);">⚡ 운영 이슈 및 최적화 대응 내역 (선택 회차 및 매체 연동 / HTML 코드 적용 가능)</div>
-                    </div>
+        <!-- 섹션 4: 단독 가로 행 - 운영 이슈 및 최적화 대응 내역 -->
+        <section class="glass-panel">
+            <div class="panel-header">
+                <div>
+                    <div class="panel-title" style="color:var(--accent-amber);">⚡ 운영 이슈 및 최적화 대응 내역 (선택 회차 및 매체 연동 / HTML 코드 적용 가능)</div>
+                    <div class="panel-desc">매체 운영 중 발생한 특이사항 및 최적화 대응 히스토리를 기록합니다.</div>
                 </div>
-                <textarea id="issueEditor" class="editor-textarea" style="min-height:260px;" placeholder="HTML 태그를 활용하여 운영 이슈 및 최적화 대응 내역을 작성하세요." oninput="handleEditorInput()"></textarea>
             </div>
-
-            <div class="glass-panel">
-                <div class="panel-header">
-                    <div>
-                        <div class="panel-title" style="color:var(--accent-purple);">🖼️ 광고 소재 성과 피드백 관리</div>
-                        <div class="panel-desc">이미지는 자동 용량 최적화 저장됩니다.</div>
-                    </div>
-                </div>
-
-                <div class="creative-upload-box">
-                    <label class="img-dropzone" id="imgDropzone">
-                        <input type="file" id="creativeImgInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
-                        <span>+ 이미지<br>선택</span>
-                    </label>
-                    <div class="creative-inputs">
-                        <input type="text" id="creativeTitleInput" placeholder="소재명 (예: 메인 A안 30초)">
-                        <textarea id="creativeDescInput" style="min-height:64px; resize:none;" placeholder="해당 소재에 대한 성과 피드백을 입력하세요."></textarea>
-                    </div>
-                </div>
-
-                <button type="button" class="btn" style="width:100%; justify-content:center; border-color:rgba(129,140,248,0.4); color:var(--accent-purple);" onclick="addCreativeItem()">↓ 현재 소재 리스트에 등록하기</button>
-
-                <div id="creativeListContainer" class="creative-list"></div>
-            </div>
+            <textarea id="issueEditor" class="editor-textarea" style="min-height:180px;" placeholder="HTML 태그를 활용하여 운영 이슈 및 최적화 대응 내역을 작성하세요." oninput="handleEditorInput()"></textarea>
         </section>
 
-        <!-- 섹션 5: 메타/매체 엑셀 보고서 (.xlsx / .csv) 업로드 및 일별 성과 데이터 -->
+        <!-- 섹션 5: 단독 가로 행 (성과 데이터 바로 위) - 광고 소재 성과 피드백 관리 -->
+        <section class="glass-panel">
+            <div class="panel-header">
+                <div>
+                    <div class="panel-title" style="color:var(--accent-purple);">🖼️ 광고 소재 성과 피드백 관리</div>
+                    <div class="panel-desc">이미지는 자동 용량 최적화 저장되며, 등록된 소재는 아래 가로 행 리스트로 깔끔하게 누적됩니다.</div>
+                </div>
+                <span id="creativeCountBadge" class="creative-count-badge">등록된 소재 0건</span>
+            </div>
+
+            <div class="creative-upload-box">
+                <label class="img-dropzone" id="imgDropzone">
+                    <input type="file" id="creativeImgInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+                    <span>+ 이미지<br>선택</span>
+                </label>
+                <div class="creative-inputs">
+                    <input type="text" id="creativeTitleInput" placeholder="소재명 (예: 메인 A안 30초 / 상대적 효율 저하 집행 중단)">
+                    <textarea id="creativeDescInput" style="min-height:66px; resize:none;" placeholder="해당 소재에 대한 성과 피드백을 입력하세요."></textarea>
+                </div>
+                <button type="button" class="btn btn-creative-add" onclick="addCreativeItem()">
+                    <span style="font-size:15px;">↓</span>
+                    <span>현재 소재 리스트에 등록</span>
+                </button>
+            </div>
+
+            <div id="creativeListContainer" class="creative-list"></div>
+        </section>
+
+        <!-- 섹션 6: 메타/매체 엑셀 보고서 (.xlsx / .csv) 업로드 및 일별 성과 데이터 -->
         <section class="glass-panel">
             <div class="panel-header">
                 <div>
@@ -1344,6 +1397,12 @@
 
         function renderCreativesList(creatives) {
             const listEl = document.getElementById('creativeListContainer');
+            const countBadge = document.getElementById('creativeCountBadge');
+            const totalCount = Array.isArray(creatives) ? creatives.length : 0;
+            if (countBadge) {
+                countBadge.textContent = '등록된 소재 ' + totalCount + '건';
+            }
+
             if (!creatives || creatives.length === 0) {
                 listEl.innerHTML = '<div style="text-align:center; padding:24px; font-size:13px; color:var(--text-muted); border:1px dashed var(--border-subtle); border-radius:12px;">등록된 소재가 없습니다.</div>';
                 return;
@@ -1358,7 +1417,7 @@
                     '<h4>' + escapeHtml(item.title) + '</h4>' +
                     '<p>' + escapeHtml(item.feedback || item.desc || '') + '</p>' +
                     '</div>' +
-                    '<button type="button" class="btn btn-sm btn-danger" onclick="deleteCreativeItem(' + idx + ')">삭제</button>' +
+                    '<button type="button" class="btn btn-sm btn-danger" style="flex-shrink:0;" onclick="deleteCreativeItem(' + idx + ')">삭제</button>' +
                     '</div>';
             }).join('');
         }
@@ -1728,7 +1787,6 @@
         function normalizeExcelDate(rawVal) {
             if (rawVal === null || rawVal === undefined || rawVal === '') return '';
 
-            // Excel 직렬 날짜 숫자 처리 (예: 46327)
             if (typeof rawVal === 'number' && rawVal > 20000 && rawVal < 90000 && typeof XLSX !== 'undefined' && XLSX.SSF) {
                 const parsed = XLSX.SSF.parse_date_code(rawVal);
                 if (parsed && parsed.y && parsed.m && parsed.d) {
@@ -1741,13 +1799,11 @@
             const str = String(rawVal).trim();
             if (/합계|총계|전체|total|summary/i.test(str)) return '';
 
-            // YYYY-MM-DD, YYYY.MM.DD, YYYY/MM/DD 형태 추출
             const ymdMatch = str.match(/(\d{4})[.\-\/\s]+(\d{1,2})[.\-\/\s]+(\d{1,2})/);
             if (ymdMatch) {
                 return ymdMatch[1] + '-' + ymdMatch[2].padStart(2, '0') + '-' + ymdMatch[3].padStart(2, '0');
             }
 
-            // MM/DD/YYYY 형태 추출
             const mdyMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
             if (mdyMatch) {
                 return mdyMatch[3] + '-' + mdyMatch[1].padStart(2, '0') + '-' + mdyMatch[2].padStart(2, '0');
@@ -1803,7 +1859,6 @@
                         return showToast('⚠️ 엑셀 파일에 읽을 수 있는 데이터 행이 없습니다.');
                     }
 
-                    // 파일명 기반 매체 힌트
                     let fileMediaHint = 'Meta';
                     const lowerFileName = file.name.toLowerCase();
                     if (lowerFileName.indexOf('naver') !== -1 || lowerFileName.indexOf('네이버') !== -1) fileMediaHint = 'Naver';
@@ -1820,7 +1875,6 @@
                             ['종료', 'end']
                         );
 
-                        // 날짜 헤더 이름이 특이한 경우 첫 번째 날짜 형식 셀 자동 탐색
                         if (!rawDate) {
                             const rowVals = Object.values(row);
                             for (let k = 0; k < rowVals.length; k++) {
@@ -1894,7 +1948,6 @@
                     const periodObj = getActivePeriodObj();
                     const uploadedMedias = new Set(extractedRows.map(function (r) { return r.media; }));
 
-                    // 기존 타 매체 데이터는 보존하고, 이번에 업로드된 매체 데이터만 최신 엑셀 데이터로 교체 병합
                     const keptOtherRows = (periodObj.rawDataset || []).filter(function (existing) {
                         return !uploadedMedias.has(normalizeMediaKey(existing.media));
                     });
@@ -2108,11 +2161,9 @@
 
             showToast('🚀 GitHub 영구 DB(' + dbRepoPath + ')에 커밋 중...');
             try {
-                // 1. 표준 database.json 영구 커밋 (모든 고객사 HTML 페이지가 실시간 참조)
                 const dbJsonString = JSON.stringify(clientDb, null, 2);
                 await commitFileToGitHub(dbRepoPath, dbJsonString, '[Admin Tower] Update database.json (' + clientKey + ')');
 
-                // 2. 신규 고객사라 HTML 파일이 아직 레포에 없는 경우에만 기본 보고서 HTML 자동 생성
                 const existingHtmlSha = await checkFileExistsInGitHub(htmlRepoPath);
                 if (!existingHtmlSha) {
                     const newHtml = buildClientPreviewHTML(clientKey, clientObj);
